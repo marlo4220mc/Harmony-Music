@@ -26,13 +26,13 @@ class SettingsScreenController extends GetxController {
   final themeModetype = ThemeType.dynamic.obs;
   final skipSilenceEnabled = false.obs;
   final loudnessNormalizationEnabled = false.obs;
-  final noOfHomeScreenContent = 3.obs;
+  final noOfHomeScreenContent = 7.obs;
   final streamingQuality = AudioQuality.High.obs;
   final playerUi = 0.obs;
   final slidableActionEnabled = true.obs;
   final isIgnoringBatteryOptimizations = false.obs;
   final autoOpenPlayer = false.obs;
-  final discoverContentType = "QP".obs;
+  final discoverContentType = "TR".obs;
   final isNewVersionAvailable = false.obs;
   final isLinkedWithPiped = false.obs;
   final stopPlyabackOnSwipeAway = false.obs;
@@ -78,15 +78,24 @@ class SettingsScreenController extends GetxController {
 
   Future<void> _setInitValue() async {
     final isDesktop = GetPlatform.isDesktop;
-    final appLang = setBox.get('currentAppLanguageCode') ?? "en";
-    currentAppLanguageCode.value = appLang == "zh_Hant"
-        ? "zh-TW"
-        : appLang == "zh_Hans"
-            ? "zh-CN"
-            : appLang;
+    final systemLang =
+    Get.deviceLocale?.languageCode ?? "en";
+
+final savedLang =
+    setBox.get('currentAppLanguageCode');
+
+final appLang = savedLang ?? systemLang;
+
+currentAppLanguageCode.value = appLang == "zh_Hant"
+    ? "zh-TW"
+    : appLang == "zh_Hans"
+        ? "zh-CN"
+        : appLang;
+
+Get.updateLocale(Locale(currentAppLanguageCode.value));
     isBottomNavBarEnabled.value =
         isDesktop ? false : (setBox.get("isBottomNavBarEnabled") ?? false);
-    noOfHomeScreenContent.value = setBox.get("noOfHomeScreenContent") ?? 3;
+    noOfHomeScreenContent.value = setBox.get("noOfHomeScreenContent") ?? 7;
     isTransitionAnimationDisabled.value =
         setBox.get("isTransitionAnimationDisabled") ?? false;
     cacheSongs.value = setBox.get('cacheSongs') ?? false;
@@ -116,7 +125,25 @@ class SettingsScreenController extends GetxController {
     exportLocationPath.value =
         setBox.get("exportLocationPath") ?? "/storage/emulated/0/Music";
     downloadingFormat.value = setBox.get('downloadingFormat') ?? "m4a";
-    discoverContentType.value = setBox.get('discoverContentType') ?? "QP";
+    final savedDiscoverType =
+    setBox.get('discoverContentType');
+
+if (savedDiscoverType == null ||
+    savedDiscoverType == "QP") {
+
+  discoverContentType.value = "TR";
+
+  await setBox.put(
+    'discoverContentType',
+    "TR",
+  );
+
+} else {
+
+  discoverContentType.value =
+      savedDiscoverType;
+
+}
     slidableActionEnabled.value = setBox.get('slidableActionEnabled') ?? true;
     if (setBox.containsKey("piped")) {
       isLinkedWithPiped.value = setBox.get("piped")['isLoggedIn'];
