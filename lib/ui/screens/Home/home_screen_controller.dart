@@ -151,12 +151,43 @@ class HomeScreenController extends GetxController {
       }
 
       if (quickPicks.value.songList.isEmpty) {
-        final index = homeContentListMap
-            .indexWhere((element) => element['title'] == "Quick picks");
-        final con = homeContentListMap.removeAt(index);
-        quickPicks.value = QuickPicks(List<MediaItem>.from(con["contents"]),
-            title: "Quick picks");
-      }
+
+  final index =
+      homeContentListMap.indexWhere(
+    (element) =>
+        element['title']
+            .toString()
+            .toLowerCase()
+            .contains("quick"),
+  );
+
+  Map<String, dynamic>? con;
+
+  if (index != -1) {
+
+    con = homeContentListMap.removeAt(index);
+
+  } else if (
+      homeContentListMap.isNotEmpty) {
+
+    printINFO(
+      "Quick Picks not found, using fallback",
+    );
+
+    con = homeContentListMap.first;
+  }
+
+  if (con != null) {
+
+    quickPicks.value = QuickPicks(
+      List<MediaItem>.from(
+        con["contents"] ?? [],
+      ),
+      title:
+          con["title"] ?? "Discover",
+    );
+  }
+}
 
       middleContent.value = _setContentList(middleContentTemp);
       fixedContent.value = _setContentList(homeContentListMap);

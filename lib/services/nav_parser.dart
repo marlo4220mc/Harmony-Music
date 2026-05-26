@@ -141,54 +141,153 @@ const musicPlaylistShelfRenderer = [
   "musicPlaylistShelfRenderer",
 ];
 
-List<Map<String, dynamic>> parseMixedContent(List<dynamic> rows) {
+List<Map<String, dynamic>> parseMixedContent(
+    List<dynamic> rows) {
+
   List<Map<String, dynamic>> items = [];
-  //inspect(rows);
 
   for (var row in rows) {
-    dynamic title;
-    dynamic contents = [];
-    if (description_shelf[0] == row.keys.first.toString()) {
-      var results = nav(row, description_shelf);
-      title = nav(results, ['header', 'runs', 0, 'text']);
-      contents = nav(results, description);
-    } else {
-      var results = row.values.first;
-      if (!results.containsKey('contents')) {
-        continue;
-      }
-      title = nav(results, carousel_title + ['text']);
 
-      for (var result in results['contents']) {
-        var data = nav(result, [mtrir]);
-        dynamic content;
-        if (data != null) {
-          var pageType = nav(data, n_title + navigation_browse + page_type,
-              noneIfAbsent: true, funName: "mixed1");
-          if (pageType == null) {
-            if (nav(data, navigation_watch_playlist_id) != null) {
-              //  content = parseWatchPlaylistHome(data);
-            } else {
-              content = parseSong(data);
-            }
-          } else if (pageType == "MUSIC_PAGE_TYPE_ALBUM") {
-            content = parseAlbum(data, reqAlbumObj: false);
-          } else if (pageType == "MUSIC_PAGE_TYPE_ARTIST") {
-            content = parseRelatedArtist(data);
-          } else if (pageType == "MUSIC_PAGE_TYPE_PLAYLIST") {
-            content = parsePlaylist(data);
-          }
-        } else {
-          data = nav(result, [mrlir]);
-          content = parseSongFlat(data);
+    try {
+
+      dynamic title;
+      dynamic contents = [];
+
+      if (description_shelf[0] ==
+          row.keys.first.toString()) {
+
+        var results = nav(row, description_shelf);
+
+        title = nav(
+            results,
+            ['header', 'runs', 0, 'text']);
+
+        contents = nav(results, description);
+
+      } else {
+
+        var results = row.values.first;
+
+        if (results == null ||
+            !results.containsKey('contents')) {
+
+          printINFO(
+            "Skipping shelf without contents",
+          );
+
+          continue;
         }
 
-        contents.add(content);
+        title = nav(
+          results,
+          carousel_title + ['text'],
+        );
+
+        for (var result in results['contents']) {
+
+          try {
+
+            var data = nav(result, [mtrir]);
+
+            dynamic content;
+
+            if (data != null) {
+
+              var pageType = nav(
+                data,
+                n_title +
+                    navigation_browse +
+                    page_type,
+                noneIfAbsent: true,
+                funName: "mixed1",
+              );
+
+              if (pageType == null) {
+
+                if (nav(data,
+                        navigation_watch_playlist_id) !=
+                    null) {
+
+                  // content =
+                  // parseWatchPlaylistHome(data);
+
+                } else {
+
+                  content = parseSong(data);
+
+                }
+
+              } else if (pageType ==
+                  "MUSIC_PAGE_TYPE_ALBUM") {
+
+                content = parseAlbum(
+                  data,
+                  reqAlbumObj: false,
+                );
+
+              } else if (pageType ==
+                  "MUSIC_PAGE_TYPE_ARTIST") {
+
+                content =
+                    parseRelatedArtist(data);
+
+              } else if (pageType ==
+                  "MUSIC_PAGE_TYPE_PLAYLIST") {
+
+                content = parsePlaylist(data);
+
+              }
+
+            } else {
+
+              data = nav(result, [mrlir]);
+
+              if (data != null) {
+                content = parseSongFlat(data);
+              }
+
+            }
+
+            if (content != null) {
+              contents.add(content);
+            }
+
+          } catch (e) {
+
+            printINFO(
+              "Error parsing content item: $e",
+            );
+
+            continue;
+          }
+        }
+
+        if (title != null &&
+            contents.isNotEmpty) {
+
+          items.add({
+            'title': title,
+            'contents': contents,
+          });
+
+        } else {
+
+          printINFO(
+            "Skipping invalid shelf",
+          );
+        }
       }
 
-      items.add({'title': title, 'contents': contents});
+    } catch (e) {
+
+      printINFO(
+        "Error parsing mixed content row: $e",
+      );
+
+      continue;
     }
   }
+
   return items;
 }
 

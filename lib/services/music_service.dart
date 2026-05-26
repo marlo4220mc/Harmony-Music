@@ -135,14 +135,41 @@ class MusicServices extends getx.GetxService {
     final data = Map.from(_context);
     data["browseId"] = "FEmusic_home";
     final response = await _sendRequest("browse", data);
-    final results = nav(response.data, single_column_tab + section_list);
-    final home = [...parseMixedContent(results)];
+    var results =
+    nav(response.data, single_column_tab + section_list);
+
+results ??= nav(response.data, [
+  'contents',
+  'twoColumnBrowseResultsRenderer',
+  'tabs',
+  0,
+  'tabRenderer',
+  'content',
+  'sectionListRenderer',
+  'contents'
+]);
+
+results ??= [];
+
+final home = [...parseMixedContent(results)];
 
     final sectionList =
-        nav(response.data, single_column_tab + ['sectionListRenderer']);
+    nav(response.data,
+        single_column_tab + ['sectionListRenderer']) ??
+    nav(response.data, [
+      'contents',
+      'twoColumnBrowseResultsRenderer',
+      'tabs',
+      0,
+      'tabRenderer',
+      'content',
+      'sectionListRenderer'
+    ]) ??
+    {};
     //inspect(sectionList);
     //print(sectionList.containsKey('continuations'));
-    if (sectionList.containsKey('continuations')) {
+    if (sectionList is Map &&
+    sectionList.containsKey('continuations')) {
       requestFunc(additionalParams) async {
         return (await _sendRequest("browse", data,
                 additionalParams: additionalParams))
