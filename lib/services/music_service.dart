@@ -60,17 +60,67 @@ class MusicServices extends getx.GetxService {
     final appPrefsBox = Hive.box('AppPrefs');
     hlCode = appPrefsBox.get('contentLanguage') ?? "en";
     if (appPrefsBox.containsKey('visitorId')) {
-      final visitorData = appPrefsBox.get("visitorId");
-      if (visitorData != null && !isExpired(epoch: visitorData['exp'])) {
-        _headers['X-Goog-Visitor-Id'] = visitorData['id'];
-        appPrefsBox.put("visitorId", {
-          'id': visitorData['id'],
-          'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 2590200
-        });
-        printINFO("Got Visitor id ($visitorData['id']) from Box");
-        return;
-      }
-    }
+
+  final visitorData =
+      appPrefsBox.get("visitorId");
+
+  print(
+    "VISITOR DATA: $visitorData",
+  );
+
+  final isInvalidVisitor =
+      visitorData == null ||
+      visitorData is! Map ||
+      !visitorData.containsKey("id") ||
+      !visitorData.containsKey("exp");
+
+  if (isInvalidVisitor) {
+
+    print(
+      "INVALID visitorId -> deleting",
+    );
+
+    await appPrefsBox.delete(
+      "visitorId",
+    );
+
+  } else if (
+      !isExpired(
+        epoch: visitorData['exp'],
+      )) {
+
+    _headers['X-Goog-Visitor-Id'] =
+        visitorData['id'];
+
+    appPrefsBox.put(
+      "visitorId",
+      {
+        'id': visitorData['id'],
+        'exp':
+            DateTime.now()
+                    .millisecondsSinceEpoch ~/
+                1000 +
+            2590200
+      },
+    );
+
+    print(
+      "USING visitorId",
+    );
+
+    return;
+
+  } else {
+
+    print(
+      "EXPIRED visitorId -> deleting",
+    );
+
+    await appPrefsBox.delete(
+      "visitorId",
+    );
+  }
+}
 
     final visitorId = await genrateVisitorId();
     if (visitorId != null) {

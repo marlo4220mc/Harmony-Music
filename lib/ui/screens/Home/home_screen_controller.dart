@@ -87,7 +87,33 @@ class HomeScreenController extends GetxController {
 
   Future<void> loadContentFromNetwork({bool silent = false}) async {
     final box = Hive.box("AppPrefs");
-    String contentType = box.get("discoverContentType") ?? "QP";
+    String contentType =
+    box.get(
+      "discoverContentType",
+    ) ??
+    "TR";
+
+const validTypes = [
+  'TR',
+  'TMV',
+  'BOLI',
+];
+
+if (!validTypes.contains(
+    contentType)) {
+
+  print(
+    "Invalid discover type "
+    "$contentType -> TR",
+  );
+
+  contentType = "TR";
+
+  await box.put(
+    'discoverContentType',
+    "TR",
+  );
+}
 
     networkError.value = false;
     try {

@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/update_check_flag_file.dart';
+import '/utils/get_localization.dart';
 import '/services/piped_service.dart';
 import '../Library/library_controller.dart';
 import '../../widgets/snackbar.dart';
@@ -78,30 +79,30 @@ class SettingsScreenController extends GetxController {
 
   Future<void> _setInitValue() async {
     final isDesktop = GetPlatform.isDesktop;
-    final systemLang =
-    Get.deviceLocale?.languageCode ?? "en";
+    final savedLang = setBox.get('currentAppLanguageCode');
+    final appLang = savedLang ?? 'en';
 
-final savedLang =
-    setBox.get('currentAppLanguageCode');
+    currentAppLanguageCode.value = appLang == "zh_Hant"
+        ? "zh-TW"
+        : appLang == "zh_Hans"
+            ? "zh-CN"
+            : appLang;
 
-final appLang = savedLang ?? systemLang;
-
-currentAppLanguageCode.value = appLang == "zh_Hant"
-    ? "zh-TW"
-    : appLang == "zh_Hans"
-        ? "zh-CN"
-        : appLang;
-
-Get.updateLocale(Locale(currentAppLanguageCode.value));
+    Get.updateLocale(Locale(currentAppLanguageCode.value));
     isBottomNavBarEnabled.value =
         isDesktop ? false : (setBox.get("isBottomNavBarEnabled") ?? false);
     noOfHomeScreenContent.value = setBox.get("noOfHomeScreenContent") ?? 7;
     isTransitionAnimationDisabled.value =
         setBox.get("isTransitionAnimationDisabled") ?? false;
     cacheSongs.value = setBox.get('cacheSongs') ?? false;
-    themeModetype.value = ThemeType.values[setBox.get('themeModeType') ?? 0];
+    final themeModeIndex = setBox.get('themeModeType');
+    themeModetype.value = (themeModeIndex is int &&
+            themeModeIndex >= 0 &&
+            themeModeIndex < ThemeType.values.length)
+        ? ThemeType.values[themeModeIndex]
+        : ThemeType.dynamic;
     skipSilenceEnabled.value =
-        isDesktop ? false : setBox.get("skipSilenceEnabled");
+        isDesktop ? false : (setBox.get("skipSilenceEnabled") ?? false);
     loudnessNormalizationEnabled.value = isDesktop
         ? false
         : (setBox.get("loudnessNormalizationEnabled") ?? false);
@@ -109,12 +110,20 @@ Get.updateLocale(Locale(currentAppLanguageCode.value));
     restorePlaybackSession.value =
         setBox.get("restrorePlaybackSession") ?? false;
     cacheHomeScreenData.value = setBox.get("cacheHomeScreenData") ?? true;
-    streamingQuality.value =
-        AudioQuality.values[setBox.get('streamingQuality')];
-    playerUi.value = isDesktop ? 0 : (setBox.get('playerUi') ?? 0);
+    final streamingQualityIndex = setBox.get('streamingQuality');
+    streamingQuality.value = (streamingQualityIndex is int &&
+            streamingQualityIndex >= 0 &&
+            streamingQualityIndex < AudioQuality.values.length)
+        ? AudioQuality.values[streamingQualityIndex]
+        : AudioQuality.High;
+    final playerUiIndex = setBox.get('playerUi');
+    playerUi.value = isDesktop
+        ? 0
+        : (playerUiIndex is int ? playerUiIndex : 0);
     backgroundPlayEnabled.value = setBox.get("backgroundPlayEnabled") ?? true;
     keepScreenAwake.value =
-        setBox.get("keepScreenAwake") ?? GetPlatform.isDesktop ? true : false;
+        (setBox.get("keepScreenAwake") ??
+            (GetPlatform.isDesktop ? true : false));
     final downloadPath =
         setBox.get('downloadLocationPath') ?? await _createInAppSongDownDir();
     downloadLocationPath.value =
@@ -352,6 +361,88 @@ if (savedDiscoverType == null ||
   void toggleAutoOpenPlayer(bool val) {
     setBox.put('autoOpenPlayer', val);
     autoOpenPlayer.value = val;
+  }
+
+  Future<void> promptSystemLanguageOnFirstLaunch(BuildContext context) async {
+    final hasPrompted = setBox.get('languagePromptShown') ?? false;
+    if (hasPrompted) return;
+
+    final savedLang = setBox.get('currentAppLanguageCode');
+    final systemLocale = Get.deviceLocale;
+    String systemLang = systemLocale?.languageCode ?? 'en';
+    if (systemLang == 'zh') {
+      final scriptCode = systemLocale?.scriptCode;
+      final countryCode = systemLocale?.countryCode?.toUpperCase();
+      systemLang = (scriptCode == 'Hant' || countryCode == 'TW')
+          ? 'zh_Hant'
+          : 'zh_Hans';
+    }
+
+    if (savedLang != null || systemLang == 'en') {
+      await setBox.put('languagePromptShown', true);
+      return;
+    }
+
+    if (!Languages().keys.containsKey(systemLang)) {
+      await setBox.put('languagePromptShown', true);
+      return;
+    }
+
+    await setBox.put('languagePromptShown', true);
+
+    final languageLabel = _humanReadableLanguage(systemLang);
+    final shouldSwitch = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text('Idioma detectado'),
+        content: Text(
+          'Se detectó el idioma del sistema como $languageLabel. ¿Quieres cambiar a ese idioma?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Sí'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSwitch == true) {
+      final selectedLang = systemLang == 'zh_Hant'
+          ? 'zh-TW'
+          : systemLang == 'zh_Hans'
+              ? 'zh-CN'
+              : systemLang;
+      setAppLanguage(selectedLang);
+    }
+  }
+
+  String _humanReadableLanguage(String code) {
+    const languageNames = {
+      'en': 'inglés',
+      'es': 'español',
+      'pt': 'portugués',
+      'fr': 'francés',
+      'de': 'alemán',
+      'it': 'italiano',
+      'ru': 'ruso',
+      'tr': 'turco',
+      'hi': 'hindi',
+      'ja': 'japonés',
+      'ko': 'coreano',
+      'zh_Hans': 'chino simplificado',
+      'zh_Hant': 'chino tradicional',
+      'ar': 'árabe',
+      'id': 'indonesio',
+      'bn': 'bengalí',
+      'vi': 'vietnamita',
+    };
+    return languageNames[code] ?? code;
   }
 
   Future<void> unlinkPiped() async {

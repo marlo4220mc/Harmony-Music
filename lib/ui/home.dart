@@ -28,6 +28,11 @@ class Home extends StatelessWidget {
     final homeScreenController = Get.find<HomeScreenController>();
     final size = MediaQuery.of(context).size;
     final isWideScreen = size.width > 800;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      settingsScreenController.promptSystemLanguageOnFirstLaunch(context);
+    });
+
     if (!playerController.initFlagForPlayer &&
         settingsScreenController.isBottomNavBarEnabled.isFalse) {
       if (isWideScreen) {

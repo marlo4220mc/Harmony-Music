@@ -211,22 +211,19 @@ class SettingsScreen extends StatelessWidget {
                     ListTile(
                       contentPadding: const EdgeInsets.only(left: 5, right: 10),
                       title: Text("setDiscoverContent".tr),
-                      subtitle: Obx(() => Text(
-                          settingsController.discoverContentType.value == "QP"
-                              ? "quickpicks".tr
-                              : settingsController.discoverContentType.value ==
-                                      "TMV"
-                                  ? "topmusicvideos".tr
-                                  : settingsController
-                                              .discoverContentType.value ==
-                                          "TR"
-                                      ? "trending".tr
-                                      : "basedOnLast".tr,
-                          style: Theme.of(context).textTheme.bodyMedium)),
+                      subtitle: Obx(
+                        () => Text(
+                          settingsController.discoverContentType.value == "TMV"
+                              ? "topmusicvideos".tr
+                              : settingsController.discoverContentType.value == "TR"
+                                  ? "trending".tr
+                                  : "basedOnLast".tr,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
                       onTap: () => showDialog(
                         context: context,
-                        builder: (context) =>
-                            const DiscoverContentSelectorDialog(),
+                        builder: (context) => const DiscoverContentSelectorDialog(),
                       ),
                     ),
                     ListTile(
@@ -786,10 +783,10 @@ class DiscoverContentSelectorDialog extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  radioWidget(
-                      label: "quickpicks".tr,
-                      controller: settingsController,
-                      value: "QP"),
+                  //radioWidget(
+                      //label: "quickpicks".tr,
+                      //controller: settingsController,
+                      //value: "QP"),
                   radioWidget(
                       label: "topmusicvideos".tr,
                       controller: settingsController,

@@ -117,18 +117,85 @@ initHive() async {
 
 void _setAppInitPrefs() {
   final appPrefs = Hive.box("AppPrefs");
-  if (appPrefs.isEmpty) {
-    appPrefs.putAll({
-      'themeModeType': 0,
-      "cacheSongs": false,
-      "skipSilenceEnabled": false,
-      'streamingQuality': 1,
-      'themePrimaryColor': 4278199603,
-      'discoverContentType': "QP",
-      'newVersionVisibility': updateCheckFlag,
-      "cacheHomeScreenData": true
-    });
-  }
+  const validDiscoverTypes = [
+  'TR',
+  'TMV',
+  'BOLI',
+];
+
+final discoverType =
+    appPrefs.get(
+        'discoverContentType');
+
+if (!appPrefs.containsKey(
+        'discoverContentType') ||
+    discoverType == "QP" ||
+    !validDiscoverTypes.contains(
+        discoverType)) {
+
+  print(
+    "Migrating discoverContentType -> TR",
+  );
+
+  appPrefs.put(
+    'discoverContentType',
+    "TR",
+  );
+}
+
+if (!appPrefs.containsKey(
+    'streamingQuality')) {
+
+  appPrefs.put(
+    'streamingQuality',
+    1,
+  );
+}
+
+if (!appPrefs.containsKey(
+    'themeModeType')) {
+
+  appPrefs.put(
+    'themeModeType',
+    0,
+  );
+}
+
+if (!appPrefs.containsKey(
+    'currentAppLanguageCode')) {
+
+  appPrefs.put(
+    'currentAppLanguageCode',
+    'en',
+  );
+}
+
+if (!appPrefs.containsKey(
+    'playerUi')) {
+
+  appPrefs.put(
+    'playerUi',
+    0,
+  );
+}
+
+if (!appPrefs.containsKey(
+    'backgroundPlayEnabled')) {
+
+  appPrefs.put(
+    'backgroundPlayEnabled',
+    true,
+  );
+}
+
+if (!appPrefs.containsKey(
+    'cacheHomeScreenData')) {
+
+  appPrefs.put(
+    'cacheHomeScreenData',
+    true,
+  );
+}
 }
 
 class LifecycleHandler extends WidgetsBindingObserver {
