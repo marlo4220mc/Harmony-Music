@@ -171,7 +171,7 @@ List<Map<String, dynamic>> parseMixedContent(
         if (results == null ||
             !results.containsKey('contents')) {
 
-          printINFO(
+          print(
             "Skipping shelf without contents",
           );
 
@@ -254,7 +254,7 @@ List<Map<String, dynamic>> parseMixedContent(
 
           } catch (e) {
 
-            printINFO(
+            print(
               "Error parsing content item: $e",
             );
 
@@ -272,7 +272,7 @@ List<Map<String, dynamic>> parseMixedContent(
 
         } else {
 
-          printINFO(
+          print(
             "Skipping invalid shelf",
           );
         }
@@ -280,7 +280,7 @@ List<Map<String, dynamic>> parseMixedContent(
 
     } catch (e) {
 
-      printINFO(
+      print(
         "Error parsing mixed content row: $e",
       );
 
