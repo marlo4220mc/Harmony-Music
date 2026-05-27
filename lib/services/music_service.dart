@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as getx;
@@ -27,6 +28,7 @@ class MusicServices extends getx.GetxService {
     'content-encoding': 'gzip',
     'origin': domain,
     'cookie': 'CONSENT=YES+1',
+    'X-YouTube-Client-Name': '1',
   };
 
   final Map<String, dynamic> _context = {
@@ -46,12 +48,16 @@ class MusicServices extends getx.GetxService {
   }
 
   final dio = Dio();
+  static const String _fallbackVisitorId =
+      "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
 
   Future<void> init() async {
     //check visitor id in data base, if not generate one , set lang code
     final date = DateTime.now();
     _context['context']['client']['clientVersion'] =
         "1.${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}.01.00";
+    _headers['X-YouTube-Client-Version'] =
+        _context['context']['client']['clientVersion'].toString();
     final signatureTimestamp = getDatestamp() - 1;
     _context['playbackContext'] = {
       'contentPlaybackContext': {'signatureTimestamp': signatureTimestamp},
@@ -61,7 +67,11 @@ class MusicServices extends getx.GetxService {
     hlCode = appPrefsBox.get('contentLanguage') ?? "en";
     if (appPrefsBox.containsKey('visitorId')) {
       final visitorData = appPrefsBox.get("visitorId");
-      if (visitorData != null && !isExpired(epoch: visitorData['exp'])) {
+      final visitorId = visitorData?['id']?.toString();
+      final exp = visitorData?['exp'];
+      if (_isValidVisitorId(visitorId) &&
+          exp != null &&
+          !isExpired(epoch: exp)) {
         _headers['X-Goog-Visitor-Id'] = visitorData['id'];
         appPrefsBox.put("visitorId", {
           'id': visitorData['id'],
@@ -83,8 +93,27 @@ class MusicServices extends getx.GetxService {
       return;
     }
     // not able to generate in that case
-    _headers['X-Goog-Visitor-Id'] =
-        visitorId ?? "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
+    _headers['X-Goog-Visitor-Id'] = visitorId ?? _fallbackVisitorId;
+  }
+
+  bool _isValidVisitorId(String? value) {
+    if (value == null || value.trim().isEmpty) return false;
+    return value.length > 8;
+  }
+
+  Future<void> _refreshVisitorId() async {
+    final appPrefsBox = Hive.box('AppPrefs');
+    final visitorId = await genrateVisitorId();
+    _headers['X-Goog-Visitor-Id'] = visitorId ?? _fallbackVisitorId;
+    if (visitorId != null) {
+      await appPrefsBox.put("visitorId", {
+        'id': visitorId,
+        'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 2592000
+      });
+    } else {
+      await appPrefsBox.delete("visitorId");
+    }
+    debugPrint("VisitorId refreshed: ${_headers['X-Goog-Visitor-Id']}");
   }
 
   set hlCode(String code) {
@@ -110,21 +139,31 @@ class MusicServices extends getx.GetxService {
 
   Future<Response> _sendRequest(String action, Map<dynamic, dynamic> data,
       {additionalParams = ""}) async {
-    //print("$baseUrl$action$fixedParms$additionalParams          data:$data");
+    final endpoint = "$baseUrl$action$fixedParms$additionalParams";
     try {
-      final response =
-          await dio.post("$baseUrl$action$fixedParms$additionalParams",
+      debugPrint("YT Request => $endpoint");
+      debugPrint("YT VisitorId => ${_headers['X-Goog-Visitor-Id']}");
+      final response = await dio.post(endpoint,
               options: Options(
                 headers: _headers,
               ),
               data: data);
+      final body = response.data.toString();
+      debugPrint("YT Response status($action): ${response.statusCode}");
+      debugPrint(
+          "YT Response body($action): ${body.substring(0, body.length > 500 ? 500 : body.length)}");
 
       if (response.statusCode == 200) {
         return response;
       } else {
+        await _refreshVisitorId();
         return _sendRequest(action, data, additionalParams: additionalParams);
       }
     } on DioException catch (e) {
+      debugPrint("YT DioException($action): ${e.response?.statusCode} $e");
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        await _refreshVisitorId();
+      }
       printINFO("Error $e");
       throw NetworkError();
     }
@@ -514,23 +553,32 @@ class MusicServices extends getx.GetxService {
   }
 
   Future<List<String>> getSearchSuggestion(String queryStr) async {
-    final data = Map.from(_context);
-    data['input'] = queryStr;
-    final res = nav(
-            (await _sendRequest("music/get_search_suggestions", data)).data,
-            ['contents', 0, 'searchSuggestionsSectionRenderer', 'contents']) ??
-        [];
-    return res
-        .map<String?>((item) {
-          return (nav(item, [
-            'searchSuggestionRenderer',
-            'navigationEndpoint',
-            'searchEndpoint',
-            'query'
-          ])).toString();
-        })
-        .whereType<String>()
-        .toList();
+    try {
+      final data = Map.from(_context);
+      data['input'] = queryStr;
+      final response = await _sendRequest("music/get_search_suggestions", data)
+          .timeout(const Duration(seconds: 8));
+      final res = nav(response.data,
+              ['contents', 0, 'searchSuggestionsSectionRenderer', 'contents']) ??
+          [];
+      if (res is! List) return [];
+      return res
+          .map<String?>((item) {
+            final query = nav(item, [
+              'searchSuggestionRenderer',
+              'navigationEndpoint',
+              'searchEndpoint',
+              'query'
+            ]);
+            return query is String && query.isNotEmpty ? query : null;
+          })
+          .whereType<String>()
+          .toList();
+    } catch (e, stack) {
+      debugPrint("Suggestion parse error: $e");
+      debugPrint("$stack");
+      return [];
+    }
   }
 
   ///Specially created for deep-links
@@ -592,9 +640,16 @@ class MusicServices extends getx.GetxService {
       data['params'] = filterParams ?? params;
     }
 
-    final response = (await _sendRequest("search", data)).data;
+    dynamic response;
+    try {
+      response = (await _sendRequest("search", data)).data;
+    } catch (e, stack) {
+      debugPrint("Search request error: $e");
+      debugPrint("$stack");
+      return searchResults;
+    }
 
-    if (response['contents'] == null) {
+    if (response == null || response['contents'] == null) {
       return searchResults;
     }
 
@@ -652,7 +707,8 @@ class MusicServices extends getx.GetxService {
 
     /// End Search Chips
 
-    results = nav(results, ['sectionListRenderer', 'contents']);
+    results = nav(results, ['sectionListRenderer', 'contents']) ?? [];
+    if (results is! List) return searchResults;
 
     if (results.length == 1 && results[0]['itemSectionRenderer'] != null) {
       return searchResults;
@@ -666,7 +722,7 @@ class MusicServices extends getx.GetxService {
         dynamic itemResults = res['musicShelfRenderer']['contents'];
         String? typeFilter = filter;
         category = "mixed"; // Just a default value
-        final mixedItems = parseSearchResults(itemResults,
+        final mixedItems = parseSearchResults(itemResults is List ? itemResults : [],
             ['artist', 'playlist', 'song', 'video', 'station'], type, category);
         if (filter == null) {
           for (var item in mixedItems) {
@@ -683,7 +739,9 @@ class MusicServices extends getx.GetxService {
         } else {
           category = nav(res, ['musicShelfRenderer', ...title_text]);
           searchResults[category] = parseSearchResults(
-              res['musicShelfRenderer']['contents'],
+              (res['musicShelfRenderer']['contents'] is List)
+                  ? res['musicShelfRenderer']['contents']
+                  : [],
               ['artist', 'playlist', 'song', 'video', 'station'],
               type,
               category);
@@ -702,6 +760,7 @@ class MusicServices extends getx.GetxService {
             ['artist', 'playlist', 'song', 'video', 'station'], type, category);
 
         if (searchResults.containsKey(category)) {
+          // TODO(search-continuation): persist continuation token for infinite scroll if YouTube changes search pagination contract.
           final x = await getContinuations(
               res['musicShelfRenderer'],
               'musicShelfContinuation',
