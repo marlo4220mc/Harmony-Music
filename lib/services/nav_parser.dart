@@ -744,10 +744,16 @@ dynamic parseSearchResult(Map<String, dynamic> data,
 
   if (resultType == 'artist') {
     searchResult['artist'] = getItemText(data, 0);
-    final list = data['flexColumns'][1]
-        ['musicResponsiveListItemFlexColumnRenderer']['text']['runs'];
-    searchResult['subscribers'] = list.length < 2 ? "" : list[2];
-    ['text'];
+    final list = nav(data, [
+      'flexColumns',
+      1,
+      'musicResponsiveListItemFlexColumnRenderer',
+      'text',
+      'runs'
+    ]);
+    searchResult['subscribers'] = (list is List && list.length > 2)
+        ? (nav(list[2], ['text'])?.toString() ?? "")
+        : "";
     //final x = parseMenuPlaylists(data, searchResult);
   } else if (resultType == 'album') {
     searchResult['type'] = getItemText(data, 1);
@@ -758,11 +764,15 @@ dynamic parseSearchResult(Map<String, dynamic> data,
       searchResult['description'] = list.map((run) => run['text']).join('');
     } catch (e) {}
   } else if (resultType.contains('playlist')) {
-    List<dynamic> flexItem = getFlexColumnItem(data, 1)['text']['runs'];
+    final flexItem = nav(getFlexColumnItem(data, 1), ['text', 'runs']);
+    if (flexItem is! List || flexItem.isEmpty) return {};
     bool hasAuthor = (flexItem.length == defaultOffset + 3);
-    searchResult['itemCount'] =
-        nav(flexItem, [defaultOffset + (hasAuthor ? 2 : 0), 'text'])
-            .split(' ')[0];
+    searchResult['itemCount'] = (nav(
+                flexItem, [defaultOffset + (hasAuthor ? 2 : 0), 'text'])
+            ?.toString()
+            .split(' ')
+            .first) ??
+        "0";
     searchResult['description'] =
         hasAuthor ? nav(flexItem, [defaultOffset, 'text']) : null;
   } else if (resultType == 'station') {
