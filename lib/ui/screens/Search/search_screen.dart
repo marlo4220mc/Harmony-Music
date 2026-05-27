@@ -12,9 +12,7 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchScreenController = Get.isRegistered<SearchScreenController>()
-        ? Get.find<SearchScreenController>()
-        : Get.put(SearchScreenController());
+    final searchScreenController = Get.find<SearchScreenController>();
     final settingsScreenController = Get.find<SettingsScreenController>();
     final topPadding = context.isLandscape ? 50.0 : 80.0;
     return Scaffold(
