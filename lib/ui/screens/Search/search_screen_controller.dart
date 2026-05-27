@@ -16,11 +16,11 @@ class SearchScreenController extends GetxController with ProcessLink {
   // Desktop search bar related
   final focusNode = FocusNode();
   final isSearchBarInFocus = false.obs;
-  final initFuture = Future.value().obs;
+  late final Future<void> initFuture;
 
   @override
   onInit() {
-    initFuture.value = _init();
+    initFuture = _init();
     super.onInit();
   }
 
@@ -35,7 +35,7 @@ class SearchScreenController extends GetxController with ProcessLink {
   }
 
   Future<void> onChanged(String text) async {
-    await initFuture.value;
+    await initFuture;
     if(text.contains("https://")){
       urlPasted.value = true; 
       return;
@@ -52,7 +52,7 @@ class SearchScreenController extends GetxController with ProcessLink {
   }
 
   Future<void> addToHistryQueryList(String txt) async {
-    await initFuture.value;
+    await initFuture;
     if (historyQuerylist.length > 9) {
       final queryForRemoval = queryBox.getAt(0);
       await queryBox.deleteAt(0);
@@ -74,7 +74,7 @@ class SearchScreenController extends GetxController with ProcessLink {
   }
 
   Future<void> removeQueryFromHistory(String txt) async {
-    await initFuture.value;
+    await initFuture;
     final index = queryBox.values.toList().indexOf(txt);
     await queryBox.deleteAt(index);
     historyQuerylist.remove(txt);

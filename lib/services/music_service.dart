@@ -138,7 +138,7 @@ class MusicServices extends getx.GetxService {
   }
 
   Future<Response> _sendRequest(String action, Map<dynamic, dynamic> data,
-      {additionalParams = ""}) async {
+      {additionalParams = "", int retryCount = 0}) async {
     final endpoint = "$baseUrl$action$fixedParms$additionalParams";
     try {
       debugPrint("YT Request => $endpoint");
@@ -155,14 +155,19 @@ class MusicServices extends getx.GetxService {
 
       if (response.statusCode == 200) {
         return response;
-      } else {
+      } else if (retryCount < 1) {
         await _refreshVisitorId();
-        return _sendRequest(action, data, additionalParams: additionalParams);
+        return _sendRequest(action, data,
+            additionalParams: additionalParams, retryCount: retryCount + 1);
       }
+      throw NetworkError();
     } on DioException catch (e) {
       debugPrint("YT DioException($action): ${e.response?.statusCode} $e");
-      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      if ((e.response?.statusCode == 401 || e.response?.statusCode == 403) &&
+          retryCount < 1) {
         await _refreshVisitorId();
+        return _sendRequest(action, data,
+            additionalParams: additionalParams, retryCount: retryCount + 1);
       }
       printINFO("Error $e");
       throw NetworkError();
@@ -558,6 +563,10 @@ class MusicServices extends getx.GetxService {
       data['input'] = queryStr;
       final response = await _sendRequest("music/get_search_suggestions", data)
           .timeout(const Duration(seconds: 8));
+      debugPrint("Suggestions status: ${response.statusCode}");
+      final body = response.data.toString();
+      debugPrint(
+          "Suggestions body: ${body.substring(0, body.length > 500 ? 500 : body.length)}");
       final res = nav(response.data,
               ['contents', 0, 'searchSuggestionsSectionRenderer', 'contents']) ??
           [];
@@ -643,6 +652,10 @@ class MusicServices extends getx.GetxService {
     dynamic response;
     try {
       response = (await _sendRequest("search", data)).data;
+      final body = response.toString();
+      debugPrint("Search status: 200");
+      debugPrint(
+          "Search body: ${body.substring(0, body.length > 500 ? 500 : body.length)}");
     } catch (e, stack) {
       debugPrint("Search request error: $e");
       debugPrint("$stack");
