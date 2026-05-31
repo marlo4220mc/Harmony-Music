@@ -92,6 +92,8 @@ class MusicServices extends getx.GetxService {
     _headers['X-Goog-Visitor-Id'] =
         visitorData['id'];
 
+    print('[HarmonySearch] init: loaded visitorId from DB=$visitorData[id]');
+
     appPrefsBox.put(
       "visitorId",
       {
@@ -102,10 +104,6 @@ class MusicServices extends getx.GetxService {
                 1000 +
             2590200
       },
-    );
-
-    print(
-      "USING visitorId",
     );
 
     return;
@@ -125,7 +123,7 @@ class MusicServices extends getx.GetxService {
     final visitorId = await genrateVisitorId();
     if (visitorId != null) {
       _headers['X-Goog-Visitor-Id'] = visitorId;
-      printINFO("New Visitor id generated ($visitorId)");
+      print('[HarmonySearch] init: generated new visitorId=$visitorId');
       appPrefsBox.put("visitorId", {
         'id': visitorId,
         'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 2592000
@@ -134,7 +132,8 @@ class MusicServices extends getx.GetxService {
     }
     // not able to generate in that case
     _headers['X-Goog-Visitor-Id'] =
-        visitorId ?? "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
+        "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
+    print('[HarmonySearch] init: using HARDCODED fallback visitorId=${_headers['X-Goog-Visitor-Id']}');
   }
 
   set hlCode(String code) {
@@ -145,37 +144,78 @@ class MusicServices extends getx.GetxService {
     try {
       final response =
           await dio.get(domain, options: Options(headers: _headers));
+      print('[HarmonySearch] genrateVisitorId: status=${response.statusCode} type=${response.data.runtimeType} len=${response.data.toString().length}');
       final reg = RegExp(r'ytcfg\.set\s*\(\s*({.+?})\s*\)\s*;');
       final matches = reg.firstMatch(response.data.toString());
       String? visitorId;
       if (matches != null) {
         final ytcfg = json.decode(matches.group(1).toString());
         visitorId = ytcfg['VISITOR_DATA']?.toString();
+        print('[HarmonySearch] genrateVisitorId: found in HTML: $visitorId');
+      } else {
+        print('[HarmonySearch] genrateVisitorId: ytcfg pattern NOT FOUND in response');
       }
       return visitorId;
     } catch (e) {
+      print('[HarmonySearch] genrateVisitorId: FAILED with $e');
       return null;
     }
   }
 
   Future<Response> _sendRequest(String action, Map<dynamic, dynamic> data,
-      {additionalParams = ""}) async {
-    //print("$baseUrl$action$fixedParms$additionalParams          data:$data");
+      {additionalParams = "", int retryCount = 0}) async {
+    if (retryCount > 3) {
+      printINFO("Max retries reached for $action");
+      throw NetworkError();
+    }
+    final url = "$baseUrl$action$fixedParms$additionalParams";
+    final visitorId = _headers['X-Goog-Visitor-Id'] ?? '(not set)';
+    print('[HarmonySearch] REQ action=$action retry=$retryCount visitorId=$visitorId');
+    print('[HarmonySearch] REQ url=$url');
     try {
       final response =
-          await dio.post("$baseUrl$action$fixedParms$additionalParams",
+          await dio.post(url,
               options: Options(
                 headers: _headers,
               ),
               data: data);
 
+      final body = response.data.toString();
+      final preview = body.length > 500 ? body.substring(0, 500) : body;
+      print('[HarmonySearch] RES action=$action status=${response.statusCode} dataType=${response.data.runtimeType} dataLen=${body.length}');
+      print('[HarmonySearch] RES body preview: $preview');
+
       if (response.statusCode == 200) {
+        if (response.data is! Map || body.isEmpty) {
+          print('[HarmonySearch] RES action=$action EMPTY BODY or non-Map data');
+          return _sendRequest(action, data,
+              additionalParams: additionalParams, retryCount: retryCount + 1);
+        }
         return response;
       } else {
-        return _sendRequest(action, data, additionalParams: additionalParams);
+        printINFO(
+            "Retry $retryCount for $action — status ${response.statusCode}");
+        return _sendRequest(action, data,
+            additionalParams: additionalParams, retryCount: retryCount + 1);
       }
     } on DioException catch (e) {
+      final rawBody = e.response?.data.toString() ?? '(no raw response)';
+      final rawPreview = rawBody.length > 500 ? rawBody.substring(0, 500) : rawBody;
+      print('[HarmonySearch] ERR action=$action type=${e.type} msg=${e.message}');
+      print('[HarmonySearch] ERR response status=${e.response?.statusCode} body=$rawPreview');
       printINFO("Error $e");
+      // if JSON parse failed, retry with plain text to capture the body
+      if (e.type == DioExceptionType.unknown && rawBody.isNotEmpty && rawBody != '(no raw response)') {
+        print('[HarmonySearch] ERR retrying to capture raw response');
+        try {
+          final plainResponse = await dio.post(url,
+              options: Options(headers: _headers, responseType: ResponseType.plain),
+              data: data);
+          print('[HarmonySearch] ERR plain response status=${plainResponse.statusCode} body=${plainResponse.data.toString().length > 500 ? plainResponse.data.toString().substring(0, 500) : plainResponse.data.toString()}');
+        } catch (e2) {
+          print('[HarmonySearch] ERR plain response also failed: $e2');
+        }
+      }
       throw NetworkError();
     }
   }
@@ -631,6 +671,7 @@ final home = [...parseMixedContent(results)];
       int limit = 30,
       bool ignoreSpelling = false,
       String? filterParams}) async {
+    print('[HarmonySearch] search() called query="$query" filter=$filter scope=$scope limit=$limit');
     final data = Map.of(_context);
     data['context']['client']["hl"] = 'en';
     data['query'] = query;
@@ -669,22 +710,36 @@ final home = [...parseMixedContent(results)];
       data['params'] = filterParams ?? params;
     }
 
-    final response = (await _sendRequest("search", data)).data;
+    print('[HarmonySearch] search() sending request query="$query"');
+    final rawResponse = await _sendRequest("search", data);
+    print('[HarmonySearch] search() got response status=${rawResponse.statusCode} dataType=${rawResponse.data.runtimeType}');
+    final response = rawResponse.data;
 
-    if (response['contents'] == null) {
+    print('[HarmonySearch] response keys=${response.keys} hasContents=${response.containsKey('contents')}');
+
+    if (response is! Map || !response.containsKey('contents')) {
+      print('[HarmonySearch] EARLY RETURN: response not Map or missing contents');
       return searchResults;
     }
 
     dynamic results;
 
-    if ((response['contents']).containsKey('tabbedSearchResultsRenderer')) {
-      final tabIndex =
-          scope == null || filter != null ? 0 : scopes.indexOf(scope) + 1;
-      results = response['contents']['tabbedSearchResultsRenderer']['tabs']
-          [tabIndex]['tabRenderer']['content'];
+    final tabbedContents = nav(response, [
+      'contents',
+      'tabbedSearchResultsRenderer',
+      'tabs',
+      scope == null || filter != null ? 0 : scopes.indexOf(scope) + 1,
+      'tabRenderer',
+      'content'
+    ]);
+    print('[HarmonySearch] tabbedContents=${tabbedContents != null} (${tabbedContents.runtimeType})');
+    if (tabbedContents != null) {
+      results = tabbedContents;
     } else {
+      print('[HarmonySearch] using response[contents] fallback');
       results = response['contents'];
     }
+    print('[HarmonySearch] results type=${results.runtimeType}');
 
     // Search Chips
     /*
@@ -730,47 +785,75 @@ final home = [...parseMixedContent(results)];
     /// End Search Chips
 
     results = nav(results, ['sectionListRenderer', 'contents']);
+    print('[HarmonySearch] sectionList contents type=${results.runtimeType}');
 
-    if (results.length == 1 && results[0]['itemSectionRenderer'] != null) {
+    if (results is! List) {
+      print('[HarmonySearch] EARLY RETURN: results is not a List');
       return searchResults;
     }
+    print('[HarmonySearch] sectionList contents length=${results.length}');
+    String? type = filter?.substring(0, filter.length - 1).toLowerCase();
+    print('[HarmonySearch] iterating ${results.length} shelves, type=$type filter=$filter');
 
-    String? type;
+    for (int shelfIdx = 0; shelfIdx < results.length; shelfIdx++) {
+      final res = results[shelfIdx];
+      print('[HarmonySearch] shelf[$shelfIdx] type=${res.runtimeType}');
+      if (res is! Map) { print('[HarmonySearch] shelf[$shelfIdx] SKIP: not a Map'); continue; }
 
-    for (var res in results) {
-      String category;
-      if (res['musicShelfRenderer'] != null) {
-        dynamic itemResults = res['musicShelfRenderer']['contents'];
-        String? typeFilter = filter;
-        category = "mixed"; // Just a default value
-        final mixedItems = parseSearchResults(itemResults,
-            ['artist', 'playlist', 'song', 'video', 'station'], type, category);
-        if (filter == null) {
-          for (var item in mixedItems) {
-            final itemType = item.runtimeType == MediaItem
-                ? (item.artist.split(",")[0]) + "s"
-                : "${item.runtimeType}s";
-            if (searchResults.containsKey(itemType) &&
-                (searchResults[itemType]).length < 3) {
-              (searchResults[itemType] as List).add(item);
-            } else if (!searchResults.containsKey(itemType)) {
-              searchResults[itemType] = [item];
-            }
-          }
-        } else {
-          category = nav(res, ['musicShelfRenderer', ...title_text]);
-          searchResults[category] = parseSearchResults(
-              res['musicShelfRenderer']['contents'],
-              ['artist', 'playlist', 'song', 'video', 'station'],
-              type,
-              category);
-        }
-        type = typeFilter?.substring(0, typeFilter.length - 1).toLowerCase();
-      } else {
+      Map? effectiveShelf;
+      effectiveShelf = nav(res, ['musicShelfRenderer']);
+      if (effectiveShelf is! Map) {
+        effectiveShelf = nav(res, ['itemSectionRenderer', 'contents', 0, 'musicShelfRenderer']);
+      }
+      if (effectiveShelf is! Map) {
+        effectiveShelf = nav(res, ['musicCardShelfRenderer']);
+      }
+      if (effectiveShelf is! Map) {
+        print('[HarmonySearch] shelf[$shelfIdx] SKIP: unrecognized renderer, keys=${res.keys}');
         continue;
       }
 
-      if (filter != null) {
+      dynamic itemResults = nav(effectiveShelf, ['contents']);
+      if (itemResults is! List) {
+        print('[HarmonySearch] shelf[$shelfIdx] SKIP: contents is not a List');
+        continue;
+      }
+      print('[HarmonySearch] shelf[$shelfIdx] itemResults length=${itemResults.length}');
+      String? typeFilter = filter;
+      final category =
+          filter == null ? "mixed" : (nav(effectiveShelf, title_text) ?? "");
+      print('[HarmonySearch] shelf[$shelfIdx] category=$category');
+      if (filter == null) {
+        final mixedItems = parseSearchResults(itemResults,
+            ['artist', 'playlist', 'song', 'video', 'station'], type, category);
+        print('[HarmonySearch] shelf[$shelfIdx] parseSearchResults returned ${mixedItems.length} items');
+        for (var item in mixedItems) {
+          if (item == null) continue;
+          String itemType;
+          if (item is MediaItem) {
+            final resultType = item.extras?['resultType']?.toString();
+            itemType = resultType != null ? "${resultType}s" : "Songs";
+          } else {
+            itemType = "${item.runtimeType}s";
+          }
+          if (searchResults.containsKey(itemType) &&
+              (searchResults[itemType] as List).length < 3) {
+            (searchResults[itemType] as List).add(item);
+          } else if (!searchResults.containsKey(itemType)) {
+            searchResults[itemType] = [item];
+          }
+        }
+      } else {
+        searchResults[category] = parseSearchResults(
+            itemResults,
+            ['artist', 'playlist', 'song', 'video', 'station'],
+            type,
+            category);
+        print('[HarmonySearch] shelf[$shelfIdx] filtered parseSearchResults returned ${(searchResults[category] as List?)?.length} items for category=$category');
+      }
+      type = typeFilter?.substring(0, typeFilter.length - 1).toLowerCase();
+
+      if (filter != null && category.isNotEmpty) {
         requestFunc(additionalParams) async =>
             (await _sendRequest("search", data,
                     additionalParams: additionalParams))
@@ -780,7 +863,7 @@ final home = [...parseMixedContent(results)];
 
         if (searchResults.containsKey(category)) {
           final x = await getContinuations(
-              res['musicShelfRenderer'],
+              effectiveShelf,
               'musicShelfContinuation',
               limit - ((searchResults[category] as List).length),
               requestFunc,
@@ -802,6 +885,7 @@ final home = [...parseMixedContent(results)];
       }
     }
 
+    print('[HarmonySearch] search() FINAL keys=${searchResults.keys} counts=${searchResults.map((k, v) => MapEntry(k, v is List ? v.length : v.runtimeType))}');
     return searchResults;
   }
 

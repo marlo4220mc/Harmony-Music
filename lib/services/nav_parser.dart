@@ -489,17 +489,15 @@ List<dynamic>? parseSongArtists(Map<String, dynamic> data, int index) {
 }
 
 Map<String, dynamic> getFlexColumnItem(Map<String, dynamic> item, int index) {
-  if ((item['flexColumns']).length <= index ||
-      !item['flexColumns'][index]['musicResponsiveListItemFlexColumnRenderer']
-          .containsKey('text') ||
-      !item['flexColumns'][index]['musicResponsiveListItemFlexColumnRenderer']
-              ['text']
-          .containsKey('runs')) {
-    return {};
-  }
-
-  return item['flexColumns'][index]
-      ['musicResponsiveListItemFlexColumnRenderer'];
+  final flexCols = nav(item, ['flexColumns']);
+  if (flexCols is! List || flexCols.length <= index) return {};
+  final column = flexCols[index];
+  if (column is! Map) return {};
+  final renderer = column['musicResponsiveListItemFlexColumnRenderer'];
+  if (renderer is! Map) return {};
+  if (renderer['text'] is! Map) return {};
+  if (!(renderer['text'] as Map).containsKey('runs')) return {};
+  return Map<String, dynamic>.from(renderer);
 }
 
 Map<String, dynamic> parseWatchPlaylistHome(Map<dynamic, dynamic> data) {
@@ -802,30 +800,86 @@ List<dynamic> parseSearchResults(List<dynamic> results,
     List<String> searchResultTypes, String? resultType, String category) {
   return results
       .map((result) {
-        return parseSearchResult(result['musicResponsiveListItemRenderer'],
+        if (result is! Map) return null;
+        final data = result[mrlir];
+        if (data is! Map) {
+          print('[HarmonySearch] Item not MRLIR: keys=${result.keys}');
+          return null;
+        }
+        return parseSearchResult(data as Map<String, dynamic>,
             searchResultTypes, resultType, category);
       })
-      .whereType<dynamic>()
+      .where((e) => e != null)
       .toList();
 }
 
 dynamic parseSearchResult(Map<String, dynamic> data,
     List<String> searchResultTypes, String? resultType, String? category) {
+  if (category == null) return null;
   if ((resultType != null && resultType.contains("playlist")) ||
-      category!.contains("playlists")) {
+      category.contains("playlists")) {
     resultType = 'playlist';
   }
   int defaultOffset = (resultType == null) ? 2 : 0;
   Map<String, dynamic> searchResult = {'category': category};
   String? videoType = nav(data,
       [...play_button, 'playNavigationEndpoint', ...navigation_video_type]);
-  if (videoType != null) {
-    resultType = (videoType == 'MUSIC_VIDEO_TYPE_ATV') ? 'song' : 'video';
-  }
 
-  resultType = ((resultType == null)
-      ? getSearchResultType(getItemText(data, 1), searchResultTypes)
-      : resultType)!;
+  if (resultType == null) {
+    // OpenTune approach: use pageType from browseEndpointContextMusicConfig
+    // (authoritative discriminator set by YouTube Music API)
+    final pt = nav(data, [...navigation_browse, ...page_type]);
+    if (pt == 'MUSIC_PAGE_TYPE_PLAYLIST') {
+      resultType = 'playlist';
+    } else if (pt == 'MUSIC_PAGE_TYPE_ALBUM' ||
+        pt == 'MUSIC_PAGE_TYPE_AUDIOBOOK') {
+      resultType = 'album';
+    } else if (pt == 'MUSIC_PAGE_TYPE_ARTIST' ||
+        pt == 'MUSIC_PAGE_TYPE_LIBRARY_ARTIST') {
+      resultType = 'artist';
+    }
+
+    // pageType didn't match known types
+    // Use OpenTune's isSong logic:
+    //   navigationEndpoint == null || watchEndpoint != null || watchPlaylistEndpoint != null
+    if (resultType == null) {
+      final navEndpoint = nav(data, ['navigationEndpoint']);
+      final isSongLike = navEndpoint is! Map ||
+          (navEndpoint).containsKey('watchEndpoint') ||
+          (navEndpoint).containsKey('watchPlaylistEndpoint');
+
+      if (isSongLike) {
+        if (videoType == 'MUSIC_VIDEO_TYPE_ATV') {
+          resultType = 'song';
+        } else if (videoType != null) {
+          resultType = 'video';
+        } else if (category.contains("playlists")) {
+          resultType = 'playlist';
+        } else {
+          resultType = 'song';
+        }
+      } else {
+        // Has browseEndpoint but pageType didn't match
+        // Fall back to browseId prefix heuristic
+        final browseId = nav(data, navigation_browse_id);
+        if (browseId is String) {
+          if (browseId.startsWith('MPRE')) {
+            resultType = 'album';
+          } else if (browseId.startsWith('UC')) {
+            resultType = 'artist';
+          } else if (browseId.startsWith('VL') ||
+              browseId.startsWith('RD') ||
+              browseId.startsWith('VM')) {
+            resultType = 'playlist';
+          }
+        }
+        if (resultType == null) {
+          resultType = 'song';
+        }
+      }
+    }
+    print('[HarmonySearch] type=$resultType pageType=$pt browseId=${nav(data, navigation_browse_id)} videoType=$videoType');
+  }
   searchResult['resultType'] = resultType;
 
   if (resultType != 'artist') {
@@ -834,27 +888,34 @@ dynamic parseSearchResult(Map<String, dynamic> data,
 
   if (resultType == 'artist') {
     searchResult['artist'] = getItemText(data, 0);
-    final list = data['flexColumns'][1]
-        ['musicResponsiveListItemFlexColumnRenderer']['text']['runs'];
-    searchResult['subscribers'] = list.length < 2 ? "" : list[2];
-    ['text'];
-    //final x = parseMenuPlaylists(data, searchResult);
+    final list = nav(data, [
+      'flexColumns', 1, 'musicResponsiveListItemFlexColumnRenderer',
+      'text', 'runs'
+    ]);
+    searchResult['subscribers'] =
+        (list is List && list.length >= 3) ? nav(list, [2, 'text']) : "";
   } else if (resultType == 'album') {
     searchResult['type'] = getItemText(data, 1);
     searchResult['audioPlaylistId'] = nav(data, audio_watch_playlist_id);
-    try {
-      final list = data['flexColumns'][1]
-          ['musicResponsiveListItemFlexColumnRenderer']['text']['runs'];
+    final list = nav(data, [
+      'flexColumns', 1, 'musicResponsiveListItemFlexColumnRenderer',
+      'text', 'runs'
+    ]);
+    if (list is List) {
       searchResult['description'] = list.map((run) => run['text']).join('');
-    } catch (e) {}
+    }
   } else if (resultType.contains('playlist')) {
-    List<dynamic> flexItem = getFlexColumnItem(data, 1)['text']['runs'];
-    bool hasAuthor = (flexItem.length == defaultOffset + 3);
+    final flexItem = getFlexColumnItem(data, 1);
+    if (flexItem.isEmpty) return null;
+    final runs = nav(flexItem, ['text', 'runs']);
+    if (runs is! List) return null;
+    final hasAuthor = (runs.length == defaultOffset + 3);
     searchResult['itemCount'] =
-        nav(flexItem, [defaultOffset + (hasAuthor ? 2 : 0), 'text'])
+        (nav(runs, [defaultOffset + (hasAuthor ? 2 : 0), 'text']) ?? "")
+            .toString()
             .split(' ')[0];
     searchResult['description'] =
-        hasAuthor ? nav(flexItem, [defaultOffset, 'text']) : null;
+        hasAuthor ? nav(runs, [defaultOffset, 'text']) : null;
   } else if (resultType == 'station') {
     searchResult['videoId'] =
         nav(data, navigation_video_id) ?? nav(data, navigation_browse_id);
@@ -868,39 +929,57 @@ dynamic parseSearchResult(Map<String, dynamic> data,
         nav(getFlexColumnItem(data, 0), ['text', 'runs']),
         nav(getFlexColumnItem(data, 1), ['text', 'runs'])
       ];
-      if (flexItems[0] != null) {
+      if (flexItems[0] is List && flexItems[0].isNotEmpty) {
         searchResult['videoId'] = nav(flexItems[0][0], navigation_video_id) ??
             nav(flexItems[0][0], navigation_browse_id);
         searchResult['playlistId'] =
             nav(flexItems[0][0], navigation_playlist_id);
       }
-      if (flexItems[1] != null) {
+      if (flexItems[1] is List) {
         searchResult.addAll(parseSongRuns(flexItems[1]));
       }
       searchResult['resultType'] = 'song';
     } else {
       searchResult['browseId'] = browseId;
-      if (searchResult['browseId'].contains('artist')) {
+      if (browseId.contains('artist')) {
         searchResult['resultType'] = 'artist';
       } else {
-        Map<String, dynamic> flexItem2 = getFlexColumnItem(data, 1);
-        List<dynamic> runs = [
-          for (int i = 0; i < flexItem2['text']['runs'].length; i++)
-            if (i % 2 == 0) flexItem2['text']['runs'][i]['text']
-        ];
-        if (runs.length > 1) {
-          searchResult['artist'] = runs[1];
-        }
-        if (runs.length > 2) {
-          searchResult['releaseDate'] = runs[2];
+        final flexItem2 = getFlexColumnItem(data, 1);
+        if (flexItem2.isNotEmpty) {
+          final runs = nav(flexItem2, ['text', 'runs']);
+          if (runs is List) {
+            List<String> textRuns = [];
+            for (int i = 0; i < runs.length; i++) {
+              if (i % 2 == 0) textRuns.add('${runs[i]['text']}');
+            }
+            if (textRuns.length > 1) {
+              searchResult['artist'] = textRuns[1];
+            }
+            if (textRuns.length > 2) {
+              searchResult['releaseDate'] = textRuns[2];
+            }
+          }
         }
         searchResult['resultType'] = 'album';
       }
     }
   }
   if ((['song', 'video']).contains(resultType)) {
-    searchResult['videoId'] = nav(data,
-        [...play_button, 'playNavigationEndpoint', 'watchEndpoint', 'videoId']);
+    String? videoId = nav(data, [
+        ...play_button, 'playNavigationEndpoint', 'watchEndpoint', 'videoId'
+    ]);
+    String? videoIdSource = 'overlay';
+    if (videoId == null) {
+      videoId = nav(data, ['navigationEndpoint', 'watchEndpoint', 'videoId']);
+      videoIdSource = 'navEndpoint';
+    }
+    if (videoId == null) {
+      // OpenTune uses playlistItemData.videoId as primary song identifier
+      videoId = nav(data, ['playlistItemData', 'videoId']);
+      videoIdSource = 'playlistData';
+    }
+    print('[HarmonySearch] videoId source=$videoIdSource');
+    searchResult['videoId'] = videoId;
     searchResult['videoType'] = videoType;
   }
 
@@ -908,15 +987,19 @@ dynamic parseSearchResult(Map<String, dynamic> data,
     searchResult['length'] = null;
     searchResult['year'] = null;
     final flexItem = getFlexColumnItem(data, 1);
-    final runs = (flexItem['text']['runs']);
-    final songInfo = parseSongRuns(runs);
-    searchResult.addAll(songInfo);
+    if (flexItem.isNotEmpty) {
+      final runs = nav(flexItem, ['text', 'runs']);
+      if (runs is List) {
+        searchResult.addAll(parseSongRuns(runs));
+      }
+    }
   }
 
   if ((['artist', 'album', 'playlist']).contains(resultType)) {
     searchResult['browseId'] = nav(data, navigation_browse_id);
     if (searchResult['browseId'] == null) {
-      return {};
+      print('[HarmonySearch] Discard($resultType): browseId=null');
+      return null;
     }
   }
 
@@ -930,6 +1013,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
     if (searchResult['videoId'] != null) {
       return MediaItemBuilder.fromJson(searchResult);
     }
+    print('[HarmonySearch] Discard($resultType): videoId=null');
     return;
   } else if (resultType.contains('playlist')) {
     return Playlist.fromJson(searchResult);

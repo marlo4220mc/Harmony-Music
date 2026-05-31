@@ -59,6 +59,15 @@ class ResultWidget extends StatelessWidget {
       SearchResultScreenController searchResScrController) {
     List<Widget> list = [];
     for (dynamic item in searchResScrController.resultContent.entries) {
+      if (item.key.contains("Artist")) {
+        list.add(SeparateTabItemWidget(
+          items: List<Artist>.from(item.value),
+          title: item.key,
+          isCompleteList: false,
+        ));
+      }
+    }
+    for (dynamic item in searchResScrController.resultContent.entries) {
       if (item.key == "Songs" || item.key == "Videos") {
         list.add(SeparateTabItemWidget(
           items: List<MediaItem>.from(item.value),
@@ -70,22 +79,6 @@ class ResultWidget extends StatelessWidget {
           content: AlbumContent(
               title: item.key, albumList: List<Album>.from(item.value)),
           isHomeContent: false,
-        ));
-      } 
-      // else if (item.key.contains("playlist")) {
-      //   list.add(ContentListWidget(
-      //     content: PlaylistContent(
-      //       title: item.key,
-      //       playlistList: List<Playlist>.from(item.value),
-      //     ),
-      //     isHomeContent: false,
-      //   ));
-      // } 
-      else if (item.key.contains("Artist")) {
-        list.add(SeparateTabItemWidget(
-          items: List<Artist>.from(item.value),
-          title: item.key,
-          isCompleteList: false,
         ));
       }
     }
