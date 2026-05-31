@@ -803,7 +803,13 @@ final home = [...parseMixedContent(results)];
       Map? effectiveShelf;
       effectiveShelf = nav(res, ['musicShelfRenderer']);
       if (effectiveShelf is! Map) {
-        effectiveShelf = nav(res, ['itemSectionRenderer', 'contents', 0, 'musicShelfRenderer']);
+        final isr = nav(res, ['itemSectionRenderer']);
+        if (isr is Map) {
+          final itemSectionContents = isr['contents'];
+          if (itemSectionContents is List) {
+            effectiveShelf = {'contents': itemSectionContents};
+          }
+        }
       }
       if (effectiveShelf is! Map) {
         effectiveShelf = nav(res, ['musicCardShelfRenderer']);
