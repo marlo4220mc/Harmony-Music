@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '/ui/navigator.dart';
 import '/ui/widgets/sort_widget.dart';
+
+const discoverContentTypes = ['TR', 'TMV', 'BOLI'];
 
 void printERROR(dynamic text, {String tag = "Harmony Music"}) {
   if (kReleaseMode) return;
@@ -160,32 +161,6 @@ void sortArtist(
   }
 }
 
-/// Return true if new version available
-Future<bool> newVersionCheck(String currentVersion) async {
-  try {
-    final tags = (await Dio()
-            .get("https://api.github.com/repos/anandnet/Harmony-Music/tags"))
-        .data;
-    final availableVersion = tags[0]['name'] as String;
-    List currentVersion_ = currentVersion.substring(1).split(".");
-    List availableVersion_ = availableVersion.substring(1).split(".");
-    if (int.parse(availableVersion_[0]) > int.parse(currentVersion_[0])) {
-      return true;
-    } else if (int.parse(availableVersion_[1]) >
-            int.parse(currentVersion_[1]) &&
-        int.parse(availableVersion_[0]) == int.parse(currentVersion_[0])) {
-      return true;
-    } else if (int.parse(availableVersion_[2]) >
-            int.parse(currentVersion_[2]) &&
-        int.parse(availableVersion_[0]) == int.parse(currentVersion_[0]) &&
-        int.parse(availableVersion_[1]) == int.parse(currentVersion_[1])) {
-      return true;
-    }
-    return false;
-  } catch (e) {
-    return false;
-  }
-}
 
 String getTimeString(Duration time) {
   final minutes = time.inMinutes.remainder(Duration.minutesPerHour).toString();

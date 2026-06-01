@@ -8,12 +8,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../utils/update_check_flag_file.dart';
-import '/utils/get_localization.dart';
 import '/services/piped_service.dart';
 import '../Library/library_controller.dart';
 import '../../widgets/snackbar.dart';
-import '../../../utils/helper.dart';
 import '/services/music_service.dart';
 import '/ui/player/player_controller.dart';
 import '../Home/home_screen_controller.dart';
@@ -53,20 +50,13 @@ class SettingsScreenController extends GetxController {
   @override
   void onInit() {
     _setInitValue();
-    if (updateCheckFlag) _checkNewVersion();
     _createInAppSongDownDir();
     super.onInit();
   }
 
-  get currentVision => currentVersion;
   get isCurrentPathsupportDownDir =>
       "$_supportDir/Music" == downloadLocationPath.toString();
   String get supportDirPath => _supportDir;
-
-  _checkNewVersion() {
-    newVersionCheck(currentVersion)
-        .then((value) => isNewVersionAvailable.value = value);
-  }
 
   Future<String> _createInAppSongDownDir() async {
     _supportDir = (await getApplicationSupportDirectory()).path;
@@ -134,25 +124,8 @@ class SettingsScreenController extends GetxController {
     exportLocationPath.value =
         setBox.get("exportLocationPath") ?? "/storage/emulated/0/Music";
     downloadingFormat.value = setBox.get('downloadingFormat') ?? "m4a";
-    final savedDiscoverType =
-    setBox.get('discoverContentType');
-
-if (savedDiscoverType == null ||
-    savedDiscoverType == "QP") {
-
-  discoverContentType.value = "TR";
-
-  await setBox.put(
-    'discoverContentType',
-    "TR",
-  );
-
-} else {
-
-  discoverContentType.value =
-      savedDiscoverType;
-
-}
+    discoverContentType.value =
+        setBox.get('discoverContentType') ?? "TR";
     slidableActionEnabled.value = setBox.get('slidableActionEnabled') ?? true;
     if (setBox.containsKey("piped")) {
       isLinkedWithPiped.value = setBox.get("piped")['isLoggedIn'];
@@ -361,88 +334,6 @@ if (savedDiscoverType == null ||
   void toggleAutoOpenPlayer(bool val) {
     setBox.put('autoOpenPlayer', val);
     autoOpenPlayer.value = val;
-  }
-
-  Future<void> promptSystemLanguageOnFirstLaunch(BuildContext context) async {
-    final hasPrompted = setBox.get('languagePromptShown') ?? false;
-    if (hasPrompted) return;
-
-    final savedLang = setBox.get('currentAppLanguageCode');
-    final systemLocale = Get.deviceLocale;
-    String systemLang = systemLocale?.languageCode ?? 'en';
-    if (systemLang == 'zh') {
-      final scriptCode = systemLocale?.scriptCode;
-      final countryCode = systemLocale?.countryCode?.toUpperCase();
-      systemLang = (scriptCode == 'Hant' || countryCode == 'TW')
-          ? 'zh_Hant'
-          : 'zh_Hans';
-    }
-
-    if (savedLang != null || systemLang == 'en') {
-      await setBox.put('languagePromptShown', true);
-      return;
-    }
-
-    if (!Languages().keys.containsKey(systemLang)) {
-      await setBox.put('languagePromptShown', true);
-      return;
-    }
-
-    await setBox.put('languagePromptShown', true);
-
-    final languageLabel = _humanReadableLanguage(systemLang);
-    final shouldSwitch = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text('Idioma detectado'),
-        content: Text(
-          'Se detectó el idioma del sistema como $languageLabel. ¿Quieres cambiar a ese idioma?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sí'),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldSwitch == true) {
-      final selectedLang = systemLang == 'zh_Hant'
-          ? 'zh-TW'
-          : systemLang == 'zh_Hans'
-              ? 'zh-CN'
-              : systemLang;
-      setAppLanguage(selectedLang);
-    }
-  }
-
-  String _humanReadableLanguage(String code) {
-    const languageNames = {
-      'en': 'inglés',
-      'es': 'español',
-      'pt': 'portugués',
-      'fr': 'francés',
-      'de': 'alemán',
-      'it': 'italiano',
-      'ru': 'ruso',
-      'tr': 'turco',
-      'hi': 'hindi',
-      'ja': 'japonés',
-      'ko': 'coreano',
-      'zh_Hans': 'chino simplificado',
-      'zh_Hant': 'chino tradicional',
-      'ar': 'árabe',
-      'id': 'indonesio',
-      'bn': 'bengalí',
-      'vi': 'vietnamita',
-    };
-    return languageNames[code] ?? code;
   }
 
   Future<void> unlinkPiped() async {

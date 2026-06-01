@@ -221,7 +221,7 @@ class MusicServices extends getx.GetxService {
   }
 
   // Future<List<Map<String, dynamic>>>
-  Future<dynamic> getHome({int limit = 4}) async {
+  Future<dynamic> getHome({required int limit}) async {
     final data = Map.from(_context);
     data["browseId"] = "FEmusic_home";
     final response = await _sendRequest("browse", data);
@@ -299,10 +299,16 @@ final home = [...parseMixedContent(results)];
             ...title_text
           ]) ==
           "Video charts") {
+        final catString = catogory == "TMV" ? "Top Music Videos" : "Trending";
         for (dynamic item in result['musicCarouselShelfRenderer']['contents']) {
-          final chartItem =
-              await getChartItems(parseChartsItemBrowseId(item), catogory);
-          charts.add(chartItem);
+          final parsed = parseChartsItemBrowseId(item);
+          if (parsed['title'].toString().contains(catString)) {
+            final songs = (await getPlaylistOrAlbumSongs(
+                playlistId: parsed['browseId']))['tracks'];
+            final limitedSongs = songs.length > 24 ? songs.sublist(0, 24) : songs;
+            charts.add({'title': parsed['title'], 'contents': limitedSongs});
+            break;
+          }
         }
       } else {
         continue;
@@ -310,18 +316,6 @@ final home = [...parseMixedContent(results)];
     }
 
     return charts;
-  }
-
-  Future<Map<String, dynamic>> getChartItems(
-      Map<String, dynamic> item, String catogory) async {
-    final catString = catogory == "TMV" ? "Top Music Videos" : "Trending";
-    if ((item['title'])!.contains(catString)) {
-      final songs = (await getPlaylistOrAlbumSongs(
-          playlistId: item['browseId']))['tracks'];
-      final limitedSongs = songs.length > 24 ? songs.sublist(0, 24) : songs;
-      return {'title': item['title'], 'contents': limitedSongs};
-    }
-    return {'title': item['title'], 'contents': []};
   }
 
   Future<Map<String, dynamic>> getWatchPlaylist(
@@ -671,7 +665,7 @@ final home = [...parseMixedContent(results)];
       int limit = 30,
       bool ignoreSpelling = false,
       String? filterParams}) async {
-    print('[HarmonySearch] search() called query="$query" filter=$filter scope=$scope limit=$limit');
+    printINFO('[HarmonySearch] search() query="$query" filter=$filter scope=$scope limit=$limit');
     final data = Map.of(_context);
     data['context']['client']["hl"] = 'en';
     data['query'] = query;
@@ -793,12 +787,11 @@ final home = [...parseMixedContent(results)];
     }
     print('[HarmonySearch] sectionList contents length=${results.length}');
     String? type = filter?.substring(0, filter.length - 1).toLowerCase();
-    print('[HarmonySearch] iterating ${results.length} shelves, type=$type filter=$filter');
+    printINFO('[HarmonySearch] processing ${results.length} shelves, type=$type filter=$filter');
 
     for (int shelfIdx = 0; shelfIdx < results.length; shelfIdx++) {
       final res = results[shelfIdx];
-      print('[HarmonySearch] shelf[$shelfIdx] type=${res.runtimeType}');
-      if (res is! Map) { print('[HarmonySearch] shelf[$shelfIdx] SKIP: not a Map'); continue; }
+      if (res is! Map) { printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: not a Map'); continue; }
 
       Map? effectiveShelf;
       effectiveShelf = nav(res, ['musicShelfRenderer']);
@@ -815,24 +808,21 @@ final home = [...parseMixedContent(results)];
         effectiveShelf = nav(res, ['musicCardShelfRenderer']);
       }
       if (effectiveShelf is! Map) {
-        print('[HarmonySearch] shelf[$shelfIdx] SKIP: unrecognized renderer, keys=${res.keys}');
+        printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: unrecognized renderer, keys=${res.keys}');
         continue;
       }
 
       dynamic itemResults = nav(effectiveShelf, ['contents']);
       if (itemResults is! List) {
-        print('[HarmonySearch] shelf[$shelfIdx] SKIP: contents is not a List');
+        printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: contents is not a List');
         continue;
       }
-      print('[HarmonySearch] shelf[$shelfIdx] itemResults length=${itemResults.length}');
       String? typeFilter = filter;
       final category =
           filter == null ? "mixed" : (nav(effectiveShelf, title_text) ?? "");
-      print('[HarmonySearch] shelf[$shelfIdx] category=$category');
       if (filter == null) {
         final mixedItems = parseSearchResults(itemResults,
             ['artist', 'playlist', 'song', 'video', 'station'], type, category);
-        print('[HarmonySearch] shelf[$shelfIdx] parseSearchResults returned ${mixedItems.length} items');
         for (var item in mixedItems) {
           if (item == null) continue;
           String itemType;
@@ -855,7 +845,7 @@ final home = [...parseMixedContent(results)];
             ['artist', 'playlist', 'song', 'video', 'station'],
             type,
             category);
-        print('[HarmonySearch] shelf[$shelfIdx] filtered parseSearchResults returned ${(searchResults[category] as List?)?.length} items for category=$category');
+
       }
       type = typeFilter?.substring(0, typeFilter.length - 1).toLowerCase();
 
@@ -891,7 +881,7 @@ final home = [...parseMixedContent(results)];
       }
     }
 
-    print('[HarmonySearch] search() FINAL keys=${searchResults.keys} counts=${searchResults.map((k, v) => MapEntry(k, v is List ? v.length : v.runtimeType))}');
+    printINFO('[HarmonySearch] search() FINAL keys=${searchResults.keys} counts=${searchResults.map((k, v) => MapEntry(k, v is List ? v.length : v.runtimeType))}');
     return searchResults;
   }
 

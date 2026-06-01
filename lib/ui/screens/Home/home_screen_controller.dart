@@ -5,14 +5,12 @@ import 'package:hive/hive.dart';
 
 import '/models/media_Item_builder.dart';
 import '/ui/player/player_controller.dart';
-import '../../../utils/update_check_flag_file.dart';
-import '../../../utils/helper.dart';
+import '/utils/helper.dart';
 import '/models/album.dart';
 import '/models/playlist.dart';
 import '/models/quick_picks.dart';
 import '/services/music_service.dart';
 import '../Settings/settings_screen_controller.dart';
-import '/ui/widgets/new_version_dialog.dart';
 
 class HomeScreenController extends GetxController {
   final MusicServices _musicServices = Get.find<MusicServices>();
@@ -22,7 +20,6 @@ class HomeScreenController extends GetxController {
   final quickPicks = QuickPicks([]).obs;
   final middleContent = [].obs;
   final fixedContent = [].obs;
-  final showVersionDialog = true.obs;
   //isHomeScreenOnTop var only useful if bottom nav enabled
   final isHomeSreenOnTop = true.obs;
   final List<ScrollController> contentScrollControllers = [];
@@ -32,7 +29,6 @@ class HomeScreenController extends GetxController {
   onInit() {
     super.onInit();
     loadContent();
-    if (updateCheckFlag) _checkNewVersion();
   }
 
   Future<void> loadContent() async {
@@ -93,19 +89,11 @@ class HomeScreenController extends GetxController {
     ) ??
     "TR";
 
-const validTypes = [
-  'TR',
-  'TMV',
-  'BOLI',
-];
-
-if (!validTypes.contains(
+if (!discoverContentTypes.contains(
     contentType)) {
 
-  print(
-    "Invalid discover type "
-    "$contentType -> TR",
-  );
+  printERROR(
+    "Invalid discover type $contentType -> TR");
 
   contentType = "TR";
 
@@ -131,8 +119,7 @@ if (!validTypes.contains(
         } else if (index == -1) {
           List charts = await _musicServices.getCharts(contentType);
           final index = charts.indexWhere((element) =>
-              element['title'] ==
-              (contentType == "TMV" ? "Top Music Videos" : "Trending"));
+              element['title'] == "Trending");
           if (index != -1) {
             quickPicks.value = QuickPicks(
                 List<MediaItem>.from(charts[index]["contents"]),
@@ -150,8 +137,7 @@ if (!validTypes.contains(
         } else if (index == -1) {
           List charts = await _musicServices.getCharts(contentType);
           final index = charts.indexWhere((element) =>
-              element['title'] ==
-              (contentType == "TMV" ? "Top Music Videos" : "Trending"));
+              element['title'] == "Top Music Videos");
           if (index != -1) {
             quickPicks.value = QuickPicks(
                 List<MediaItem>.from(charts[index]["contents"]),
@@ -237,17 +223,18 @@ if (!validTypes.contains(
   ) {
     List contentTemp = [];
     for (var content in contents) {
-      if((content["contents"]).isEmpty) continue;
-      if ((content["contents"][0]).runtimeType == Playlist) {
+      final items = content["contents"];
+      if (items.isEmpty) continue;
+      if (items[0].runtimeType == Playlist) {
         final tmp = PlaylistContent(
-            playlistList: (content["contents"]).whereType<Playlist>().toList(),
+            playlistList: items.whereType<Playlist>().toList(),
             title: content["title"]);
         if (tmp.playlistList.length >= 2) {
           contentTemp.add(tmp);
         }
-      } else if ((content["contents"][0]).runtimeType == Album) {
+      } else if (items[0].runtimeType == Album) {
         final tmp = AlbumContent(
-            albumList: (content["contents"]).whereType<Album>().toList(),
+            albumList: items.whereType<Album>().toList(),
             title: content["title"]);
         if (tmp.albumList.length >= 2) {
           contentTemp.add(tmp);
@@ -259,12 +246,7 @@ if (!validTypes.contains(
 
   Future<void> changeDiscoverContent(dynamic val, {String? songId}) async {
     QuickPicks? quickPicks_;
-    if (val == 'QP') {
-      final homeContentListMap = await _musicServices.getHome(limit: 3);
-      quickPicks_ = QuickPicks(
-          List<MediaItem>.from(homeContentListMap[0]["contents"]),
-          title: homeContentListMap[0]["title"]);
-    } else if (val == "TMV" || val == 'TR') {
+    if (val == "TMV" || val == 'TR') {
       try {
         final charts = await _musicServices.getCharts(val);
         final index = charts.indexWhere((element) =>
@@ -320,26 +302,6 @@ if (!validTypes.contains(
     tabIndex.value = index;
   }
 
-  void _checkNewVersion() {
-    showVersionDialog.value =
-        Hive.box("AppPrefs").get("newVersionVisibility") ?? true;
-    if (showVersionDialog.isTrue) {
-      newVersionCheck(Get.find<SettingsScreenController>().currentVersion)
-          .then((value) {
-        if (value) {
-          showDialog(
-              context: Get.context!,
-              builder: (context) => const NewVersionDialog());
-        }
-      });
-    }
-  }
-
-  void onChangeVersionVisibility(bool val) {
-    Hive.box("AppPrefs").put("newVersionVisibility", !val);
-    showVersionDialog.value = !val;
-  }
-
   ///This is used to minimized bottom navigation bar by setting [isHomeSreenOnTop.value] to `true` and set mini player height.
   ///
   ///and applicable/useful if bottom nav enabled
@@ -387,6 +349,7 @@ if (!validTypes.contains(
             isQuickPicks: true),
         "middleContent": _getContentDataInJson(middleContent.toList()),
       });
+      printINFO("Saved Homescreen data data");
     } else if (updateAll) {
       await homeScreenData.putAll({
         "quickPicksType": quickPicks.value.title,
@@ -395,9 +358,8 @@ if (!validTypes.contains(
         "middleContent": _getContentDataInJson(middleContent.toList()),
         "fixedContent": _getContentDataInJson(fixedContent.toList())
       });
+      printINFO("Saved Homescreen data data");
     }
-
-    printINFO("Saved Homescreen data data");
   }
 
   List<Map<String, dynamic>> _getContentDataInJson(List content,

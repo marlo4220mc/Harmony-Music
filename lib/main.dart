@@ -19,8 +19,8 @@ import 'ui/screens/Settings/settings_screen_controller.dart';
 import '/ui/utils/theme_controller.dart';
 import 'ui/screens/Home/home_screen_controller.dart';
 import 'ui/screens/Library/library_controller.dart';
+import 'utils/helper.dart';
 import 'utils/system_tray.dart';
-import 'utils/update_check_flag_file.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -117,11 +117,7 @@ initHive() async {
 
 void _setAppInitPrefs() {
   final appPrefs = Hive.box("AppPrefs");
-  const validDiscoverTypes = [
-  'TR',
-  'TMV',
-  'BOLI',
-];
+  const validDiscoverTypes = discoverContentTypes;
 
 final discoverType =
     appPrefs.get(
