@@ -794,25 +794,53 @@ final home = [...parseMixedContent(results)];
       if (res is! Map) { printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: not a Map'); continue; }
 
       Map? effectiveShelf;
+      String? rendererType;
       effectiveShelf = nav(res, ['musicShelfRenderer']);
-      if (effectiveShelf is! Map) {
+      if (effectiveShelf is Map) {
+        rendererType = 'musicShelfRenderer';
+      } else {
         final isr = nav(res, ['itemSectionRenderer']);
         if (isr is Map) {
           final itemSectionContents = isr['contents'];
           if (itemSectionContents is List) {
             effectiveShelf = {'contents': itemSectionContents};
+            rendererType = 'itemSectionRenderer';
           }
         }
       }
       if (effectiveShelf is! Map) {
         effectiveShelf = nav(res, ['musicCardShelfRenderer']);
+        if (effectiveShelf is Map) rendererType = 'musicCardShelfRenderer';
       }
       if (effectiveShelf is! Map) {
         printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: unrecognized renderer, keys=${res.keys}');
         continue;
       }
 
+      final shelfTitle = nav(effectiveShelf, title_text) as String?;
       dynamic itemResults = nav(effectiveShelf, ['contents']);
+      final itemCount = (itemResults is List) ? itemResults.length : -1;
+      print('[HarmonySearch] shelf[$shelfIdx] renderer=$rendererType title="$shelfTitle" items=$itemCount');
+
+      if (rendererType == 'musicCardShelfRenderer' && filter == null) {
+        final primaryItem = createCardPrimaryItem(effectiveShelf.cast<String, dynamic>());
+        if (primaryItem != null) {
+          String itemType;
+          if (primaryItem is MediaItem) {
+            final resultType = primaryItem.extras?['resultType']?.toString();
+            itemType = resultType != null ? "${resultType}s" : "Songs";
+          } else {
+            itemType = "${primaryItem.runtimeType}s";
+          }
+          if (!searchResults.containsKey(itemType)) {
+            searchResults[itemType] = [primaryItem];
+          } else if ((searchResults[itemType] as List).length < 3) {
+            (searchResults[itemType] as List).add(primaryItem);
+          }
+          printINFO('[HarmonySearch] card primary result: type=$itemType');
+        }
+      }
+
       if (itemResults is! List) {
         printWarning('[HarmonySearch] shelf[$shelfIdx] SKIP: contents is not a List');
         continue;

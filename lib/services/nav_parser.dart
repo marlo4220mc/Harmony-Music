@@ -813,6 +813,50 @@ List<dynamic> parseSearchResults(List<dynamic> results,
       .toList();
 }
 
+/// Extracts the primary search result from a [musicCardShelfRenderer] (the "Top result" card).
+/// The card itself carries the best match item via [onTap], [title], [subtitle] and [thumbnail].
+/// Returns an [Artist], [Album], [Playlist] or [MediaItem] matching OpenTune's
+/// [SearchSummaryPage.fromMusicCardShelfRenderer].
+dynamic createCardPrimaryItem(Map<String, dynamic> card) {
+  final title = nav(card, ['title', 'runs', 0, 'text']);
+  if (title == null) return null;
+
+  final onTap = card['onTap'];
+  if (onTap is! Map) return null;
+
+  final subtitle = card['subtitle'];
+  final thumbnail = card['thumbnail'];
+
+  final flexColumns = <dynamic>[
+    {'musicResponsiveListItemFlexColumnRenderer': {
+      'text': {'runs': [{'text': title}]}
+    }},
+  ];
+
+  if (subtitle is Map && subtitle['runs'] is List) {
+    flexColumns.add({
+      'musicResponsiveListItemFlexColumnRenderer': {
+        'text': {'runs': subtitle['runs']}
+      }
+    });
+  }
+
+  final data = <String, dynamic>{
+    'navigationEndpoint': onTap,
+    'flexColumns': flexColumns,
+    'thumbnail': thumbnail,
+    'thumbnailRenderer': thumbnail is Map
+        ? {'musicThumbnailRenderer': thumbnail}
+        : null,
+  };
+
+  if (card['overlay'] != null) {
+    data['overlay'] = card['overlay'];
+  }
+
+  return parseSearchResult(data, ['artist', 'playlist', 'song', 'video', 'station'], null, 'mixed');
+}
+
 dynamic parseSearchResult(Map<String, dynamic> data,
     List<String> searchResultTypes, String? resultType, String? category) {
   if (category == null) return null;
