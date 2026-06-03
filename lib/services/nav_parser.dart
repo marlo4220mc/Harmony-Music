@@ -813,6 +813,13 @@ List<dynamic> parseSearchResults(List<dynamic> results,
       .toList();
 }
 
+/// Media-type labels that appear as the first run in the subtitle of a musicCardShelfRenderer
+/// (e.g. "Song • Artist • Year"). These are redundant with the item's [resultType] and must
+/// be stripped before passing to [parseSongRuns] to avoid being treated as artist names.
+const _cardTypeLabels = [
+  'Song', 'Video', 'Album', 'Single', 'Podcast', 'Artist', 'EP', 'Station'
+];
+
 /// Extracts the primary search result from a [musicCardShelfRenderer] (the "Top result" card).
 /// The card itself carries the best match item via [onTap], [title], [subtitle] and [thumbnail].
 /// Returns an [Artist], [Album], [Playlist] or [MediaItem] matching OpenTune's
@@ -834,9 +841,19 @@ dynamic createCardPrimaryItem(Map<String, dynamic> card) {
   ];
 
   if (subtitle is Map && subtitle['runs'] is List) {
+    var runs = subtitle['runs'] as List;
+    // Card subtitles start with a type label + separator (e.g. "Song • Artist • Year").
+    // Strip them so parseSongRuns doesn't treat the label as an artist name.
+    if (runs.length >= 3 &&
+        runs[0] is Map &&
+        runs[1] is Map &&
+        runs[1]['text'] == ' • ' &&
+        _cardTypeLabels.contains(runs[0]['text'])) {
+      runs = runs.sublist(2);
+    }
     flexColumns.add({
       'musicResponsiveListItemFlexColumnRenderer': {
-        'text': {'runs': subtitle['runs']}
+        'text': {'runs': runs}
       }
     });
   }
