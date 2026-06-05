@@ -97,14 +97,16 @@ class SearchResultScreenController extends GetxController
     if (args != null) {
       queryString.value = args;
       resultContent.value = await musicServices.search(args);
-      final allKeys = resultContent.keys.where((element) => ([
-            "Songs",
-            "Videos",
-            "Albums",
-            "Featured playlists",
-            "Community playlists",
-            "Artists"
-          ]).contains(element));
+      const tabOrder = [
+        "Artists",
+        "Featured playlists",
+        "Community playlists",
+        "Songs",
+        "Videos",
+        "Albums",
+      ];
+      final available = resultContent.keys.toSet();
+      final allKeys = tabOrder.where((key) => available.contains(key)).toList();
       railItems.value = List<String>.from(allKeys);
       final len =
           railItems.where((element) => element.contains("playlists")).length;

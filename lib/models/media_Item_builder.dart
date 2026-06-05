@@ -34,7 +34,8 @@ class MediaItemBuilder {
           'artists': json['artists'],
           'date': json['date'],
           'trackDetails': json['trackDetails'],
-          'year': json['year']
+          'year': json['year'],
+          'resultType': json['resultType']
         });
   }
 

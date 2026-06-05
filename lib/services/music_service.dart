@@ -659,6 +659,17 @@ final home = [...parseMixedContent(results)];
     return [false, null];
   }
 
+  String _searchResultCategory(String? resultType) {
+    switch (resultType) {
+      case 'song':     return 'Songs';
+      case 'video':    return 'Videos';
+      case 'album':    return 'Albums';
+      case 'artist':   return 'Artists';
+      case 'playlist': return 'playlists';
+      default:         return 'Songs';
+    }
+  }
+
   Future<Map<String, dynamic>> search(String query,
       {String? filter,
       String? scope,
@@ -828,7 +839,7 @@ final home = [...parseMixedContent(results)];
           String itemType;
           if (primaryItem is MediaItem) {
             final resultType = primaryItem.extras?['resultType']?.toString();
-            itemType = resultType != null ? "${resultType}s" : "Songs";
+            itemType = _searchResultCategory(resultType);
           } else {
             itemType = "${primaryItem.runtimeType}s";
           }
@@ -856,7 +867,7 @@ final home = [...parseMixedContent(results)];
           String itemType;
           if (item is MediaItem) {
             final resultType = item.extras?['resultType']?.toString();
-            itemType = resultType != null ? "${resultType}s" : "Songs";
+            itemType = _searchResultCategory(resultType);
           } else {
             itemType = "${item.runtimeType}s";
           }
