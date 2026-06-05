@@ -68,13 +68,25 @@ class ResultWidget extends StatelessWidget {
       }
     }
     for (dynamic item in searchResScrController.resultContent.entries) {
-      if (item.key == "Songs" || item.key == "Videos") {
+      if (item.key == "Songs") {
         list.add(SeparateTabItemWidget(
           items: List<MediaItem>.from(item.value),
           title: item.key,
           isCompleteList: false,
         ));
-      } else if (item.key == "Albums") {
+      }
+    }
+    for (dynamic item in searchResScrController.resultContent.entries) {
+      if (item.key == "Videos") {
+        list.add(SeparateTabItemWidget(
+          items: List<MediaItem>.from(item.value),
+          title: item.key,
+          isCompleteList: false,
+        ));
+      }
+    }
+    for (dynamic item in searchResScrController.resultContent.entries) {
+      if (item.key == "Albums") {
         list.add(ContentListWidget(
           content: AlbumContent(
               title: item.key, albumList: List<Album>.from(item.value)),

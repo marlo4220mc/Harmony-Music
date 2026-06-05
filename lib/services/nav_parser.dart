@@ -885,6 +885,9 @@ dynamic parseSearchResult(Map<String, dynamic> data,
   Map<String, dynamic> searchResult = {'category': category};
   String? videoType = nav(data,
       [...play_button, 'playNavigationEndpoint', ...navigation_video_type]);
+  if (videoType == null) {
+    videoType = nav(data, ['navigationEndpoint', ...navigation_video_type]);
+  }
 
   if (resultType == null) {
     // OpenTune approach: use pageType from browseEndpointContextMusicConfig
