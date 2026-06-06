@@ -437,17 +437,6 @@ final home = [...parseMixedContent(results)];
     return audioPlaylistId;
   }
 
-  dynamic getContentRelatedToSong(String videoId, String hlCode) async {
-    final params = await getWatchPlaylist(videoId: videoId, onlyRelated: true);
-    final data = Map.from(_context);
-    data['browseId'] = params['related'];
-    data['context']['client']['hl'] = hlCode;
-    final response = (await _sendRequest('browse', data)).data;
-    final sections = nav(response, ['contents'] + section_list);
-    final x = parseMixedContent(sections);
-    return x;
-  }
-
   dynamic getLyrics(String browseId) async {
     final data = Map.from(_context);
     data['browseId'] = browseId;
