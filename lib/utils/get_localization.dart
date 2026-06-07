@@ -82,6 +82,7 @@ Map<String, Map<String, String>> get keys => {
     "light": "مضيء",
     "language": "اللغة",
     "languageDes": "ضبط لغة التطبيق",
+    "quickpicks": "اختيارات سريعة",
     "homeContentCountDes": "حدد عدد محتوى الشاشة الرئيسية الأولي (تقريبًا). عدد أقل تحميل أسرع",
     "cacheSongsDes": "سيؤدي تخزين الأغاني مؤقتًا أثناء التشغيل للتشغيل في المستقبل/دون الاتصال بالإنترنت إلى استهلاك مساحة إضافية على جهازك",
     "skipSilence": "تخطي الصمت",
@@ -248,7 +249,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "ابقِ الشاشة مضاءة أثناء التشغيل",
     "keepScreenOnWhilePlayingDes": "إذا تم التفعيل، ستبقى شاشة الجهاز مضاءة أثناء تشغيل الموسيقى",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"az" : {
     "playlistCreatednsongAddedAlert": "Pleylist yaradıldı və mahnı əlavə edildi!",
     "dismiss": "Ləğv et",
@@ -379,6 +380,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Bu məlumatı təkrar göstərmə",
     "noOfflineSong": "Oflayn mahnılar yoxdur!",
     "featuredplaylists": "Göstərilən Səsləndirmə Siyahıları",
+    "quickpicks": "Sürətli Seçimlər",
     "artistBookmarkRemoveAlert": "Sənətkar əlfəcini silindi!",
     "operationFailed": "Əməliyyat uğursuz oldu",
     "goToAlbum": "Alboma keç",
@@ -396,7 +398,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Musiqi çalarkən ekranı açıq saxla",
     "keepScreenOnWhilePlayingDes": "Aktivdirsə, cihazın ekranı musiqi çalarkən açıq qalacaq",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"bg" : {
     "playlistCreatednsongAddedAlert": "Създаден плейлист и добавена песен!",
     "dismiss": "Отхвърли",
@@ -522,6 +524,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Не показвай тази информация отново",
     "noOfflineSong": "Няма офлайн песни!",
     "featuredplaylists": "Представени Плейлисти",
+    "quickpicks": "Бърз избор",
     "artistBookmarkRemoveAlert": "Отметката за изпълнител е премахната!",
     "operationFailed": "Операцията се провали",
     "goToAlbum": "Отиди на албум",
@@ -675,7 +678,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Запази екрана включен по време на възпроизвеждане",
     "keepScreenOnWhilePlayingDes": "Ако е активирано, екранът на устройството ще остане включен по време на възпроизвеждане на музика",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"bn" : {
     "songs": "গানগুলো",
     "home": "হোম",
@@ -717,6 +720,7 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "জেসচার",
     "languageDes": "অ্যাপের ভাষা নির্ধারণ করুন",
     "setDiscoverContent": "আবিষ্কারের বিষয়বস্তু নির্ধারণ করুন",
+    "quickpicks": "দ্রুত পছন্দ",
     "discover": "আবিষ্কার",
     "basedOnLast": "শেষ ইন্টারঅ্যাকশনের উপর",
     "autoOpenPlayer": "অটো প্লেয়ার স্ক্রিন খুলুন",
@@ -944,7 +948,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "প্লে থাকাকালীন স্ক্রীন জ্বলন্ত রাখুন",
     "keepScreenOnWhilePlayingDes": "সক্রিয় করলে, গান চলাকালীন ডিভাইসের স্ক্রীন জ্বলে থাকবে",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"ca" : {
     "libPlaylists": "Col · lecció de llistes de reproducció",
     "libArtists": "Biblioteca d'Artistes",
@@ -1016,6 +1020,7 @@ Map<String, Map<String, String>> get keys => {
     "language": "Idioma",
     "languageDes": "Configurar l'idioma de l'aplicació",
     "setDiscoverContent": "Descobrir contingut",
+    "quickpicks": "Tria ràpida",
     "trending": "Tendència",
     "topmusicvideos": "Millors Vídeos Musicals",
     "enableBottomNav": "Barra de navegació a baix",
@@ -1215,7 +1220,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Mantenir la pantalla encesa mentre es reprodueix",
     "keepScreenOnWhilePlayingDes": "Si està activat, la pantalla del dispositiu romandrà encesa mentre es reprodueix música",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"cs" : {
     "home": "Domů",
     "playlistCreatednsongAddedAlert": "Playlist vytvořen a skladba přidána!",
@@ -1341,6 +1346,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Tuto informaci již nezobrazujte",
     "noOfflineSong": "Žádné skladby offline!",
     "featuredplaylists": "Doporučené playlisty",
+    "quickpicks": "Rychlý výběr",
     "artistBookmarkRemoveAlert": "Interpret odstraněn ze záložek!",
     "operationFailed": "Operace selhala",
     "goToAlbum": "Přejít do alba",
@@ -1494,7 +1500,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Nechat obrazovku zapnutou během přehrávání",
     "keepScreenOnWhilePlayingDes": "Pokud je povoleno, obrazovka zařízení zůstane během přehrávání hudby zapnutá",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"de" : {
     "home": "Start",
     "songs": "Lieder",
@@ -1634,6 +1640,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "API-URL zur Piped-Instanz",
     "downloadingFormatDes": "Wähle das Dateiformat für Downloads aus. „Opus“ bietet die beste Qualität",
     "featuredplaylists": "Vorgestellte Playlists",
+    "quickpicks": "Schnellauswahl",
     "sleepTimer": "Sleep-Timer",
     "minutes": "Minuten",
     "library": "Bibliothek",
@@ -1768,7 +1775,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Bildschirm während der Wiedergabe eingeschaltet lassen",
     "keepScreenOnWhilePlayingDes": "Wenn aktiviert, bleibt der Bildschirm des Geräts beim Musikhören eingeschaltet",
     "foryou": "Für dich",
-    "continueradio": "Radio fortsetzen",
+    "continueradio": "Radio fortsetzen"
 },"en" : {
     "home": "Home",
     "songs": "Songs",
@@ -1830,9 +1837,6 @@ Map<String, Map<String, String>> get keys => {
     "playingfromArtist": "PLAYING FROM ARTIST",
     "randomSelection": "Random Selection",
     "randomRadio": "Random Radio",
-    "foryou": "For You",
-    "discover": "Discover",
-    "continueradio": "Continue Radio",
     "playnextMsg": "Upcoming",
     "shuffleQueue": "Shuffle Queue",
     "queueLoop": "Queue loop",
@@ -1868,6 +1872,8 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "Gesture",
     "languageDes": "Set App language",
     "setDiscoverContent": "Set discover content",
+    "quickpicks": "Quick Picks",
+    "discover": "Discover",
     "trending": "Trending",
     "topmusicvideos": "Top Music Videos",
     "basedOnLast": "Based on last interaction",
@@ -2044,7 +2050,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "It will push your playlist (songs < 50) to current queue, don't forget to add to playlist/save after opening in YtMusic",
     "linkCopied": "Link copied to clipboard",
     "keepScreenOnWhilePlaying": "Keep screen on while playing",
-    "keepScreenOnWhilePlayingDes": "If enabled, the device screen will stay awake while music is playing"
+    "keepScreenOnWhilePlayingDes": "If enabled, the device screen will stay awake while music is playing",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 },"eo" : {
     "renamePlaylist": "Alinomi Ludliston",
     "trending": "Populara",
@@ -2109,6 +2117,7 @@ Map<String, Map<String, String>> get keys => {
     "removeFromPlaylist": "Forigi el ludlisto",
     "noOfflineSong": "Neniuj elretaj kantoj!",
     "featuredplaylists": "Elstarigitaj Ludlistoj",
+    "quickpicks": "Rapidelektoj",
     "goToAlbum": "Iri al la albumo",
     "removeFromQueue": "Forigi el la vico",
     "shareSong": "Kunhavigi ĉi tiun kanton",
@@ -2205,7 +2214,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Konservi ekrano ŝaltita dum ludado",
     "keepScreenOnWhilePlayingDes": "Se ebligita, la ekrano de la aparato restos ŝaltita dum muziko ludas",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"es" : {
     "playlistCreatednsongAddedAlert": "¡Lista de reproducción creada y la canción fue añadida!",
     "dismiss": "Descartar",
@@ -2330,6 +2339,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "No volver a mostrar esta información",
     "noOfflineSong": "¡No hay canciones sin conexión!",
     "featuredplaylists": "Listas de reproducción destacadas",
+    "quickpicks": "Selecciones rápidas",
     "artistBookmarkRemoveAlert": "¡Se eliminó el marcador del artista!",
     "operationFailed": "Error en la operación",
     "goToAlbum": "Ir al álbum",
@@ -2483,7 +2493,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Mantener la pantalla encendida mientras se reproduce",
     "keepScreenOnWhilePlayingDes": "Si está activado, la pantalla del dispositivo permanecerá despierta mientras se reproduce música",
     "foryou": "Para ti",
-    "continueradio": "Continuar la radio",
+    "continueradio": "Continuar la radio"
 },"et" : {
     "home": "Avaleht",
     "songs": "Lood",
@@ -2530,6 +2540,7 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "Žestide-põhine",
     "languageDes": "Vali rakenduse keel",
     "setDiscoverContent": "Vali uue sisu avastamise viis",
+    "quickpicks": "Kiirvalikud",
     "discover": "Avastamised",
     "trending": "Populaarsust koguvad lood",
     "topmusicvideos": "Populaarsed muusikavideod",
@@ -2759,7 +2770,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Hoia ekraan mängimise ajal sees",
     "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"eu" : {
     "songs": "Abestiak",
     "playlists": "Erreprodukzio-zerrendak",
@@ -2819,6 +2830,7 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "Keinuen bitartekoa",
     "languageDes": "Aplikazioaren hizkuntza hautatu",
     "setDiscoverContent": "Detekzio-edukia ezarri",
+    "quickpicks": "Hautaketa azkarrak",
     "discover": "Deskubritu",
     "trending": "Joerak",
     "topmusicvideos": "Bideo musikal onenak",
@@ -3035,7 +3047,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Mantendu pantaila piztuta erreproduzitzen den bitartean",
     "keepScreenOnWhilePlayingDes": "Gaituta badago, gailuaren pantaila piztuta egongo da musika erreproduzitzen den bitartean",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"fa" : {
     "home": "خانه",
     "songs": "آهنگ",
@@ -3115,6 +3127,7 @@ Map<String, Map<String, String>> get keys => {
     "standard": "استاندارد",
     "languageDes": "تنظیم زبان نرم افزار",
     "setDiscoverContent": "تنظیم محتوای کشف",
+    "quickpicks": "انتخاب های سریع",
     "discover": "کشف",
     "topmusicvideos": "نماهنگ های برتر",
     "basedOnLast": "بر اساس آخرین تعامل",
@@ -3166,7 +3179,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "روشن نگه داشتن صفحه هنگام پخش",
     "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"fi" : {
     "libAlbums": "Kirjaston albumit",
     "libArtists": "Kirjaston artistit",
@@ -3223,6 +3236,7 @@ Map<String, Map<String, String>> get keys => {
     "light": "Vaalea",
     "language": "Kieli",
     "languageDes": "Valitse sovelluksen kieli",
+    "quickpicks": "Pikavalinnat",
     "setDiscoverContent": "Aseta löytöjen sisältö",
     "discover": "Löydöt",
     "trending": "Trendaavat",
@@ -3319,7 +3333,9 @@ Map<String, Map<String, String>> get keys => {
     "dark": "Tumma",
     "systemDefault": "Järjestelmän oletus",
     "keepScreenOnWhilePlaying": "Pidä näyttö päällä toiston aikana",
-    "keepScreenOnWhilePlayingDes": "Jos käytössä, laitteen näyttö pysyy päällä musiikin toiston aikana"
+    "keepScreenOnWhilePlayingDes": "Jos käytössä, laitteen näyttö pysyy päällä musiikin toiston aikana",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 },"fil" : {
     "enqueueAll": "Patugtugin lahat",
     "recentlyPlayed": "Nakaraang Tugtugin",
@@ -3402,6 +3418,7 @@ Map<String, Map<String, String>> get keys => {
     "playerUi": "Itsura ng Player",
     "playerUiDes": "Pumili ng itsura ng player",
     "languageDes": "Pumili ng wika ng App",
+    "quickpicks": "Bilis-Pili",
     "discover": "Tuklasin",
     "trending": "Mga Trending",
     "basedOnLast": "Mula sa mga huling pili",
@@ -3534,13 +3551,12 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Panatilihing naka-on ang screen habang tumutugtog",
     "keepScreenOnWhilePlayingDes": "Kung naka-enable, mananatiling naka-on ang screen ng device habang tumutugtog ang musika",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"fj" : {
     "keepScreenOnWhilePlaying": "Taura na mata ni bula tiko ni qito",
     "keepScreenOnWhilePlayingDes": "Kevaka e vakayagataki, na mata ni iyaya ena bula tiko ni qito na sere",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"fr" : {
     "libPlaylists": "Playlists de la Bibliothèque",
     "networkError1": "Oups erreur réseau !",
@@ -3674,6 +3690,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "URL API de l'instance Piped",
     "removeFromPlaylist": "Supprimer de la playlist",
     "featuredplaylists": "Playlists Mises en Avant",
+    "quickpicks": "Sélection Rapide",
     "downloads": "Téléchargements",
     "removeFromLib": "Supprimer de la bibliothèque",
     "downloadingFormat": "Format de fichier téléchargé",
@@ -3821,13 +3838,12 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Garder l'écran allumé pendant la lecture",
     "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique",
     "foryou": "Pour vous",
-    "continueradio": "Continuer la radio",
+    "continueradio": "Continuer la radio"
 },"ga" : {
     "keepScreenOnWhilePlaying": "Coinnigh an scáileán ar siúl agus tú ag seinm",
     "keepScreenOnWhilePlayingDes": "Má tá sé faoi ghníomh, coinníodhfaidh scáileán an ghléis ar siúl agus tú ag seinm ceoil",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"gl" : {
     "singles": "Sinxelos",
     "artists": "Artistas",
@@ -3953,6 +3969,7 @@ Map<String, Map<String, String>> get keys => {
     "light": "Claro",
     "language": "Idioma",
     "languageDes": "Seleccionar idioma da aplicación",
+    "quickpicks": "Selección rápida",
     "restoreLastPlaybackSessionDes": "Restaurar automáticamente a última sesión de reprodución ó iniciar a aplicación",
     "homeContentCount": "Reconto de contidos",
     "homeContentCountDes": "Selecciona o número de contido na pantalla de inicio. Menos resultados resultan nunha carga máis rápida",
@@ -4098,7 +4115,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Manter a pantalla acesa mentres se reproduce",
     "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"hi" : {
     "themeMode": "थीम मोड",
     "playlists": "प्लेलिस्ट",
@@ -4232,6 +4249,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "पाइप्ड इंस्टैंस एपीआई यूआरएल",
     "removeFromPlaylist": "प्लेलिस्ट से निकालें",
     "featuredplaylists": "फीचर्ड प्लेलिस्ट",
+    "quickpicks": "गानों का सुझाव",
     "downloads": "डाउनलोड्स",
     "removeFromLib": "लाइब्रेरी गाने से हटाएँ",
     "downloadingFormat": "डाउनलोडिंग फ़ाइल फ़ारमैट",
@@ -4337,7 +4355,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "प्ले के दौरान स्क्रीन जला रखें",
     "keepScreenOnWhilePlayingDes": "यदि सक्षम है, तो संगीत चलाते समय डिवाइस की स्क्रीन जगी रहेगी",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"hr" : {
     "home": "Početna",
     "songs": "Pjesme",
@@ -4366,8 +4384,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Ostavi zaslon uključen tijekom reprodukcije",
     "keepScreenOnWhilePlayingDes": "Ako je omogućeno, zaslon uređaja ostat će uključen tijekom reprodukcije glazbe",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"hu" : {
     "artists": "Előadók",
     "settings": "Beállítások",
@@ -4427,6 +4444,7 @@ Map<String, Map<String, String>> get keys => {
     "playerUi": "Lejátszó Ui",
     "languageDes": "Állítsa be az alkalmazás nyelvét",
     "setDiscoverContent": "Állítsa be a felfedezés tartalmát",
+    "quickpicks": "Gyors választások",
     "discover": "Felfedezés",
     "trending": "Felkapott",
     "topmusicvideos": "Legjobb Zenei Videók",
@@ -4472,7 +4490,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "A képernyő bekapcsolva tartása lejátszás közben",
     "keepScreenOnWhilePlayingDes": "Ha engedélyezve van, a készülék képernyője lejátszás közben bekapcsolva marad",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"ia" : {
     "playlistCreatednsongAddedAlert": "Lista de reproduction create e canto addite!",
     "dismiss": "Dimitter",
@@ -4610,6 +4628,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Non monstrar iste information novemente",
     "featuredplaylists": "Listas de reproduction eminente",
     "homeContentCountDes": "Selige le numero de contentos del schermo de initio (approx.). Minus resultatos carga plus rapide",
+    "quickpicks": "Selectiones rapide",
     "artistBookmarkRemoveAlert": "Marcator de artista removite!",
     "operationFailed": "Falleva le operation",
     "goToAlbum": "Vader al album",
@@ -4698,7 +4717,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Mantenir le schermo accendite durante le reproduction",
     "keepScreenOnWhilePlayingDes": "Si activate, le schermo del dispositivo remanera accendite durante le reproduction del musica",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"id" : {
     "playlistCreatednsongAddedAlert": "Daftar Putar dibuat & lagu ditambahkan!",
     "dismiss": "Biarkan",
@@ -4829,6 +4848,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Jangan tampilkan info ini lagi",
     "noOfflineSong": "Tidak ada lagu offline!",
     "featuredplaylists": "Daftar Putar yang Difiturkan",
+    "quickpicks": "Pilihan Cepat",
     "artistBookmarkRemoveAlert": "Bookmark artis dihapus!",
     "operationFailed": "Operasi gagal",
     "goToAlbum": "Ke album",
@@ -4967,7 +4987,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Pertahankan layar tetap hidup saat memutar",
     "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"it" : {
     "home": "Pagina principale",
     "songs": "Canzoni",
@@ -5099,6 +5119,7 @@ Map<String, Map<String, String>> get keys => {
     "downloadingFormat": "Formato di Download File",
     "operationFailed": "Operazione fallita",
     "enqueueSong": "Metti in coda la canzone",
+    "quickpicks": "Selezioni rapide",
     "basedOnLast": "Basato sull'ultima interazione",
     "equalizer": "Equalizzatore",
     "disabled": "Disabilitato",
@@ -5243,7 +5264,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Mantieni lo schermo attivo durante la riproduzione",
     "keepScreenOnWhilePlayingDes": "Se abilitato, lo schermo del dispositivo resterà acceso mentre la musica viene riprodotta",
     "foryou": "Per te",
-    "continueradio": "Continua la radio",
+    "continueradio": "Continua la radio"
 },"ja" : {
     "playlistCreatednsongAddedAlert": "再生リストを作成し曲を追加しました！",
     "dismiss": "非表示",
@@ -5374,6 +5395,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "再び表示しない",
     "noOfflineSong": "オフラインの曲なし！",
     "featuredplaylists": "おすすめの再生リスト",
+    "quickpicks": "おすすめ",
     "artistBookmarkRemoveAlert": "アーティストのブックマークを解除しました！",
     "operationFailed": "操作に失敗",
     "goToAlbum": "アルバムを開く",
@@ -5521,7 +5543,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "再生中は画面を点灯したままにする",
     "keepScreenOnWhilePlayingDes": "有効にすると、音楽再生中はデバイスの画面が点灯したままになります",
     "foryou": "あなたに",
-    "continueradio": "ラジオを続ける",
+    "continueradio": "ラジオを続ける"
 },"km" : {
     "home": "ដើម",
     "singles": "ទោល",
@@ -5535,8 +5557,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "រក្សាអេក្រង់ឲ្យភ្លឺនៅពេលកំពុងចាក់",
     "keepScreenOnWhilePlayingDes": "ប្រសិនបើបានបើក អេក្រង់ឧបករណ៍នឹងនៅភ្លឺខណៈពេលចាក់តន្ត្រី",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"kn" : {
     "libArtists": "",
     "artists": "ಕಲಾವಿದರು",
@@ -5558,8 +5579,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "ಪ್ಲೇ ಮಾಡುವಾಗ ಪರದೆ ಜಾಗೃತವಾಗಿರಲಿ",
     "keepScreenOnWhilePlayingDes": "ಸಕ್ರಿಯಗೊಳಿಸಿದರೆ, ಸಂಗೀತ ಪ್ಲೇ ಮಾಡುವಾಗ ಸಾಧನದ ಪರದೆ ಜಾಗೃತವಾಗಿರುತ್ತದೆ",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"ko" : {
     "deleteDownloadData": "다운로드에서 제거",
     "trending": "인기 급상승",
@@ -5629,6 +5649,7 @@ Map<String, Map<String, String>> get keys => {
     "renamePlaylist": "플레이리스트 이름 변경",
     "cachedOrOffline": "캐시됨/오프라인",
     "emptyPlaylist": "빈 플레이리스트!",
+    "quickpicks": "빠른 추천",
     "discover": "탐색",
     "cacheSongs": "음악을 캐시에 저장",
     "skipSilence": "묵음 건너뛰기",
@@ -5742,13 +5763,12 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "재생 중 화면 켜짐 유지",
     "keepScreenOnWhilePlayingDes": "활성화하면 음악 재생 중에 기기 화면이 켜진 상태로 유지됩니다",
     "foryou": "추천",
-    "continueradio": "라디오 계속하기",
+    "continueradio": "라디오 계속하기"
 },"ku" : {
     "keepScreenOnWhilePlaying": "Li demê lîstinê ekranê li ser bimîne",
     "keepScreenOnWhilePlayingDes": "Heke çalak be, ekranê amûrê di dema lîstinê de dikare bimîne",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"ml" : {
     "songs": "പാട്ടുകൾ",
     "home": "ഹോംപേജ്",
@@ -5814,11 +5834,12 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "പ്ലേ ചെയ്യുമ്പോൾ സ്‌ക്രീൻ ഓണായിരിക്കട്ടെ",
     "keepScreenOnWhilePlayingDes": "സജ്ജമാക്കിയാൽ, സംഗീതം പ്ലേ ചെയ്യുമ്പോൾ ഡിവൈസിന്റെ സ്‌ക്രീൻ ഓണായിരിക്കുമെന്ന് ഉറപ്പ ചെയ്യും",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"my" : {
     "keepScreenOnWhilePlaying": "တေးဂီတဖျော်ဖြေနချိန် မျက်နှာပြင် မပွင့်ထားပါနဲ့",
-    "keepScreenOnWhilePlayingDes": "ဖွင့်ထားပါက အသံလှည့်နေစဉ် စက်ပစ္စည်း၏ မျက်နှာပြင် မအိပ်ဘဲ ပွင့်နေပါလိမ့်မည်"
+    "keepScreenOnWhilePlayingDes": "ဖွင့်ထားပါက အသံလှည့်နေစဉ် စက်ပစ္စည်း၏ မျက်နှာပြင် မအိပ်ဘဲ ပွင့်နေပါလိမ့်မည်",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 },"nb_NO" : {
     "home": "Hjem",
     "low": "Lav",
@@ -5952,6 +5973,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "API-nettadresse til Piped-instans",
     "removeFromPlaylist": "Fjern fra spillelisten",
     "featuredplaylists": "Framhevede spillelister",
+    "quickpicks": "Hurtigvalg",
     "library": "Bibliotek",
     "synced": "Synkronisert",
     "cancelTimerAlert": "Tidsavbrudd avbrutt",
@@ -5959,7 +5981,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Hold skjermen på under avspilling",
     "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"nl" : {
     "enqueueAll": "Alles in wachtrij",
     "removePlaylist": "Verwijder Afspeellijst",
@@ -6027,6 +6049,7 @@ Map<String, Map<String, String>> get keys => {
     "results": "Resultaten",
     "downloads": "Downloads",
     "goToAlbum": "Ga naar album",
+    "quickpicks": "Snelle keuzes",
     "topmusicvideos": "Top muziek videos",
     "streamingQuality": "Streaming kwaliteit",
     "equalizer": "Equalizer",
@@ -6149,7 +6172,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Scherm aanhouden tijdens afspelen",
     "keepScreenOnWhilePlayingDes": "Indien ingeschakeld blijft het scherm van het apparaat ingeschakeld tijdens het afspelen van muziek",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"or" : {
     "playlistCreatednsongAddedAlert": "ପ୍ଲେଲିଷ୍ଟ ସୃଷ୍ଟି ଏବଂ ଗୀତ ଯୋଡା ଯାଇଛି!",
     "dismiss": "ବରଖାସ୍ତ",
@@ -6275,6 +6298,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "ଏହି ସୂଚନାକୁ ଆଉ ଦେଖାନ୍ତୁ ନାହିଁ",
     "noOfflineSong": "ଅଫଲାଇନ ଗୀତ ନାହିଁ!",
     "featuredplaylists": "ପ୍ରଦର୍ଶିତ ପ୍ଲେଲିଷ୍ଟଗୁଡିକ",
+    "quickpicks": "ଶୀଘ୍ର ଚୟନ",
     "artistBookmarkRemoveAlert": "କଳାକାର ବୁକମାର୍କ ଅପସାରିତ ହୋଇଛି!",
     "operationFailed": "ଅପରେସନ୍ ବିଫଳ ହେଲା",
     "goToAlbum": "ଆଲବମକୁ ଯାଆନ୍ତୁ",
@@ -6296,7 +6320,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "ସଙ୍ଗୀତ ଚଲିଥିବାବେଳେ ସ୍କ୍ରୀନ୍ ଚାଲୁ ରଖନ୍ତୁ",
     "keepScreenOnWhilePlayingDes": "ସକ୍ରିୟ କଲେ, ସଙ୍ଗୀତ ଚଳାଉଥିବା ସମୟରେ ଡିଭାଇସର ସ୍କ୍ରୀନ୍ ଜାଗ୍ରତ ରହିବ",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"pa" : {
     "playlistCreatednsongAddedAlert": "ਪਲੇਲਿਸਟ ਬਣਾਈ ਗਈ ਅਤੇ ਗੀਤ ਜੋੜਿਆ ਗਿਆ!",
     "dismiss": "ਖਾਰਿਜ ਕਰੋ",
@@ -6422,6 +6446,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "ਇਸ ਜਾਣਕਾਰੀ ਨੂੰ ਦੁਬਾਰਾ ਨਾ ਵਿਖਾਓ",
     "noOfflineSong": "ਕੋਈ ਆਫਲਾਈਨ ਗੀਤ ਨਹੀਂ!",
     "featuredplaylists": "ਫੀਚਰਡ ਪਲੇਲਿਸਟਾਂ",
+    "quickpicks": "ਤਤਕਾਲ ਚੋਣ",
     "artistBookmarkRemoveAlert": "ਕਲਾਕਾਰ ਬੁੱਕਮਾਰਕ ਹਟਾਇਆ ਗਿਆ!",
     "operationFailed": "ਕਾਰਵਾਈ ਅਸਫਲ ਰਹੀ",
     "goToAlbum": "ਐਲਬਮ 'ਤੇ ਜਾਓ",
@@ -6533,7 +6558,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "ਸੰਗੀਤ ਚਲਾਉਣ ਦੌਰਾਨ ਸਕਰੀਨ ਚਾਲੂ ਰੱਖੋ",
     "keepScreenOnWhilePlayingDes": "ਜੇ ਇਹ ਚਾਲੂ ਕੀਤਾ ਗਿਆ ਹੈ, ਤਾਂ ਡਿਵਾਈਸ ਦੀ ਸਕ੍ਰੀਨ ਸੰਗੀਤ ਚਲਦੇ ਸਮੇਂ ਚਾਲੂ ਰਹੇਗੀ",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"pl" : {
     "home": "Główna",
     "songs": "Utwory",
@@ -6667,6 +6692,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "API URL do instancji Piped",
     "removeFromPlaylist": "Usuń z playlistę",
     "featuredplaylists": "Polecane playlisty",
+    "quickpicks": "Szybki wybór",
     "downloads": "Pobrania",
     "removeFromLib": "Usuń z Biblioteki Utworów",
     "downloadingFormat": "Pobierz format pliku",
@@ -6807,7 +6833,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Utrzymuj ekran włączony podczas odtwarzania",
     "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"pt" : {
     "renamePlaylist": "Renomear Playlist",
     "noLibPlaylist": "Você não tem uma biblioteca de playlist!",
@@ -6941,6 +6967,7 @@ Map<String, Map<String, String>> get keys => {
     "albumBookmarkAddAlert": "Álbum salvo!",
     "lyricsNotAvailable": "Letra não disponível!",
     "dontShowInfoAgain": "Não mostrar novamente",
+    "quickpicks": "Escolhas rápidas",
     "artistBookmarkRemoveAlert": "Marcador de artista removido!",
     "operationFailed": "Operação falhou",
     "songRemovedAlert": "Removida da/do",
@@ -7078,7 +7105,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Manter a tela ligada durante a reprodução",
     "keepScreenOnWhilePlayingDes": "Se ativado, a tela do dispositivo permanecerá ligada enquanto a música estiver sendo reproduzida",
     "foryou": "Para você",
-    "continueradio": "Continuar rádio",
+    "continueradio": "Continuar rádio"
 },"ro" : {
     "minutes": "minute",
     "results": "Rezultate",
@@ -7147,6 +7174,7 @@ Map<String, Map<String, String>> get keys => {
     "recentlyPlayed": "Redat recent",
     "add5Minutes": "Adaugă 5 minute",
     "languageDes": "Setați limba aplicației",
+    "quickpicks": "Alegeri rapide",
     "reArrangePlaylist": "Reordonează playlist",
     "removeMultiple": "Eliminați mai multe melodii",
     "createnAdd": "Crează și adăugă",
@@ -7325,7 +7353,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Păstrează ecranul aprins în timpul redării",
     "keepScreenOnWhilePlayingDes": "Dacă este activat, ecranul dispozitivului va rămâne aprins în timp ce muzica se redă",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"ru" : {
     "home": "Главная",
     "songs": "Песни",
@@ -7459,6 +7487,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "URL-адрес API сервера Piped",
     "removeFromPlaylist": "Удалить из плейлиста",
     "featuredplaylists": "Избранные плейлисты",
+    "quickpicks": "Быстрый выбор",
     "downloads": "Загрузки",
     "removeFromLib": "Удалить из библиотеки",
     "downloadingFormat": "Загрузка формата файла",
@@ -7604,7 +7633,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Держать экран включенным во время воспроизведения",
     "keepScreenOnWhilePlayingDes": "Если включено, экран устройства будет оставаться включенным во время воспроизведения музыки",
     "foryou": "Для вас",
-    "continueradio": "Продолжить радио",
+    "continueradio": "Продолжить радио"
 },"sk" : {
     "nomatch": "Nenašla sa žiadna zhoda pre",
     "subscribers": "Odberatelia",
@@ -7672,6 +7701,7 @@ Map<String, Map<String, String>> get keys => {
     "dark": "Tmavá",
     "light": "Svetlá",
     "languageDes": "Nastavte jazyk aplikácie",
+    "quickpicks": "Rýchle výbery",
     "trending": "Trendy",
     "topmusicvideos": "Najlepšie hudobné videá",
     "enableBottomNav": "Dolný navigačný panel",
@@ -7882,7 +7912,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Nechajte obrazovku zapnutú počas prehrávania",
     "keepScreenOnWhilePlayingDes": "Ak je povolené, obrazovka zariadenia zostane zapnutá počas prehrávania hudby",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"sr" : {
     "playlistCreatednsongAddedAlert": "Плејлиста је направљена и песма је додата!",
     "dismiss": "Одбаци",
@@ -8008,6 +8038,7 @@ Map<String, Map<String, String>> get keys => {
     "dontShowInfoAgain": "Не приказуј поново ове информације",
     "noOfflineSong": "Нема офлајн песама!",
     "featuredplaylists": "Истакнуте плејлисте",
+    "quickpicks": "Брзи избори",
     "artistBookmarkRemoveAlert": "Обележивач извођача је уклоњен!",
     "operationFailed": "Операција неуспела",
     "goToAlbum": "Иди на албум",
@@ -8154,7 +8185,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Одржавај екран укљученим током репродукције",
     "keepScreenOnWhilePlayingDes": "Ако је омогућено, екран уређаја ће остати укључен док се репродукује музика",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"sv" : {
     "settings": "Inställningar",
     "library": "Bibliotek",
@@ -8180,6 +8211,7 @@ Map<String, Map<String, String>> get keys => {
     "dynamic": "Dynamiskt",
     "systemDefault": "Systemstandard",
     "languageDes": "Byt språk",
+    "quickpicks": "Snabbval",
     "discover": "Upptäck",
     "trending": "Trendar nu",
     "restoreLastPlaybackSession": "Återställ den senaste sessionen",
@@ -8324,7 +8356,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Håll skärmen på under uppspelning",
     "keepScreenOnWhilePlayingDes": "Om aktiverat förblir enhetens skärm på medan musik spelas",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"ta" : {
     "CreateNewPlaylist": "புதிய பட்டியலை உருவாக்கு",
     "home": "முகப்பு",
@@ -8430,6 +8462,7 @@ Map<String, Map<String, String>> get keys => {
     "queuerearrangingDeniedMsg": "கலக்கு பயன்முறை இயக்கப்பட்டால் வரிசையை மறுசீரமைக்க முடியாது",
     "systemDefault": "கணினி இயல்புநிலை",
     "notaSongVideo": "ஒரு பாடல்/இசை-வீடியோ அல்ல!",
+    "quickpicks": "விரைவான தேர்வுகள்",
     "topmusicvideos": "சிறந்த இசை வீடியோக்கள்",
     "clearImgCacheAlert": "படங்கள் கேச் வெற்றிகரமாக அழிக்கப்பட்டது",
     "addToPlaylist": "பிளேலிச்ட்டில் சேர்க்கவும்",
@@ -8593,7 +8626,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "ப்ளே செய்யும்போது திரையை இயக்க 상태வை வைத்திரு",
     "keepScreenOnWhilePlayingDes": "செயல்படுத்தப்பட்டால், இசை ஓடும்போது சாதனத்தின் திரை பயங்கரவாக இருக்கும்",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"te" : {
     "selectSongs": "పాటలను ఎంచుకోండి",
     "openIn": "తెరవండి",
@@ -8690,6 +8723,7 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "సంజ్ఞ",
     "languageDes": "యాప్ భాషను సెట్ చేయండి",
     "setDiscoverContent": "డిస్కవర్ కంటెంట్‌ని సెట్ చేయండి",
+    "quickpicks": "త్వరిత ఎంపికలు",
     "discover": "కనుగొనండి",
     "trending": "ట్రెండింగ్‌లో ఉంది",
     "topmusicvideos": "అగ్ర సంగీత వీడియోలు",
@@ -8731,7 +8765,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "సంగీతం ప్లే చేస్తున్నప్పుడు స్క్రీన్ ఆన్ ఉంచండి",
     "keepScreenOnWhilePlayingDes": "సక్రియపెడితే, సంగీతం ప్లే చేస్తున్నప్పుడు పరికరం యొక్క స్క్రీన్ ఆన్ గా ఉంటుంది",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"tr" : {
     "renamePlaylist": "Çalma Listesini Yeniden Adlandır",
     "networkError1": "Oops ağ hatası!",
@@ -8857,6 +8891,7 @@ Map<String, Map<String, String>> get keys => {
     "removeFromPlaylist": "Çalma listesinden çıkar",
     "lyricsNotAvailable": "Şarkı sözleri mevcut değil!",
     "dontShowInfoAgain": "Bunu artık gösterme",
+    "quickpicks": "Hızlı Seçimler",
     "artistBookmarkRemoveAlert": "Sanatçı kitaplıktan kaldırıldı!",
     "operationFailed": "İşlem başarısız oldu",
     "goToAlbum": "Albüme git",
@@ -9010,7 +9045,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Müzik çalarken ekranı açık tut",
     "keepScreenOnWhilePlayingDes": "Etkinleştirildiğinde, müzik çalarken cihazın ekranı açık kalır",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"uk" : {
     "library": "Бібліотека",
     "libPlaylists": "Бібліотека списків відтворення",
@@ -9047,6 +9082,7 @@ Map<String, Map<String, String>> get keys => {
     "sleepTimer": "Таймер сну",
     "add5Minutes": "Додати 5 хвилин",
     "dark": "Темна",
+    "quickpicks": "Швидкий вибір",
     "basedOnLast": "На основі останньої взаємодії",
     "homeContentCount": "Кількість вмісту на головній сторінці",
     "homeContentCountDes": "Виберіть кількість перших елементів головному екрана. Чим менше, тим швидше завантажується",
@@ -9288,7 +9324,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Тримати екран увімкненим під час відтворення",
     "keepScreenOnWhilePlayingDes": "Якщо увімкнено, екран пристрою залишатиметься увімкненим під час відтворення музики",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"ur" : {
     "songs": "گانے",
     "playlists": "پلے لسٹ",
@@ -9303,8 +9339,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "پلے ہوتے وقت اسکرین کو روشن رکھیں",
     "keepScreenOnWhilePlayingDes": "اگر فعال ہو تو، جب موسیقی چل رہی ہوگی تو ڈیوائس کی اسکرین روشن رہے گی",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
-    "discover": "Discover",
+    "continueradio": "Continue Radio"
 },"vi" : {
     "home": "Trang chủ",
     "songs": "Bài hát",
@@ -9320,6 +9355,7 @@ Map<String, Map<String, String>> get keys => {
     "trending": "Xu hướng",
     "topmusicvideos": "Video âm nhạc hàng đầu",
     "setDiscoverContent": "Cài đặt nội dung khám phá",
+    "quickpicks": "Chọn nhanh",
     "skipSilenceDes": "Khoảng lặng sẽ bị bỏ qua khi chơi nhạc",
     "streamingQuality": "Chất lượng truyền tải",
     "cacheSongs": "Lưu nhạc vào bộ nhớ đệm",
@@ -9582,7 +9618,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "Giữ màn hình sáng khi phát nhạc",
     "keepScreenOnWhilePlayingDes": "Nếu được bật, màn hình thiết bị sẽ giữ sáng trong khi nhạc đang phát",
     "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "continueradio": "Continue Radio"
 },"zh-CN" : {
     "home": "首页",
     "songs": "歌曲",
@@ -9722,6 +9758,7 @@ Map<String, Map<String, String>> get keys => {
     "hintApiUrl": "Piped 实例的 API 地址",
     "downloadingFormatDes": "选择下载所用的文件格式。“Opus”会提供最佳音质",
     "removeFromPlaylist": "从播放列表移除",
+    "quickpicks": "歌曲快选",
     "sleepTimer": "睡眠定时器",
     "plain": "普通",
     "library": "音乐库",
@@ -9861,7 +9898,7 @@ Map<String, Map<String, String>> get keys => {
     "keepScreenOnWhilePlaying": "播放时保持屏幕常亮",
     "keepScreenOnWhilePlayingDes": "启用后，播放音乐时设备屏幕将保持点亮",
     "foryou": "为你推荐",
-    "continueradio": "继续播放电台",
+    "continueradio": "继续播放电台"
 },"zh-TW" : {
     "createnAdd": "建立並新增",
     "cachedOrOffline": "快取/離線",
@@ -10013,6 +10050,7 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "手勢",
     "languageDes": "設定應用程式語言",
     "setDiscoverContent": "設定探索頁面內容",
+    "quickpicks": "快速選擇",
     "discover": "探索",
     "trending": "熱門趨勢",
     "topmusicvideos": "熱門音樂影片",
@@ -10129,8 +10167,8 @@ Map<String, Map<String, String>> get keys => {
     "importLargeFileNote": "注意：匯入大型播放清單可能需要更長的時間",
     "keepScreenOnWhilePlaying": "播放時保持螢幕常亮",
     "keepScreenOnWhilePlayingDes": "啟用後，播放音樂時設備螢幕將保持亮起",
-    "foryou": "For You",
-    "continueradio": "Continue Radio",
+    "foryou": "為你推薦",
+    "continueradio": "繼續播放電台"
 },
  };
 }

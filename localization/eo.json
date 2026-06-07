@@ -157,5 +157,7 @@
     "errorOccuredAlert": "Iu eraro okazis!",
     "resetblacklistedplaylist": "Rekomencigi nigralistigitajn ludlistojn",
     "keepScreenOnWhilePlaying": "Konservi ekrano ŝaltita dum ludado",
-    "keepScreenOnWhilePlayingDes": "Se ebligita, la ekrano de la aparato restos ŝaltita dum muziko ludas"
+    "keepScreenOnWhilePlayingDes": "Se ebligita, la ekrano de la aparato restos ŝaltita dum muziko ludas",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

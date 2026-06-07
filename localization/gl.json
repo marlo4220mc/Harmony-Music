@@ -267,5 +267,7 @@
     "fileNotFound": "Arquivo non atopado",
     "importLargeFileNote": "Nota: As listaxes grandes poden tardar máis en importarse",
     "keepScreenOnWhilePlaying": "Manter a pantalla acesa mentres se reproduce",
-    "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música"
+    "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

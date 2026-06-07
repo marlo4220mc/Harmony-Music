@@ -270,5 +270,7 @@
     "playlistExportedMsg": "Lista odtwarzania została pomyślnie wyeksportowana do",
     "importError": "Błąd podczas importowania listy odtwarzania",
     "keepScreenOnWhilePlaying": "Utrzymuj ekran włączony podczas odtwarzania",
-    "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki"
+    "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

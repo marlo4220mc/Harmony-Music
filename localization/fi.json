@@ -151,5 +151,7 @@
     "dark": "Tumma",
     "systemDefault": "Järjestelmän oletus",
     "keepScreenOnWhilePlaying": "Pidä näyttö päällä toiston aikana",
-    "keepScreenOnWhilePlayingDes": "Jos käytössä, laitteen näyttö pysyy päällä musiikin toiston aikana"
+    "keepScreenOnWhilePlayingDes": "Jos käytössä, laitteen näyttö pysyy päällä musiikin toiston aikana",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

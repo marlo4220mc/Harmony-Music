@@ -239,5 +239,7 @@
     "playingfromPlaylist": "التشغيل من قائمة التشغيل",
     "playingfromSelection": "اللعب من المختارة",
     "keepScreenOnWhilePlaying": "ابقِ الشاشة مضاءة أثناء التشغيل",
-    "keepScreenOnWhilePlayingDes": "إذا تم التفعيل، ستبقى شاشة الجهاز مضاءة أثناء تشغيل الموسيقى"
+    "keepScreenOnWhilePlayingDes": "إذا تم التفعيل، ستبقى شاشة الجهاز مضاءة أثناء تشغيل الموسيقى",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

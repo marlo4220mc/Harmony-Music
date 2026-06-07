@@ -127,5 +127,7 @@
     "cacheHomeScreenData": "داده‌های محتوای صفحه اصلی را ذخیره کنید",
     "cacheHomeScreenDataDes": "ذخیره سازی داده‌های محتوای صفحه اصلی را فعال کنید، اگر این گزینه فعال باشد، صفحه اصلی فوراً بارگیری می‌شود",
     "keepScreenOnWhilePlaying": "روشن نگه داشتن صفحه هنگام پخش",
-    "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند"
+    "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }
