@@ -30,11 +30,17 @@ class HomeScreenController extends GetxController {
   @override
   onInit() {
     super.onInit();
+    _initAndLoadContent();
+  }
+
+  Future<void> _initAndLoadContent() async {
+    await _musicServices.init();
     loadContent();
   }
 
   Future<void> loadContent() async {
     final box = Hive.box("AppPrefs");
+    final currentContentType = box.get("discoverContentType") ?? "TR";
     final isCachedHomeScreenDataEnabled =
         box.get("cacheHomeScreenData") ?? true;
     if (isCachedHomeScreenDataEnabled) {
@@ -46,11 +52,16 @@ class HomeScreenController extends GetxController {
         final isStale = currTimeSecsDiff / 1000 > 3600 * 8;
         final cachedContentType =
             Hive.box("homeScreenData").get("cachedContentType") ?? "";
-        final currentContentType =
-            box.get("discoverContentType") ?? "TR";
         final contentTypeChanged = cachedContentType != currentContentType;
         if (isStale || contentTypeChanged) {
           loadContentFromNetwork(silent: true);
+        } else {
+          if (currentContentType == "BOLI") {
+            await _loadRecommendationSnapshots();
+            if (snapshotCards.isNotEmpty && snapshotCards.first.title == "foryou") {
+              snapshotCards.removeAt(0);
+            }
+          }
         }
       } else {
         loadContentFromNetwork();
@@ -120,8 +131,9 @@ if (!discoverContentTypes.contains(
         final index = homeContentListMap
             .indexWhere((element) => element['title'] == "Trending");
         if (index != -1 && index != 0) {
+          final con = homeContentListMap.removeAt(index);
           quickPicks.value = QuickPicks(
-              List<MediaItem>.from(homeContentListMap[index]["contents"]),
+              List<MediaItem>.from(con["contents"]),
               title: "Trending");
         } else if (index == -1) {
           List charts = await _musicServices.getCharts(contentType);

@@ -46,8 +46,15 @@ class MusicServices extends getx.GetxService {
   }
 
   final dio = Dio();
+  Future<void>? _initFuture;
 
   Future<void> init() async {
+    if (_initFuture != null) return _initFuture;
+    _initFuture = _doInit();
+    return _initFuture;
+  }
+
+  Future<void> _doInit() async {
     //check visitor id in data base, if not generate one , set lang code
     final date = DateTime.now();
     _context['context']['client']['clientVersion'] =
@@ -64,7 +71,7 @@ class MusicServices extends getx.GetxService {
   final visitorData =
       appPrefsBox.get("visitorId");
 
-  print(
+  printINFO(
     "VISITOR DATA: $visitorData",
   );
 
@@ -76,7 +83,7 @@ class MusicServices extends getx.GetxService {
 
   if (isInvalidVisitor) {
 
-    print(
+  printINFO(
       "INVALID visitorId -> deleting",
     );
 
@@ -92,7 +99,7 @@ class MusicServices extends getx.GetxService {
     _headers['X-Goog-Visitor-Id'] =
         visitorData['id'];
 
-    print('[HarmonySearch] init: loaded visitorId from DB=$visitorData[id]');
+  printINFO('[HarmonySearch] init: loaded visitorId from DB=$visitorData[id]');
 
     appPrefsBox.put(
       "visitorId",
@@ -110,7 +117,7 @@ class MusicServices extends getx.GetxService {
 
   } else {
 
-    print(
+  printINFO(
       "EXPIRED visitorId -> deleting",
     );
 
@@ -123,7 +130,7 @@ class MusicServices extends getx.GetxService {
     final visitorId = await genrateVisitorId();
     if (visitorId != null) {
       _headers['X-Goog-Visitor-Id'] = visitorId;
-      print('[HarmonySearch] init: generated new visitorId=$visitorId');
+  printINFO('[HarmonySearch] init: generated new visitorId=$visitorId');
       appPrefsBox.put("visitorId", {
         'id': visitorId,
         'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 2592000
@@ -133,7 +140,7 @@ class MusicServices extends getx.GetxService {
     // not able to generate in that case
     _headers['X-Goog-Visitor-Id'] =
         "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
-    print('[HarmonySearch] init: using HARDCODED fallback visitorId=${_headers['X-Goog-Visitor-Id']}');
+  printINFO('[HarmonySearch] init: using HARDCODED fallback visitorId=${_headers['X-Goog-Visitor-Id']}');
   }
 
   set hlCode(String code) {
@@ -144,20 +151,20 @@ class MusicServices extends getx.GetxService {
     try {
       final response =
           await dio.get(domain, options: Options(headers: _headers));
-      print('[HarmonySearch] genrateVisitorId: status=${response.statusCode} type=${response.data.runtimeType} len=${response.data.toString().length}');
+  printINFO('[HarmonySearch] genrateVisitorId: status=${response.statusCode} type=${response.data.runtimeType} len=${response.data.toString().length}');
       final reg = RegExp(r'ytcfg\.set\s*\(\s*({.+?})\s*\)\s*;');
       final matches = reg.firstMatch(response.data.toString());
       String? visitorId;
       if (matches != null) {
         final ytcfg = json.decode(matches.group(1).toString());
         visitorId = ytcfg['VISITOR_DATA']?.toString();
-        print('[HarmonySearch] genrateVisitorId: found in HTML: $visitorId');
+  printINFO('[HarmonySearch] genrateVisitorId: found in HTML: $visitorId');
       } else {
-        print('[HarmonySearch] genrateVisitorId: ytcfg pattern NOT FOUND in response');
+  printINFO('[HarmonySearch] genrateVisitorId: ytcfg pattern NOT FOUND in response');
       }
       return visitorId;
     } catch (e) {
-      print('[HarmonySearch] genrateVisitorId: FAILED with $e');
+  printINFO('[HarmonySearch] genrateVisitorId: FAILED with $e');
       return null;
     }
   }
@@ -170,8 +177,8 @@ class MusicServices extends getx.GetxService {
     }
     final url = "$baseUrl$action$fixedParms$additionalParams";
     final visitorId = _headers['X-Goog-Visitor-Id'] ?? '(not set)';
-    print('[HarmonySearch] REQ action=$action retry=$retryCount visitorId=$visitorId');
-    print('[HarmonySearch] REQ url=$url');
+  printINFO('[HarmonySearch] REQ action=$action retry=$retryCount visitorId=$visitorId');
+  printINFO('[HarmonySearch] REQ url=$url');
     try {
       final response =
           await dio.post(url,
@@ -182,12 +189,12 @@ class MusicServices extends getx.GetxService {
 
       final body = response.data.toString();
       final preview = body.length > 500 ? body.substring(0, 500) : body;
-      print('[HarmonySearch] RES action=$action status=${response.statusCode} dataType=${response.data.runtimeType} dataLen=${body.length}');
-      print('[HarmonySearch] RES body preview: $preview');
+  printINFO('[HarmonySearch] RES action=$action status=${response.statusCode} dataType=${response.data.runtimeType} dataLen=${body.length}');
+  printINFO('[HarmonySearch] RES body preview: $preview');
 
       if (response.statusCode == 200) {
         if (response.data is! Map || body.isEmpty) {
-          print('[HarmonySearch] RES action=$action EMPTY BODY or non-Map data');
+  printINFO('[HarmonySearch] RES action=$action EMPTY BODY or non-Map data');
           return _sendRequest(action, data,
               additionalParams: additionalParams, retryCount: retryCount + 1);
         }
@@ -201,19 +208,19 @@ class MusicServices extends getx.GetxService {
     } on DioException catch (e) {
       final rawBody = e.response?.data.toString() ?? '(no raw response)';
       final rawPreview = rawBody.length > 500 ? rawBody.substring(0, 500) : rawBody;
-      print('[HarmonySearch] ERR action=$action type=${e.type} msg=${e.message}');
-      print('[HarmonySearch] ERR response status=${e.response?.statusCode} body=$rawPreview');
+  printINFO('[HarmonySearch] ERR action=$action type=${e.type} msg=${e.message}');
+  printINFO('[HarmonySearch] ERR response status=${e.response?.statusCode} body=$rawPreview');
       printINFO("Error $e");
       // if JSON parse failed, retry with plain text to capture the body
       if (e.type == DioExceptionType.unknown && rawBody.isNotEmpty && rawBody != '(no raw response)') {
-        print('[HarmonySearch] ERR retrying to capture raw response');
+  printINFO('[HarmonySearch] ERR retrying to capture raw response');
         try {
           final plainResponse = await dio.post(url,
               options: Options(headers: _headers, responseType: ResponseType.plain),
               data: data);
-          print('[HarmonySearch] ERR plain response status=${plainResponse.statusCode} body=${plainResponse.data.toString().length > 500 ? plainResponse.data.toString().substring(0, 500) : plainResponse.data.toString()}');
+  printINFO('[HarmonySearch] ERR plain response status=${plainResponse.statusCode} body=${plainResponse.data.toString().length > 500 ? plainResponse.data.toString().substring(0, 500) : plainResponse.data.toString()}');
         } catch (e2) {
-          print('[HarmonySearch] ERR plain response also failed: $e2');
+  printINFO('[HarmonySearch] ERR plain response also failed: $e2');
         }
       }
       throw NetworkError();
@@ -704,15 +711,15 @@ final home = [...parseMixedContent(results)];
       data['params'] = filterParams ?? params;
     }
 
-    print('[HarmonySearch] search() sending request query="$query"');
+  printINFO('[HarmonySearch] search() sending request query="$query"');
     final rawResponse = await _sendRequest("search", data);
-    print('[HarmonySearch] search() got response status=${rawResponse.statusCode} dataType=${rawResponse.data.runtimeType}');
+  printINFO('[HarmonySearch] search() got response status=${rawResponse.statusCode} dataType=${rawResponse.data.runtimeType}');
     final response = rawResponse.data;
 
-    print('[HarmonySearch] response keys=${response.keys} hasContents=${response.containsKey('contents')}');
+  printINFO('[HarmonySearch] response keys=${response.keys} hasContents=${response.containsKey('contents')}');
 
     if (response is! Map || !response.containsKey('contents')) {
-      print('[HarmonySearch] EARLY RETURN: response not Map or missing contents');
+  printINFO('[HarmonySearch] EARLY RETURN: response not Map or missing contents');
       return searchResults;
     }
 
@@ -726,14 +733,14 @@ final home = [...parseMixedContent(results)];
       'tabRenderer',
       'content'
     ]);
-    print('[HarmonySearch] tabbedContents=${tabbedContents != null} (${tabbedContents.runtimeType})');
+  printINFO('[HarmonySearch] tabbedContents=${tabbedContents != null} (${tabbedContents.runtimeType})');
     if (tabbedContents != null) {
       results = tabbedContents;
     } else {
-      print('[HarmonySearch] using response[contents] fallback');
+  printINFO('[HarmonySearch] using response[contents] fallback');
       results = response['contents'];
     }
-    print('[HarmonySearch] results type=${results.runtimeType}');
+  printINFO('[HarmonySearch] results type=${results.runtimeType}');
 
     // Search Chips
     /*
@@ -779,13 +786,13 @@ final home = [...parseMixedContent(results)];
     /// End Search Chips
 
     results = nav(results, ['sectionListRenderer', 'contents']);
-    print('[HarmonySearch] sectionList contents type=${results.runtimeType}');
+  printINFO('[HarmonySearch] sectionList contents type=${results.runtimeType}');
 
     if (results is! List) {
-      print('[HarmonySearch] EARLY RETURN: results is not a List');
+  printINFO('[HarmonySearch] EARLY RETURN: results is not a List');
       return searchResults;
     }
-    print('[HarmonySearch] sectionList contents length=${results.length}');
+  printINFO('[HarmonySearch] sectionList contents length=${results.length}');
     String? type = filter?.substring(0, filter.length - 1).toLowerCase();
     printINFO('[HarmonySearch] processing ${results.length} shelves, type=$type filter=$filter');
 
@@ -820,7 +827,7 @@ final home = [...parseMixedContent(results)];
       final shelfTitle = nav(effectiveShelf, title_text) as String?;
       dynamic itemResults = nav(effectiveShelf, ['contents']);
       final itemCount = (itemResults is List) ? itemResults.length : -1;
-      print('[HarmonySearch] shelf[$shelfIdx] renderer=$rendererType title="$shelfTitle" items=$itemCount');
+  printINFO('[HarmonySearch] shelf[$shelfIdx] renderer=$rendererType title="$shelfTitle" items=$itemCount');
 
       if (rendererType == 'musicCardShelfRenderer' && filter == null) {
         final primaryItem = createCardPrimaryItem(effectiveShelf.cast<String, dynamic>());
