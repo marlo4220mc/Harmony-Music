@@ -336,7 +336,7 @@ if (!discoverContentTypes.contains(
             if (radioTracks != null && radioTracks.isNotEmpty) {
               cards.add(QuickPicks(
                 radioTracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
-                title: "continueRadio",
+                title: "continueradio",
               ));
             }
             break;
