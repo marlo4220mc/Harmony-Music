@@ -243,5 +243,7 @@
     "restoreAppData": "Restaurați datele aplicației",
     "id": "Id",
     "keepScreenOnWhilePlaying": "Păstrează ecranul aprins în timpul redării",
-    "keepScreenOnWhilePlayingDes": "Dacă este activat, ecranul dispozitivului va rămâne aprins în timp ce muzica se redă"
+    "keepScreenOnWhilePlayingDes": "Dacă este activat, ecranul dispozitivului va rămâne aprins în timp ce muzica se redă",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

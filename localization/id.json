@@ -265,5 +265,7 @@
     "invalidPlaylistFile": "struktur file daftar putar tidak valid",
     "importLargeFileNote": "Catatan: Daftar putar berukuran besar mungkin akan memakan waktu lama saat mengimpor",
     "keepScreenOnWhilePlaying": "Pertahankan layar tetap hidup saat memutar",
-    "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar"
+    "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

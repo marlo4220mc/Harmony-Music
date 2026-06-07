@@ -272,5 +272,7 @@
     "exportToYouTubeMusicSubtitle": "Järgnevaga lisatakse sinu esitusloend (<50 loo) praegusesse esitusjärjekorda. Peale Youtube Musicus avamist ära unusta seda lisamast esitusloendisse ja salvestamast",
     "linkCopied": "Link on kopeeritud lõikelauale",
     "keepScreenOnWhilePlaying": "Hoia ekraan mängimise ajal sees",
-    "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel"
+    "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

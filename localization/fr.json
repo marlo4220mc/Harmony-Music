@@ -277,5 +277,7 @@
     "exportToYouTubeMusicSubtitle": "Cela poussera votre playlist (titres < 50) vers la file d'attente actuelle. N'oubliez pas de l'ajouter à la playlist/de l'enregistrer après l'ouverture dans YouTube Music",
     "linkCopied": "Lien copié dans le presse-papiers",
     "keepScreenOnWhilePlaying": "Garder l'écran allumé pendant la lecture",
-    "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique"
+    "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique",
+    "foryou": "Pour vous",
+    "continueradio": "Continuer la radio"
 }

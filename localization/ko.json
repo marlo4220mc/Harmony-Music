@@ -179,5 +179,7 @@
     "artistBookmarkAddAlert": "아티스트를 즐겨찾기에 추가함!",
     "openIn": "열기",
     "keepScreenOnWhilePlaying": "재생 중 화면 켜짐 유지",
-    "keepScreenOnWhilePlayingDes": "활성화하면 음악 재생 중에 기기 화면이 켜진 상태로 유지됩니다"
+    "keepScreenOnWhilePlayingDes": "활성화하면 음악 재생 중에 기기 화면이 켜진 상태로 유지됩니다",
+    "foryou": "추천",
+    "continueradio": "라디오 계속하기"
 }

@@ -137,5 +137,7 @@
     "cancelTimerAlert": "Tidsavbrudd avbrutt",
     "minutes": "minutter",
     "keepScreenOnWhilePlaying": "Hold skjermen på under avspilling",
-    "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles"
+    "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }

@@ -24,5 +24,7 @@
     "selectSongs": "Odaberi pjesme",
     "selectAll": "Odaberi sve",
     "keepScreenOnWhilePlaying": "Ostavi zaslon uključen tijekom reprodukcije",
-    "keepScreenOnWhilePlayingDes": "Ako je omogućeno, zaslon uređaja ostat će uključen tijekom reprodukcije glazbe"
+    "keepScreenOnWhilePlayingDes": "Ako je omogućeno, zaslon uređaja ostat će uključen tijekom reprodukcije glazbe",
+    "foryou": "For You",
+    "continueradio": "Continue Radio"
 }
