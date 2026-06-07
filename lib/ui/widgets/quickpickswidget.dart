@@ -24,10 +24,10 @@ class QuickPicksWidget extends StatelessWidget {
         children: [
           Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                content.title.toLowerCase().removeAllWhitespace.tr,
-                style: Theme.of(context).textTheme.titleLarge,
-              )),
+                child: Text(
+                  content.title.toLowerCase().removeAllWhitespace.tr,
+                  style: Theme.of(context).textTheme.titleLarge,
+                )),
           const SizedBox(height: 10),
           Expanded(
             child: Scrollbar(
@@ -82,10 +82,11 @@ class QuickPicksWidget extends StatelessWidget {
                             maxLines: 1,
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
-                          onTap: () {
-                            playerController
-                                .pushSongToQueue(content.songList[item]);
-                          },
+                        onTap: () {
+                          playerController.pushSongToQueue(
+                              content.songList[item],
+                              fromContinueRadio: content.title == "continueradio");
+                        },
                           onLongPress: () {
                             showModalBottomSheet(
                               constraints: const BoxConstraints(maxWidth: 500),

@@ -27,7 +27,6 @@ class HomeScreenController extends GetxController
   final isHomeSreenOnTop = true.obs;
   final List<ScrollController> contentScrollControllers = [];
   bool reverseAnimationtransiton = false;
-  bool _isCheckingBoli = false;
 
   @override
   onInit() {
@@ -39,7 +38,6 @@ class HomeScreenController extends GetxController
   Future<void> _initAndLoadContent() async {
     await _musicServices.init();
     loadContent();
-    await _saveInitialSnapshotRef();
   }
 
   Future<void> loadContent() async {
@@ -293,56 +291,155 @@ if (!discoverContentTypes.contains(
         .put("homeScreenDataTime", DateTime.now().millisecondsSinceEpoch);
   }
 
+  Future<void> _migrateToV3IfNeeded() async {
+    final box = await Hive.openBox("RecommendationSnapshots");
+    final len = box.length;
+    if (len == 0) return;
+    final first = box.getAt(0);
+    if (first == null || first["repeatCount"] != null) return;
+
+    final Map<String, Map> merged = {};
+    for (int i = 0; i < len; i++) {
+      final entry = box.getAt(i);
+      if (entry == null) continue;
+      final sid = entry["sourceSongId"]?.toString() ?? "";
+      if (sid.isEmpty) continue;
+      final createdAt = (entry["createdAt"] ?? 0) as int;
+      final isRadio = entry["type"] == "radio";
+
+      if (merged.containsKey(sid)) {
+        final existing = merged[sid]!;
+        existing["repeatCount"] = (existing["repeatCount"] as int) + 1;
+        if (createdAt < (existing["firstSeenAt"] as int)) {
+          existing["firstSeenAt"] = createdAt;
+        }
+        if (createdAt > (existing["lastPlayedAt"] as int)) {
+          existing["lastPlayedAt"] = createdAt;
+          existing["tracks"] = entry["tracks"];
+          existing["playlistId"] = entry["playlistId"];
+        }
+        if (isRadio && createdAt > ((existing["lastRadioAt"] as int?) ?? 0)) {
+          existing["lastRadioAt"] = createdAt;
+        }
+      } else {
+        merged[sid] = {
+          "sourceSongId": sid,
+          "sourceSongTitle": entry["sourceSongTitle"] ?? "",
+          "playlistId": entry["playlistId"] ?? "",
+          "repeatCount": 1,
+          "firstSeenAt": createdAt,
+          "lastPlayedAt": createdAt,
+          if (isRadio) "lastRadioAt": createdAt,
+          "tracks": entry["tracks"],
+        };
+      }
+    }
+
+    await box.clear();
+    for (final entry in merged.values) {
+      await box.add(entry);
+    }
+  }
+
+  QuickPicks? _calculateDiscover(List<Map> entries, String? forYouId) {
+    if (entries.length < 2) return null;
+    final candidates =
+        entries.where((e) => e["sourceSongId"] != forYouId).toList();
+    if (candidates.isEmpty) return null;
+    Map? selected;
+    if (candidates.length < 3) {
+      selected = candidates[Random().nextInt(candidates.length)];
+    } else {
+      final scores = <double>[];
+      double totalScore = 0;
+      final now = DateTime.now().millisecondsSinceEpoch;
+      for (final e in candidates) {
+        final cnt = (e["repeatCount"] ?? 1) as int;
+        final lastPlayed = (e["lastPlayedAt"] ?? 0) as int;
+        final hours = ((now - lastPlayed) / 3600000).clamp(0, 720).toInt();
+        final double baseWeight = cnt == 1 ? 50 : (cnt <= 4 ? 35 : 20);
+        final recencyBonus = hours < 30 ? 30 - hours : 0;
+        final score = baseWeight + recencyBonus;
+        scores.add(score);
+        totalScore += score;
+      }
+      double pick = Random().nextDouble() * totalScore;
+      for (int i = 0; i < candidates.length; i++) {
+        pick -= scores[i];
+        if (pick <= 0) {
+          selected = candidates[i];
+          break;
+        }
+      }
+      selected ??= candidates.last;
+    }
+    final tracks = selected["tracks"] as List?;
+    if (tracks == null || tracks.isEmpty) return null;
+    return QuickPicks(
+      tracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+      title: "discover",
+    );
+  }
+
   Future<void> _loadRecommendationSnapshots() async {
     try {
       final box = await Hive.openBox("RecommendationSnapshots");
       final len = box.length;
       if (len == 0) return;
+
+      await _migrateToV3IfNeeded();
+      final newLen = box.length;
+      if (newLen == 0) return;
+
+      final List<Map> entries = [];
+      for (int i = 0; i < newLen; i++) {
+        final entry = box.getAt(i);
+        if (entry != null) entries.add(entry);
+      }
+
       final List<QuickPicks> cards = [];
 
-      // FOR YOU = most recent snapshot
-      try {
-        final latest = box.getAt(len - 1);
-        final latestTracks = latest["tracks"] as List?;
-        if (latestTracks != null) {
-          final deserialized = latestTracks
-              .map((e) => MediaItemBuilder.fromJson(e))
-              .toList();
-          cards.add(QuickPicks(deserialized, title: "foryou"));
+      // FOR YOU = entry with max lastPlayedAt
+      Map? forYouEntry;
+      for (final entry in entries) {
+        if (forYouEntry == null || (entry["lastPlayedAt"] ?? 0) > (forYouEntry["lastPlayedAt"] ?? 0)) {
+          forYouEntry = entry;
         }
-      } catch (_) {}
+      }
+      if (forYouEntry != null) {
+        final tracks = forYouEntry["tracks"] as List?;
+        if (tracks != null && tracks.isNotEmpty) {
+          cards.add(QuickPicks(
+            tracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+            title: "foryou",
+          ));
+        }
+      }
 
-      // DISCOVER = random snapshot != FOR YOU
-      try {
-        if (len >= 2) {
-          final discoverIdx = Random().nextInt(len - 1);
-          final discover = box.getAt(discoverIdx);
-          final discoverTracks = discover["tracks"] as List?;
-          if (discoverTracks != null && discoverTracks.isNotEmpty) {
-            cards.add(QuickPicks(
-              discoverTracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
-              title: "discover",
-            ));
-          }
-        }
-      } catch (_) {}
+      // DISCOVER = weighted selection
+      final discover = _calculateDiscover(entries, forYouEntry?["sourceSongId"]);
+      if (discover != null) {
+        cards.add(discover);
+      }
 
-      // CONTINUE RADIO = most recent radio snapshot
-      try {
-        for (int i = len - 1; i >= 0; i--) {
-          final entry = box.getAt(i);
-          if (entry["type"] == "radio") {
-            final radioTracks = entry["tracks"] as List?;
-            if (radioTracks != null && radioTracks.isNotEmpty) {
-              cards.add(QuickPicks(
-                radioTracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
-                title: "continueradio",
-              ));
-            }
-            break;
-          }
+      // CONTINUE RADIO = entry with max lastRadioAt
+      Map? radioEntry;
+      for (final entry in entries) {
+        final lastRadio = entry["lastRadioAt"] as int?;
+        if (lastRadio != null &&
+            (radioEntry == null || lastRadio > (radioEntry["lastRadioAt"] as int))) {
+          radioEntry = entry;
         }
-      } catch (_) {}
+      }
+      if (radioEntry != null) {
+        final tracks = radioEntry["tracks"] as List?;
+        if (tracks != null && tracks.isNotEmpty) {
+          cards.add(QuickPicks(
+            tracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+            title: "continueradio",
+          ));
+        }
+      }
 
       snapshotCards.value = cards;
     } catch (_) {}
@@ -450,7 +547,7 @@ if (!discoverContentTypes.contains(
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _checkForBoliUpdate();
+      _refreshBoliCards();
     }
   }
 
@@ -461,44 +558,40 @@ if (!discoverContentTypes.contains(
     }
   }
 
-  Future<void> _checkForBoliUpdate() async {
-    if (_isCheckingBoli) return;
-    _isCheckingBoli = true;
+  Future<void> refreshContinueRadio() async {
     try {
-      final contentType =
-          Hive.box("AppPrefs").get("discoverContentType") ?? "TR";
-      if (contentType != "BOLI") return;
       final box = await Hive.openBox("RecommendationSnapshots");
       final len = box.length;
       if (len == 0) return;
-      final latest = box.getAt(len - 1);
-      if (latest == null) return;
-      final latestCreatedAt = latest["createdAt"];
-      if (latestCreatedAt == null) return;
-      final lastSeen = Hive.box("AppPrefs").get("lastSnapshotCreatedAt");
-      if (latestCreatedAt.toString() == lastSeen?.toString()) return;
-      await Hive.box("AppPrefs")
-          .put("lastSnapshotCreatedAt", latestCreatedAt.toString());
-      await _refreshBoliCards();
-    } finally {
-      _isCheckingBoli = false;
-    }
+      Map? radioEntry;
+      for (int i = 0; i < len; i++) {
+        final entry = box.getAt(i);
+        if (entry == null) continue;
+        final lastRadio = entry["lastRadioAt"] as int?;
+        if (lastRadio != null &&
+            (radioEntry == null ||
+                lastRadio > (radioEntry["lastRadioAt"] as int))) {
+          radioEntry = entry;
+        }
+      }
+      if (radioEntry == null) return;
+      final tracks = radioEntry["tracks"] as List?;
+      if (tracks == null || tracks.isEmpty) return;
+      final card = QuickPicks(
+        tracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+        title: "continueradio",
+      );
+      final idx = snapshotCards.indexWhere((qp) => qp.title == "continueradio");
+      if (idx >= 0) {
+        snapshotCards[idx] = card;
+      } else {
+        snapshotCards.add(card);
+      }
+    } catch (_) {}
   }
 
-  Future<void> _saveInitialSnapshotRef() async {
-    final box = Hive.box("AppPrefs");
-    final contentType = box.get("discoverContentType") ?? "TR";
-    if (contentType != "BOLI") return;
-    final snapBox = await Hive.openBox("RecommendationSnapshots");
-    final len = snapBox.length;
-    if (len > 0) {
-      final latest = snapBox.getAt(len - 1);
-      if (latest == null) return;
-      final createdAt = latest["createdAt"];
-      if (createdAt != null) {
-        box.put("lastSnapshotCreatedAt", createdAt.toString());
-      }
-    }
+  Future<void> refreshAfterBootstrap() async {
+    await _refreshBoliCards();
   }
 
   @override
