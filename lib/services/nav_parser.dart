@@ -886,9 +886,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
   Map<String, dynamic> searchResult = {'category': category};
   String? videoType = nav(data,
       [...play_button, 'playNavigationEndpoint', ...navigation_video_type]);
-  if (videoType == null) {
-    videoType = nav(data, ['navigationEndpoint', ...navigation_video_type]);
-  }
+  videoType ??= nav(data, ['navigationEndpoint', ...navigation_video_type]);
 
   if (resultType == null) {
     // OpenTune approach: use pageType from browseEndpointContextMusicConfig
@@ -938,9 +936,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
             resultType = 'playlist';
           }
         }
-        if (resultType == null) {
-          resultType = 'song';
-        }
+        resultType ??= 'song';
       }
     }
   printINFO('[HarmonySearch] type=$resultType pageType=$pt browseId=${nav(data, navigation_browse_id)} videoType=$videoType');

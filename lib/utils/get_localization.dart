@@ -1868,7 +1868,6 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "Gesture",
     "languageDes": "Set App language",
     "setDiscoverContent": "Set discover content",
-    "discover": "Discover",
     "trending": "Trending",
     "topmusicvideos": "Top Music Videos",
     "basedOnLast": "Based on last interaction",

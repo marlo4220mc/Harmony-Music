@@ -13,7 +13,8 @@ import '/models/quick_picks.dart';
 import '/services/music_service.dart';
 import '../Settings/settings_screen_controller.dart';
 
-class HomeScreenController extends GetxController {
+class HomeScreenController extends GetxController
+    with WidgetsBindingObserver {
   final MusicServices _musicServices = Get.find<MusicServices>();
   final isContentFetched = false.obs;
   final tabIndex = 0.obs;
@@ -26,16 +27,19 @@ class HomeScreenController extends GetxController {
   final isHomeSreenOnTop = true.obs;
   final List<ScrollController> contentScrollControllers = [];
   bool reverseAnimationtransiton = false;
+  bool _isCheckingBoli = false;
 
   @override
   onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     _initAndLoadContent();
   }
 
   Future<void> _initAndLoadContent() async {
     await _musicServices.init();
     loadContent();
+    await _saveInitialSnapshotRef();
   }
 
   Future<void> loadContent() async {
@@ -57,10 +61,7 @@ class HomeScreenController extends GetxController {
           loadContentFromNetwork(silent: true);
         } else {
           if (currentContentType == "BOLI") {
-            await _loadRecommendationSnapshots();
-            if (snapshotCards.isNotEmpty && snapshotCards.first.title == "foryou") {
-              snapshotCards.removeAt(0);
-            }
+            await _refreshBoliCards();
           }
         }
       } else {
@@ -165,10 +166,7 @@ if (!discoverContentTypes.contains(
           }
         }
       } else if (contentType == "BOLI") {
-        await _loadRecommendationSnapshots();
-        if (snapshotCards.isNotEmpty) {
-          quickPicks.value = snapshotCards.removeAt(0);
-        }
+        await _refreshBoliCards();
       }
 
       if (contentType != "BOLI") {
@@ -274,9 +272,9 @@ if (!discoverContentTypes.contains(
             "Seems ${val == "TMV" ? "Top music videos" : "Trending songs"} currently not available!");
       }
     } else if (val == "BOLI") {
-      await _loadRecommendationSnapshots();
-      if (snapshotCards.isNotEmpty) {
-        quickPicks_ = snapshotCards.removeAt(0);
+      await _refreshBoliCards();
+      if (quickPicks.value.songList.isNotEmpty) {
+        quickPicks_ = quickPicks.value;
       }
     } else {
       snapshotCards.clear();
@@ -450,7 +448,62 @@ if (!discoverContentTypes.contains(
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkForBoliUpdate();
+    }
+  }
+
+  Future<void> _refreshBoliCards() async {
+    await _loadRecommendationSnapshots();
+    if (snapshotCards.isNotEmpty) {
+      quickPicks.value = snapshotCards.removeAt(0);
+    }
+  }
+
+  Future<void> _checkForBoliUpdate() async {
+    if (_isCheckingBoli) return;
+    _isCheckingBoli = true;
+    try {
+      final contentType =
+          Hive.box("AppPrefs").get("discoverContentType") ?? "TR";
+      if (contentType != "BOLI") return;
+      final box = await Hive.openBox("RecommendationSnapshots");
+      final len = box.length;
+      if (len == 0) return;
+      final latest = box.getAt(len - 1);
+      if (latest == null) return;
+      final latestCreatedAt = latest["createdAt"];
+      if (latestCreatedAt == null) return;
+      final lastSeen = Hive.box("AppPrefs").get("lastSnapshotCreatedAt");
+      if (latestCreatedAt.toString() == lastSeen?.toString()) return;
+      await Hive.box("AppPrefs")
+          .put("lastSnapshotCreatedAt", latestCreatedAt.toString());
+      await _refreshBoliCards();
+    } finally {
+      _isCheckingBoli = false;
+    }
+  }
+
+  Future<void> _saveInitialSnapshotRef() async {
+    final box = Hive.box("AppPrefs");
+    final contentType = box.get("discoverContentType") ?? "TR";
+    if (contentType != "BOLI") return;
+    final snapBox = await Hive.openBox("RecommendationSnapshots");
+    final len = snapBox.length;
+    if (len > 0) {
+      final latest = snapBox.getAt(len - 1);
+      if (latest == null) return;
+      final createdAt = latest["createdAt"];
+      if (createdAt != null) {
+        box.put("lastSnapshotCreatedAt", createdAt.toString());
+      }
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     disposeDetachedScrollControllers(disposeAll: true);
     super.dispose();
   }
