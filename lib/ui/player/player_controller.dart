@@ -337,90 +337,8 @@ class PlayerController extends GetxController
         final content = await _musicServices.getWatchPlaylist(
             videoId: mediaItem?.id ?? "", radio: radio, playlistId: playlistid);
         radioContinuationParam = content['additionalParamsForNext'];
-        try {
-          final recBox = await Hive.openBox("RecommendationSnapshots");
-          final now = DateTime.now().millisecondsSinceEpoch;
-          final sourceSongId = mediaItem?.id ?? "";
-          bool found = false;
-
-          for (int i = 0; i < recBox.length; i++) {
-            final entry = recBox.getAt(i);
-            if (entry["sourceSongId"] == sourceSongId) {
-              entry["repeatCount"] = (entry["repeatCount"] ?? 1) + 1;
-              entry["sourceSongTitle"] = mediaItem?.title ?? "";
-              entry["playlistId"] = content['playlistId'];
-              entry["tracks"] = (content['tracks'] as List)
-                  .map((e) => MediaItemBuilder.toJson(e as MediaItem))
-                  .toList();
-              if (radio) {
-                entry["lastRadioAt"] = now;
-              } else if (!fromContinueRadio) {
-                entry["lastPlayedAt"] = now;
-              }
-              await recBox.putAt(i, entry);
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            final lenBefore = recBox.length;
-            if (recBox.length >= 100) {
-              int worstIdx = 0;
-              int worstValue = 0x7FFFFFFFFFFFFFFF;
-              for (int i = 0; i < recBox.length; i++) {
-                final entry = recBox.getAt(i);
-                final cnt = (entry["repeatCount"] ?? 1) as int;
-                final lastPlayed = (entry["lastPlayedAt"] ?? entry["lastRadioAt"] ?? 0) as int;
-                final hours = ((now - lastPlayed) / 3600000).clamp(0, 720).toInt();
-                final val = cnt * cnt + (720 - hours);
-                if (val < worstValue) {
-                  worstValue = val;
-                  worstIdx = i;
-                }
-              }
-              await recBox.deleteAt(worstIdx);
-            }
-
-            final snapshot = {
-              "sourceSongId": sourceSongId,
-              "sourceSongTitle": mediaItem?.title ?? "",
-              "playlistId": content['playlistId'],
-              "repeatCount": 1,
-              "firstSeenAt": now,
-              if (radio) "lastRadioAt": now,
-              if (!radio && !fromContinueRadio) "lastPlayedAt": now,
-              "tracks": (content['tracks'] as List)
-                  .map((e) => MediaItemBuilder.toJson(e as MediaItem))
-                  .toList(),
-            };
-            await recBox.add(snapshot);
-
-            // Bootstrap: refresh full UH on first 1–2 snapshots
-            if (lenBefore <= 1) {
-              await recBox.close();
-              Get.find<HomeScreenController>().refreshAfterBootstrap();
-              return;
-            }
-          }
-
-          await recBox.close();
-          if (radio) {
-            Get.find<HomeScreenController>().refreshContinueRadio();
-          }
-        } catch (_) {}
-        await _audioHandler
-            .updateQueue(List<MediaItem>.from(content['tracks']));
-        if (isShuffleModeEnabled.isTrue) {
-          await _audioHandler.customAction("shuffleCmd", {"index": 0});
-        }
-
-        // added here to broadcast current mediaitem via Audio Service as list is updated
-        // if radio is started on current playing song
-        if (radio && (currentSong.value?.id == mediaItem?.id)) {
-          _audioHandler
-              .customAction("upadateMediaItemInAudioService", {"index": 0});
-        }
+        await _recordSnapshotToBox(mediaItem, content, radio: radio, fromContinueRadio: fromContinueRadio);
+        await _buildPlaybackQueue(content, radio, mediaItem);
       },
     ).then((value) async {
       if (playlistid != null) {
@@ -445,6 +363,107 @@ class PlayerController extends GetxController
         isShuffleModeEnabled.isFalse) {
       toggleQueueLoopMode();
     }
+  }
+
+  Future<void> _buildPlaybackQueue(Map content, bool radio, MediaItem? mediaItem) async {
+    await _audioHandler
+        .updateQueue(List<MediaItem>.from(content['tracks']));
+    if (isShuffleModeEnabled.isTrue) {
+      await _audioHandler.customAction("shuffleCmd", {"index": 0});
+    }
+    if (radio && (currentSong.value?.id == mediaItem?.id)) {
+      _audioHandler
+          .customAction("upadateMediaItemInAudioService", {"index": 0});
+    }
+  }
+
+  Future<bool> _recordSnapshotToBox(MediaItem? mediaItem, Map watchContent, {
+    bool radio = false,
+    bool fromContinueRadio = false,
+  }) async {
+    if (mediaItem == null) return false;
+    try {
+      final recBox = await Hive.openBox("RecommendationSnapshots");
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final sourceSongId = mediaItem.id;
+      bool found = false;
+
+      for (int i = 0; i < recBox.length; i++) {
+        final entry = recBox.getAt(i);
+        if (entry["sourceSongId"] == sourceSongId) {
+          entry["repeatCount"] = (entry["repeatCount"] ?? 1) + 1;
+          entry["sourceSongTitle"] = mediaItem.title;
+          entry["playlistId"] = watchContent['playlistId'];
+          entry["tracks"] = (watchContent['tracks'] as List)
+              .map((e) => MediaItemBuilder.toJson(e as MediaItem))
+              .toList();
+          if (radio) {
+            entry["lastRadioAt"] = now;
+          } else if (!fromContinueRadio) {
+            entry["lastPlayedAt"] = now;
+          }
+          await recBox.putAt(i, entry);
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        final lenBefore = recBox.length;
+        if (recBox.length >= 100) {
+          int worstIdx = 0;
+          int worstValue = 0x7FFFFFFFFFFFFFFF;
+          for (int i = 0; i < recBox.length; i++) {
+            final entry = recBox.getAt(i);
+            final cnt = (entry["repeatCount"] ?? 1) as int;
+            final lastPlayed = (entry["lastPlayedAt"] ?? entry["lastRadioAt"] ?? 0) as int;
+            final hours = ((now - lastPlayed) / 3600000).clamp(0, 720).toInt();
+            final val = cnt * cnt + (720 - hours);
+            if (val < worstValue) {
+              worstValue = val;
+              worstIdx = i;
+            }
+          }
+          await recBox.deleteAt(worstIdx);
+        }
+
+        final snapshot = {
+          "sourceSongId": sourceSongId,
+          "sourceSongTitle": mediaItem.title,
+          "playlistId": watchContent['playlistId'],
+          "repeatCount": 1,
+          "firstSeenAt": now,
+          if (radio) "lastRadioAt": now,
+          if (!radio && !fromContinueRadio) "lastPlayedAt": now,
+          "tracks": (watchContent['tracks'] as List)
+              .map((e) => MediaItemBuilder.toJson(e as MediaItem))
+              .toList(),
+        };
+        await recBox.add(snapshot);
+
+        // Bootstrap: refresh full UH on first 1–2 snapshots
+        if (lenBefore <= 1) {
+          await recBox.close();
+          Get.find<HomeScreenController>().refreshAfterBootstrap();
+          return true;
+        }
+      }
+
+      await recBox.close();
+      if (radio) {
+        Get.find<HomeScreenController>().refreshContinueRadio();
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> recordSnapshotFromSong(MediaItem song) async {
+    try {
+      final content = await _musicServices.getWatchPlaylist(videoId: song.id);
+      await _recordSnapshotToBox(song, content);
+    } catch (_) {}
   }
 
   Future<void> playPlayListSong(List<MediaItem> mediaItems, int index,

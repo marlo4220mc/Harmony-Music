@@ -343,8 +343,9 @@ if (!discoverContentTypes.contains(
 
   QuickPicks? _calculateDiscover(List<Map> entries, String? forYouId) {
     if (entries.length < 2) return null;
-    final candidates =
-        entries.where((e) => e["sourceSongId"] != forYouId).toList();
+    final candidates = entries
+        .where((e) => e["sourceSongId"] != forYouId && e["lastPlayedAt"] != null)
+        .toList();
     if (candidates.isEmpty) return null;
     Map? selected;
     if (candidates.length < 3) {
