@@ -397,13 +397,23 @@ final home = [...parseMixedContent(results)];
         'content',
         'playlistPanelRenderer'
       ]));
-      playlist = results['contents']
-          .map((content) => nav(content,
+      final queueContents = results['contents'];
+      if (queueContents is! List || queueContents.isEmpty) {
+        return {
+          'tracks': <MediaItem>[],
+          'playlistId': null,
+          'lyrics': lyricsBrowseId,
+          'related': relatedBrowseId,
+          'additionalParamsForNext': null,
+        };
+      }
+      playlist = queueContents
+          .map((c) => nav(c,
               ['playlistPanelVideoRenderer', ...navigation_playlist_id]))
           .where((e) => e != null)
           .toList()
           .first;
-      tracks.addAll(parseWatchPlaylist(results['contents']));
+      tracks.addAll(parseWatchPlaylist(queueContents));
     }
 
     dynamic additionalParamsForNext;
