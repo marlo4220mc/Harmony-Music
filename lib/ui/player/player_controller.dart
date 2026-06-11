@@ -16,7 +16,6 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../services/windows_audio_service.dart';
 import '../../utils/helper.dart';
 import '/models/media_Item_builder.dart';
-import '../screens/Home/home_screen_controller.dart';
 import '../widgets/sliding_up_panel.dart';
 import '/models/durationstate.dart';
 import '/services/music_service.dart';
@@ -337,6 +336,24 @@ class PlayerController extends GetxController
         final content = await _musicServices.getWatchPlaylist(
             videoId: mediaItem?.id ?? "", radio: radio, playlistId: playlistid);
         radioContinuationParam = content['additionalParamsForNext'];
+        try {
+          final recBox = await Hive.openBox("RecommendationSnapshots");
+          if (recBox.length >= 20) {
+            await recBox.deleteAt(0);
+          }
+          final snapshot = {
+            "createdAt": DateTime.now().millisecondsSinceEpoch,
+            "type": radio ? "radio" : "randomSelection",
+            "sourceSongId": mediaItem?.id ?? "",
+            "sourceSongTitle": mediaItem?.title ?? "",
+            "playlistId": content['playlistId'],
+            "tracks": (content['tracks'] as List)
+                .map((e) => MediaItemBuilder.toJson(e as MediaItem))
+                .toList(),
+          };
+          await recBox.add(snapshot);
+          await recBox.close();
+        } catch (_) {}
         await _audioHandler
             .updateQueue(List<MediaItem>.from(content['tracks']));
         if (isShuffleModeEnabled.isTrue) {
@@ -354,11 +371,6 @@ class PlayerController extends GetxController
       if (playlistid != null) {
         _playerPanelCheck();
         await _audioHandler.customAction("playByIndex", {"index": 0});
-      } else {
-        if (Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
-          Get.find<HomeScreenController>()
-              .changeDiscoverContent("BOLI", songId: mediaItem!.id);
-        }
       }
     });
 
@@ -388,14 +400,6 @@ class PlayerController extends GetxController
     /// update playing from value
     playinfrom.value =
         playfrom ?? PlaylingFrom(type: PlaylingFromType.SELECTION);
-
-    //for changing home content based on last interation
-    Future.delayed(const Duration(seconds: 3), () {
-      if (Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
-        Get.find<HomeScreenController>()
-            .changeDiscoverContent("BOLI", songId: mediaItems[index].id);
-      }
-    });
 
     _playerPanelCheck();
     await _audioHandler.updateQueue(mediaItems);

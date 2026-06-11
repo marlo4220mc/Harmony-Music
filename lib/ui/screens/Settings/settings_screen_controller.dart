@@ -151,6 +151,7 @@ class SettingsScreenController extends GetxController {
   void setContentNumber(int? no) {
     noOfHomeScreenContent.value = no!;
     setBox.put("noOfHomeScreenContent", no);
+    Get.find<HomeScreenController>().loadContentFromNetwork(silent: true);
   }
 
   void setStreamingQuality(dynamic val) {
@@ -257,7 +258,7 @@ class SettingsScreenController extends GetxController {
   void onContentChange(dynamic value) {
     setBox.put('discoverContentType', value);
     discoverContentType.value = value;
-    Get.find<HomeScreenController>().changeDiscoverContent(value);
+    Get.find<HomeScreenController>().loadContentFromNetwork(silent: true);
   }
 
   void toggleCachingSongsValue(bool value) {

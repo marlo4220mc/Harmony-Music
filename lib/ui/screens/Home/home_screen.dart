@@ -207,6 +207,16 @@ class Body extends StatelessWidget {
                                           homeScreenController.quickPicks.value,
                                       scrollController: scrollController);
                                 }),
+                                ...homeScreenController.snapshotCards.map((qp) {
+                                  final scrollController =
+                                      ScrollController();
+                                  homeScreenController
+                                      .contentScrollControllers
+                                      .add(scrollController);
+                                  return QuickPicksWidget(
+                                      content: qp,
+                                      scrollController: scrollController);
+                                }),
                                 ...getWidgetList(
                                     homeScreenController.middleContent,
                                     homeScreenController),

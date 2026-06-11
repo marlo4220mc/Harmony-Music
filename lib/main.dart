@@ -129,7 +129,7 @@ if (!appPrefs.containsKey(
     !validDiscoverTypes.contains(
         discoverType)) {
 
-  print(
+  printINFO(
     "Migrating discoverContentType -> TR",
   );
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,38 +13,56 @@ import '/models/quick_picks.dart';
 import '/services/music_service.dart';
 import '../Settings/settings_screen_controller.dart';
 
-class HomeScreenController extends GetxController {
+class HomeScreenController extends GetxController
+    with WidgetsBindingObserver {
   final MusicServices _musicServices = Get.find<MusicServices>();
   final isContentFetched = false.obs;
   final tabIndex = 0.obs;
   final networkError = false.obs;
   final quickPicks = QuickPicks([]).obs;
+  final snapshotCards = <QuickPicks>[].obs;
   final middleContent = [].obs;
   final fixedContent = [].obs;
   //isHomeScreenOnTop var only useful if bottom nav enabled
   final isHomeSreenOnTop = true.obs;
   final List<ScrollController> contentScrollControllers = [];
   bool reverseAnimationtransiton = false;
+  bool _isCheckingBoli = false;
 
   @override
   onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+    _initAndLoadContent();
+  }
+
+  Future<void> _initAndLoadContent() async {
+    await _musicServices.init();
     loadContent();
+    await _saveInitialSnapshotRef();
   }
 
   Future<void> loadContent() async {
     final box = Hive.box("AppPrefs");
+    final currentContentType = box.get("discoverContentType") ?? "TR";
     final isCachedHomeScreenDataEnabled =
         box.get("cacheHomeScreenData") ?? true;
     if (isCachedHomeScreenDataEnabled) {
       final loaded = await loadContentFromDb();
-
       if (loaded) {
         final currTimeSecsDiff = DateTime.now().millisecondsSinceEpoch -
             (box.get("homeScreenDataTime") ??
                 DateTime.now().millisecondsSinceEpoch);
-        if (currTimeSecsDiff / 1000 > 3600 * 8) {
+        final isStale = currTimeSecsDiff / 1000 > 3600 * 8;
+        final cachedContentType =
+            Hive.box("homeScreenData").get("cachedContentType") ?? "";
+        final contentTypeChanged = cachedContentType != currentContentType;
+        if (isStale || contentTypeChanged) {
           loadContentFromNetwork(silent: true);
+        } else {
+          if (currentContentType == "BOLI") {
+            await _refreshBoliCards();
+          }
         }
       } else {
         loadContentFromNetwork();
@@ -113,8 +132,9 @@ if (!discoverContentTypes.contains(
         final index = homeContentListMap
             .indexWhere((element) => element['title'] == "Trending");
         if (index != -1 && index != 0) {
+          final con = homeContentListMap.removeAt(index);
           quickPicks.value = QuickPicks(
-              List<MediaItem>.from(homeContentListMap[index]["contents"]),
+              List<MediaItem>.from(con["contents"]),
               title: "Trending");
         } else if (index == -1) {
           List charts = await _musicServices.getCharts(contentType);
@@ -146,20 +166,12 @@ if (!discoverContentTypes.contains(
           }
         }
       } else if (contentType == "BOLI") {
-        try {
-          final songId = box.get("recentSongId");
-          if (songId != null) {
-            final rel = (await _musicServices.getContentRelatedToSong(
-                songId, getContentHlCode()));
-            final con = rel.removeAt(0);
-            quickPicks.value =
-                QuickPicks(List<MediaItem>.from(con["contents"]));
-            middleContentTemp.addAll(rel);
-          }
-        } catch (e) {
-          printERROR(
-              "Seems Based on last interaction content currently not available!");
-        }
+        await _refreshBoliCards();
+      }
+
+      if (contentType != "BOLI") {
+        await _loadRecommendationSnapshots();
+        snapshotCards.clear();
       }
 
       if (quickPicks.value.songList.isEmpty) {
@@ -259,21 +271,17 @@ if (!discoverContentTypes.contains(
         printERROR(
             "Seems ${val == "TMV" ? "Top music videos" : "Trending songs"} currently not available!");
       }
-    } else {
-      songId ??= Hive.box("AppPrefs").get("recentSongId");
-      if (songId != null) {
-        try {
-          final value = await _musicServices.getContentRelatedToSong(
-              songId, getContentHlCode());
-          middleContent.value = _setContentList(value);
-          if (value.isNotEmpty && (value[0]['title']).contains("like")) {
-            quickPicks_ =
-                QuickPicks(List<MediaItem>.from(value[0]["contents"]));
-            Hive.box("AppPrefs").put("recentSongId", songId);
-          }
-          // ignore: empty_catches
-        } catch (e) {}
+    } else if (val == "BOLI") {
+      await _refreshBoliCards();
+      if (quickPicks.value.songList.isNotEmpty) {
+        quickPicks_ = quickPicks.value;
       }
+    } else {
+      snapshotCards.clear();
+      return;
+    }
+    if (val == "TMV" || val == 'TR') {
+      snapshotCards.clear();
     }
     if (quickPicks_ == null) return;
 
@@ -285,11 +293,59 @@ if (!discoverContentTypes.contains(
         .put("homeScreenDataTime", DateTime.now().millisecondsSinceEpoch);
   }
 
-  String getContentHlCode() {
-    const List<String> unsupportedLangIds = ["ia", "ga", "fj", "eo"];
-    final userLangId =
-        Get.find<SettingsScreenController>().currentAppLanguageCode.value;
-    return unsupportedLangIds.contains(userLangId) ? "en" : userLangId;
+  Future<void> _loadRecommendationSnapshots() async {
+    try {
+      final box = await Hive.openBox("RecommendationSnapshots");
+      final len = box.length;
+      if (len == 0) return;
+      final List<QuickPicks> cards = [];
+
+      // FOR YOU = most recent snapshot
+      try {
+        final latest = box.getAt(len - 1);
+        final latestTracks = latest["tracks"] as List?;
+        if (latestTracks != null) {
+          final deserialized = latestTracks
+              .map((e) => MediaItemBuilder.fromJson(e))
+              .toList();
+          cards.add(QuickPicks(deserialized, title: "foryou"));
+        }
+      } catch (_) {}
+
+      // DISCOVER = random snapshot != FOR YOU
+      try {
+        if (len >= 2) {
+          final discoverIdx = Random().nextInt(len - 1);
+          final discover = box.getAt(discoverIdx);
+          final discoverTracks = discover["tracks"] as List?;
+          if (discoverTracks != null && discoverTracks.isNotEmpty) {
+            cards.add(QuickPicks(
+              discoverTracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+              title: "discover",
+            ));
+          }
+        }
+      } catch (_) {}
+
+      // CONTINUE RADIO = most recent radio snapshot
+      try {
+        for (int i = len - 1; i >= 0; i--) {
+          final entry = box.getAt(i);
+          if (entry["type"] == "radio") {
+            final radioTracks = entry["tracks"] as List?;
+            if (radioTracks != null && radioTracks.isNotEmpty) {
+              cards.add(QuickPicks(
+                radioTracks.map((e) => MediaItemBuilder.fromJson(e)).toList(),
+                title: "continueRadio",
+              ));
+            }
+            break;
+          }
+        }
+      } catch (_) {}
+
+      snapshotCards.value = cards;
+    } catch (_) {}
   }
 
   void onSideBarTabSelected(int index) {
@@ -348,6 +404,8 @@ if (!discoverContentTypes.contains(
         "quickPicks": _getContentDataInJson(quickPicks.value.songList,
             isQuickPicks: true),
         "middleContent": _getContentDataInJson(middleContent.toList()),
+        "cachedContentType":
+            Hive.box("AppPrefs").get("discoverContentType") ?? "TR",
       });
       printINFO("Saved Homescreen data data");
     } else if (updateAll) {
@@ -356,7 +414,9 @@ if (!discoverContentTypes.contains(
         "quickPicks": _getContentDataInJson(quickPicks.value.songList,
             isQuickPicks: true),
         "middleContent": _getContentDataInJson(middleContent.toList()),
-        "fixedContent": _getContentDataInJson(fixedContent.toList())
+        "fixedContent": _getContentDataInJson(fixedContent.toList()),
+        "cachedContentType":
+            Hive.box("AppPrefs").get("discoverContentType") ?? "TR",
       });
       printINFO("Saved Homescreen data data");
     }
@@ -388,7 +448,62 @@ if (!discoverContentTypes.contains(
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkForBoliUpdate();
+    }
+  }
+
+  Future<void> _refreshBoliCards() async {
+    await _loadRecommendationSnapshots();
+    if (snapshotCards.isNotEmpty) {
+      quickPicks.value = snapshotCards.removeAt(0);
+    }
+  }
+
+  Future<void> _checkForBoliUpdate() async {
+    if (_isCheckingBoli) return;
+    _isCheckingBoli = true;
+    try {
+      final contentType =
+          Hive.box("AppPrefs").get("discoverContentType") ?? "TR";
+      if (contentType != "BOLI") return;
+      final box = await Hive.openBox("RecommendationSnapshots");
+      final len = box.length;
+      if (len == 0) return;
+      final latest = box.getAt(len - 1);
+      if (latest == null) return;
+      final latestCreatedAt = latest["createdAt"];
+      if (latestCreatedAt == null) return;
+      final lastSeen = Hive.box("AppPrefs").get("lastSnapshotCreatedAt");
+      if (latestCreatedAt.toString() == lastSeen?.toString()) return;
+      await Hive.box("AppPrefs")
+          .put("lastSnapshotCreatedAt", latestCreatedAt.toString());
+      await _refreshBoliCards();
+    } finally {
+      _isCheckingBoli = false;
+    }
+  }
+
+  Future<void> _saveInitialSnapshotRef() async {
+    final box = Hive.box("AppPrefs");
+    final contentType = box.get("discoverContentType") ?? "TR";
+    if (contentType != "BOLI") return;
+    final snapBox = await Hive.openBox("RecommendationSnapshots");
+    final len = snapBox.length;
+    if (len > 0) {
+      final latest = snapBox.getAt(len - 1);
+      if (latest == null) return;
+      final createdAt = latest["createdAt"];
+      if (createdAt != null) {
+        box.put("lastSnapshotCreatedAt", createdAt.toString());
+      }
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     disposeDetachedScrollControllers(disposeAll: true);
     super.dispose();
   }

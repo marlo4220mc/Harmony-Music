@@ -246,7 +246,9 @@ Map<String, Map<String, String>> get keys => {
     "playingfromPlaylist": "التشغيل من قائمة التشغيل",
     "playingfromSelection": "اللعب من المختارة",
     "keepScreenOnWhilePlaying": "ابقِ الشاشة مضاءة أثناء التشغيل",
-    "keepScreenOnWhilePlayingDes": "إذا تم التفعيل، ستبقى شاشة الجهاز مضاءة أثناء تشغيل الموسيقى"
+    "keepScreenOnWhilePlayingDes": "إذا تم التفعيل، ستبقى شاشة الجهاز مضاءة أثناء تشغيل الموسيقى",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"az" : {
     "playlistCreatednsongAddedAlert": "Pleylist yaradıldı və mahnı əlavə edildi!",
     "dismiss": "Ləğv et",
@@ -392,7 +394,9 @@ Map<String, Map<String, String>> get keys => {
     "sleepTimer": "Yuxu taymeri",
     "cancelTimerAlert": "Yuxu taymeri ləğv edildi",
     "keepScreenOnWhilePlaying": "Musiqi çalarkən ekranı açıq saxla",
-    "keepScreenOnWhilePlayingDes": "Aktivdirsə, cihazın ekranı musiqi çalarkən açıq qalacaq"
+    "keepScreenOnWhilePlayingDes": "Aktivdirsə, cihazın ekranı musiqi çalarkən açıq qalacaq",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"bg" : {
     "playlistCreatednsongAddedAlert": "Създаден плейлист и добавена песен!",
     "dismiss": "Отхвърли",
@@ -669,7 +673,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Това ще премести плейлиста ви (песни < 50) в текущата опашка, не забравяйте да добавите към плейлиста/запазите след отваряне в YtMusic",
     "linkCopied": "Връзката е копирана в клипборда",
     "keepScreenOnWhilePlaying": "Запази екрана включен по време на възпроизвеждане",
-    "keepScreenOnWhilePlayingDes": "Ако е активирано, екранът на устройството ще остане включен по време на възпроизвеждане на музика"
+    "keepScreenOnWhilePlayingDes": "Ако е активирано, екранът на устройството ще остане включен по време на възпроизвеждане на музика",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"bn" : {
     "songs": "গানগুলো",
     "home": "হোম",
@@ -936,7 +942,9 @@ Map<String, Map<String, String>> get keys => {
     "playlistExportedMsg": "প্লেলিস্ট সফলভাবে রপ্তানি করা হয়েছে",
     "importPlaylistDesc": "আমদানি করার জন্য পূর্বে রপ্তানি করা একটি প্লেলিস্ট JSON ফাইল নির্বাচন করুন",
     "keepScreenOnWhilePlaying": "প্লে থাকাকালীন স্ক্রীন জ্বলন্ত রাখুন",
-    "keepScreenOnWhilePlayingDes": "সক্রিয় করলে, গান চলাকালীন ডিভাইসের স্ক্রীন জ্বলে থাকবে"
+    "keepScreenOnWhilePlayingDes": "সক্রিয় করলে, গান চলাকালীন ডিভাইসের স্ক্রীন জ্বলে থাকবে",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"ca" : {
     "libPlaylists": "Col · lecció de llistes de reproducció",
     "libArtists": "Biblioteca d'Artistes",
@@ -1205,7 +1213,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "No s'ha trobat el fitxer",
     "importLargeFileNote": "Nota: La importació de llistes de reproducció grosses pot trigar més estona",
     "keepScreenOnWhilePlaying": "Mantenir la pantalla encesa mentre es reprodueix",
-    "keepScreenOnWhilePlayingDes": "Si està activat, la pantalla del dispositiu romandrà encesa mentre es reprodueix música"
+    "keepScreenOnWhilePlayingDes": "Si està activat, la pantalla del dispositiu romandrà encesa mentre es reprodueix música",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"cs" : {
     "home": "Domů",
     "playlistCreatednsongAddedAlert": "Playlist vytvořen a skladba přidána!",
@@ -1482,7 +1492,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Vaše playlisty (s méně než 50 skladbami) se přesunou do aktuální fronty. Nezapomeňte je po otevření v YtMusic přidat do playlistu/uložit",
     "linkCopied": "Odkaz zkopírován do schránky",
     "keepScreenOnWhilePlaying": "Nechat obrazovku zapnutou během přehrávání",
-    "keepScreenOnWhilePlayingDes": "Pokud je povoleno, obrazovka zařízení zůstane během přehrávání hudby zapnutá"
+    "keepScreenOnWhilePlayingDes": "Pokud je povoleno, obrazovka zařízení zůstane během přehrávání hudby zapnutá",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"de" : {
     "home": "Start",
     "songs": "Lieder",
@@ -1754,7 +1766,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "Datei nicht gefunden",
     "importLargeFileNote": "Hinweis: Der Import großer Playlisten kann länger dauern",
     "keepScreenOnWhilePlaying": "Bildschirm während der Wiedergabe eingeschaltet lassen",
-    "keepScreenOnWhilePlayingDes": "Wenn aktiviert, bleibt der Bildschirm des Geräts beim Musikhören eingeschaltet"
+    "keepScreenOnWhilePlayingDes": "Wenn aktiviert, bleibt der Bildschirm des Geräts beim Musikhören eingeschaltet",
+    "foryou": "Für dich",
+    "continueRadio": "Radio fortsetzen",
 },"en" : {
     "home": "Home",
     "songs": "Songs",
@@ -1816,6 +1830,9 @@ Map<String, Map<String, String>> get keys => {
     "playingfromArtist": "PLAYING FROM ARTIST",
     "randomSelection": "Random Selection",
     "randomRadio": "Random Radio",
+    "foryou": "For You",
+    "discover": "Discover",
+    "continueRadio": "Continue Radio",
     "playnextMsg": "Upcoming",
     "shuffleQueue": "Shuffle Queue",
     "queueLoop": "Queue loop",
@@ -1851,7 +1868,6 @@ Map<String, Map<String, String>> get keys => {
     "gesture": "Gesture",
     "languageDes": "Set App language",
     "setDiscoverContent": "Set discover content",
-    "discover": "Discover",
     "trending": "Trending",
     "topmusicvideos": "Top Music Videos",
     "basedOnLast": "Based on last interaction",
@@ -2187,7 +2203,9 @@ Map<String, Map<String, String>> get keys => {
     "errorOccuredAlert": "Iu eraro okazis!",
     "resetblacklistedplaylist": "Rekomencigi nigralistigitajn ludlistojn",
     "keepScreenOnWhilePlaying": "Konservi ekrano ŝaltita dum ludado",
-    "keepScreenOnWhilePlayingDes": "Se ebligita, la ekrano de la aparato restos ŝaltita dum muziko ludas"
+    "keepScreenOnWhilePlayingDes": "Se ebligita, la ekrano de la aparato restos ŝaltita dum muziko ludas",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"es" : {
     "playlistCreatednsongAddedAlert": "¡Lista de reproducción creada y la canción fue añadida!",
     "dismiss": "Descartar",
@@ -2463,7 +2481,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusic": "Exportar a YouTube Music",
     "linkCopied": "Link copiado al portapapeles",
     "keepScreenOnWhilePlaying": "Mantener la pantalla encendida mientras se reproduce",
-    "keepScreenOnWhilePlayingDes": "Si está activado, la pantalla del dispositivo permanecerá despierta mientras se reproduce música"
+    "keepScreenOnWhilePlayingDes": "Si está activado, la pantalla del dispositivo permanecerá despierta mientras se reproduce música",
+    "foryou": "Para ti",
+    "continueRadio": "Continuar la radio",
 },"et" : {
     "home": "Avaleht",
     "songs": "Lood",
@@ -2737,7 +2757,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Järgnevaga lisatakse sinu esitusloend (<50 loo) praegusesse esitusjärjekorda. Peale Youtube Musicus avamist ära unusta seda lisamast esitusloendisse ja salvestamast",
     "linkCopied": "Link on kopeeritud lõikelauale",
     "keepScreenOnWhilePlaying": "Hoia ekraan mängimise ajal sees",
-    "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel"
+    "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"eu" : {
     "songs": "Abestiak",
     "playlists": "Erreprodukzio-zerrendak",
@@ -3011,7 +3033,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Zure erreprodukzio-zerrenda (50 abesti baino gutxiago) uneko ilaran jarriko du, ez ahaztu erreprodukzio-zerrendan gehitzea/gordetzea YtMusic-en ireki ondoren",
     "linkCopied": "Esteka arbelean kopiatu da",
     "keepScreenOnWhilePlaying": "Mantendu pantaila piztuta erreproduzitzen den bitartean",
-    "keepScreenOnWhilePlayingDes": "Gaituta badago, gailuaren pantaila piztuta egongo da musika erreproduzitzen den bitartean"
+    "keepScreenOnWhilePlayingDes": "Gaituta badago, gailuaren pantaila piztuta egongo da musika erreproduzitzen den bitartean",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"fa" : {
     "home": "خانه",
     "songs": "آهنگ",
@@ -3140,7 +3164,9 @@ Map<String, Map<String, String>> get keys => {
     "cacheHomeScreenData": "داده‌های محتوای صفحه اصلی را ذخیره کنید",
     "cacheHomeScreenDataDes": "ذخیره سازی داده‌های محتوای صفحه اصلی را فعال کنید، اگر این گزینه فعال باشد، صفحه اصلی فوراً بارگیری می‌شود",
     "keepScreenOnWhilePlaying": "روشن نگه داشتن صفحه هنگام پخش",
-    "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند"
+    "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"fi" : {
     "libAlbums": "Kirjaston albumit",
     "libArtists": "Kirjaston artistit",
@@ -3506,10 +3532,15 @@ Map<String, Map<String, String>> get keys => {
     "unLink": "Huwag ikawing",
     "allFieldsReqMsg": "Kailagan may laman ang mga field",
     "keepScreenOnWhilePlaying": "Panatilihing naka-on ang screen habang tumutugtog",
-    "keepScreenOnWhilePlayingDes": "Kung naka-enable, mananatiling naka-on ang screen ng device habang tumutugtog ang musika"
+    "keepScreenOnWhilePlayingDes": "Kung naka-enable, mananatiling naka-on ang screen ng device habang tumutugtog ang musika",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"fj" : {
     "keepScreenOnWhilePlaying": "Taura na mata ni bula tiko ni qito",
-    "keepScreenOnWhilePlayingDes": "Kevaka e vakayagataki, na mata ni iyaya ena bula tiko ni qito na sere"
+    "keepScreenOnWhilePlayingDes": "Kevaka e vakayagataki, na mata ni iyaya ena bula tiko ni qito na sere",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"fr" : {
     "libPlaylists": "Playlists de la Bibliothèque",
     "networkError1": "Oups erreur réseau !",
@@ -3788,10 +3819,15 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Cela poussera votre playlist (titres < 50) vers la file d'attente actuelle. N'oubliez pas de l'ajouter à la playlist/de l'enregistrer après l'ouverture dans YouTube Music",
     "linkCopied": "Lien copié dans le presse-papiers",
     "keepScreenOnWhilePlaying": "Garder l'écran allumé pendant la lecture",
-    "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique"
+    "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique",
+    "foryou": "Pour vous",
+    "continueRadio": "Continuer la radio",
 },"ga" : {
     "keepScreenOnWhilePlaying": "Coinnigh an scáileán ar siúl agus tú ag seinm",
-    "keepScreenOnWhilePlayingDes": "Má tá sé faoi ghníomh, coinníodhfaidh scáileán an ghléis ar siúl agus tú ag seinm ceoil"
+    "keepScreenOnWhilePlayingDes": "Má tá sé faoi ghníomh, coinníodhfaidh scáileán an ghléis ar siúl agus tú ag seinm ceoil",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"gl" : {
     "singles": "Sinxelos",
     "artists": "Artistas",
@@ -4060,7 +4096,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "Arquivo non atopado",
     "importLargeFileNote": "Nota: As listaxes grandes poden tardar máis en importarse",
     "keepScreenOnWhilePlaying": "Manter a pantalla acesa mentres se reproduce",
-    "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música"
+    "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"hi" : {
     "themeMode": "थीम मोड",
     "playlists": "प्लेलिस्ट",
@@ -4297,7 +4335,9 @@ Map<String, Map<String, String>> get keys => {
     "autoDownFavSongDes": "पसंदीदा में जोड़े जाने पर पसंदीदा गाने स्वचालित रूप से डाउनलोड करें",
     "songInfo": "गाने की जानकारी",
     "keepScreenOnWhilePlaying": "प्ले के दौरान स्क्रीन जला रखें",
-    "keepScreenOnWhilePlayingDes": "यदि सक्षम है, तो संगीत चलाते समय डिवाइस की स्क्रीन जगी रहेगी"
+    "keepScreenOnWhilePlayingDes": "यदि सक्षम है, तो संगीत चलाते समय डिवाइस की स्क्रीन जगी रहेगी",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"hr" : {
     "home": "Početna",
     "songs": "Pjesme",
@@ -4324,7 +4364,10 @@ Map<String, Map<String, String>> get keys => {
     "selectSongs": "Odaberi pjesme",
     "selectAll": "Odaberi sve",
     "keepScreenOnWhilePlaying": "Ostavi zaslon uključen tijekom reprodukcije",
-    "keepScreenOnWhilePlayingDes": "Ako je omogućeno, zaslon uređaja ostat će uključen tijekom reprodukcije glazbe"
+    "keepScreenOnWhilePlayingDes": "Ako je omogućeno, zaslon uređaja ostat će uključen tijekom reprodukcije glazbe",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"hu" : {
     "artists": "Előadók",
     "settings": "Beállítások",
@@ -4427,7 +4470,9 @@ Map<String, Map<String, String>> get keys => {
     "selectAll": "Összes kiválasztása",
     "upNext": "Következő",
     "keepScreenOnWhilePlaying": "A képernyő bekapcsolva tartása lejátszás közben",
-    "keepScreenOnWhilePlayingDes": "Ha engedélyezve van, a készülék képernyője lejátszás közben bekapcsolva marad"
+    "keepScreenOnWhilePlayingDes": "Ha engedélyezve van, a készülék képernyője lejátszás közben bekapcsolva marad",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"ia" : {
     "playlistCreatednsongAddedAlert": "Lista de reproduction create e canto addite!",
     "dismiss": "Dimitter",
@@ -4651,7 +4696,9 @@ Map<String, Map<String, String>> get keys => {
     "playerUiDes": "Selige le interfacie de usator del reproductor",
     "enableSlidableAction": "Activar le acciones glissabile",
     "keepScreenOnWhilePlaying": "Mantenir le schermo accendite durante le reproduction",
-    "keepScreenOnWhilePlayingDes": "Si activate, le schermo del dispositivo remanera accendite durante le reproduction del musica"
+    "keepScreenOnWhilePlayingDes": "Si activate, le schermo del dispositivo remanera accendite durante le reproduction del musica",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"id" : {
     "playlistCreatednsongAddedAlert": "Daftar Putar dibuat & lagu ditambahkan!",
     "dismiss": "Biarkan",
@@ -4918,7 +4965,9 @@ Map<String, Map<String, String>> get keys => {
     "invalidPlaylistFile": "struktur file daftar putar tidak valid",
     "importLargeFileNote": "Catatan: Daftar putar berukuran besar mungkin akan memakan waktu lama saat mengimpor",
     "keepScreenOnWhilePlaying": "Pertahankan layar tetap hidup saat memutar",
-    "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar"
+    "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"it" : {
     "home": "Pagina principale",
     "songs": "Canzoni",
@@ -5192,7 +5241,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Sposterà la tua playlist (meno di 50 brani) nella coda corrente, non dimenticare di aggiungere alla playlist/salvare dopo aver aperto YTMusic",
     "linkCopied": "Link copiato negli appunti",
     "keepScreenOnWhilePlaying": "Mantieni lo schermo attivo durante la riproduzione",
-    "keepScreenOnWhilePlayingDes": "Se abilitato, lo schermo del dispositivo resterà acceso mentre la musica viene riprodotta"
+    "keepScreenOnWhilePlayingDes": "Se abilitato, lo schermo del dispositivo resterà acceso mentre la musica viene riprodotta",
+    "foryou": "Per te",
+    "continueRadio": "Continua la radio",
 },"ja" : {
     "playlistCreatednsongAddedAlert": "再生リストを作成し曲を追加しました！",
     "dismiss": "非表示",
@@ -5468,7 +5519,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "再生リスト (曲数50未満) を現在のキューに追加する。YtMusicで開いたら、再生リストへの追加/保存を忘れないよう",
     "linkCopied": "リンクをクリップボードにコピー",
     "keepScreenOnWhilePlaying": "再生中は画面を点灯したままにする",
-    "keepScreenOnWhilePlayingDes": "有効にすると、音楽再生中はデバイスの画面が点灯したままになります"
+    "keepScreenOnWhilePlayingDes": "有効にすると、音楽再生中はデバイスの画面が点灯したままになります",
+    "foryou": "あなたに",
+    "continueRadio": "ラジオを続ける",
 },"km" : {
     "home": "ដើម",
     "singles": "ទោល",
@@ -5480,7 +5533,10 @@ Map<String, Map<String, String>> get keys => {
     "settings": "ការកំណត់",
     "library": "បណ្ណាល័យ",
     "keepScreenOnWhilePlaying": "រក្សាអេក្រង់ឲ្យភ្លឺនៅពេលកំពុងចាក់",
-    "keepScreenOnWhilePlayingDes": "ប្រសិនបើបានបើក អេក្រង់ឧបករណ៍នឹងនៅភ្លឺខណៈពេលចាក់តន្ត្រី"
+    "keepScreenOnWhilePlayingDes": "ប្រសិនបើបានបើក អេក្រង់ឧបករណ៍នឹងនៅភ្លឺខណៈពេលចាក់តន្ត្រី",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"kn" : {
     "libArtists": "",
     "artists": "ಕಲಾವಿದರು",
@@ -5500,7 +5556,10 @@ Map<String, Map<String, String>> get keys => {
     "enqueueAll": "ಎಲ್ಲವನ್ನೂ ಎನ್ಕ್ಯೂ ಮಾಡಿ",
     "renamePlaylist": "ಪ್ಲೇಪಟ್ಟಿಯನ್ನು ಮರುಹೆಸರಿಸಿ",
     "keepScreenOnWhilePlaying": "ಪ್ಲೇ ಮಾಡುವಾಗ ಪರದೆ ಜಾಗೃತವಾಗಿರಲಿ",
-    "keepScreenOnWhilePlayingDes": "ಸಕ್ರಿಯಗೊಳಿಸಿದರೆ, ಸಂಗೀತ ಪ್ಲೇ ಮಾಡುವಾಗ ಸಾಧನದ ಪರದೆ ಜಾಗೃತವಾಗಿರುತ್ತದೆ"
+    "keepScreenOnWhilePlayingDes": "ಸಕ್ರಿಯಗೊಳಿಸಿದರೆ, ಸಂಗೀತ ಪ್ಲೇ ಮಾಡುವಾಗ ಸಾಧನದ ಪರದೆ ಜಾಗೃತವಾಗಿರುತ್ತದೆ",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"ko" : {
     "deleteDownloadData": "다운로드에서 제거",
     "trending": "인기 급상승",
@@ -5681,10 +5740,15 @@ Map<String, Map<String, String>> get keys => {
     "artistBookmarkAddAlert": "아티스트를 즐겨찾기에 추가함!",
     "openIn": "열기",
     "keepScreenOnWhilePlaying": "재생 중 화면 켜짐 유지",
-    "keepScreenOnWhilePlayingDes": "활성화하면 음악 재생 중에 기기 화면이 켜진 상태로 유지됩니다"
+    "keepScreenOnWhilePlayingDes": "활성화하면 음악 재생 중에 기기 화면이 켜진 상태로 유지됩니다",
+    "foryou": "추천",
+    "continueRadio": "라디오 계속하기",
 },"ku" : {
     "keepScreenOnWhilePlaying": "Li demê lîstinê ekranê li ser bimîne",
-    "keepScreenOnWhilePlayingDes": "Heke çalak be, ekranê amûrê di dema lîstinê de dikare bimîne"
+    "keepScreenOnWhilePlayingDes": "Heke çalak be, ekranê amûrê di dema lîstinê de dikare bimîne",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"ml" : {
     "songs": "പാട്ടുകൾ",
     "home": "ഹോംപേജ്",
@@ -5748,7 +5812,10 @@ Map<String, Map<String, String>> get keys => {
     "randomRadio": "റാൻഡം റേഡിയോ",
     "playnextMsg": "വെരാൻ പോകുന്നത്",
     "keepScreenOnWhilePlaying": "പ്ലേ ചെയ്യുമ്പോൾ സ്‌ക്രീൻ ഓണായിരിക്കട്ടെ",
-    "keepScreenOnWhilePlayingDes": "സജ്ജമാക്കിയാൽ, സംഗീതം പ്ലേ ചെയ്യുമ്പോൾ ഡിവൈസിന്റെ സ്‌ക്രീൻ ഓണായിരിക്കുമെന്ന് ഉറപ്പ ചെയ്യും"
+    "keepScreenOnWhilePlayingDes": "സജ്ജമാക്കിയാൽ, സംഗീതം പ്ലേ ചെയ്യുമ്പോൾ ഡിവൈസിന്റെ സ്‌ക്രീൻ ഓണായിരിക്കുമെന്ന് ഉറപ്പ ചെയ്യും",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"my" : {
     "keepScreenOnWhilePlaying": "တေးဂီတဖျော်ဖြေနချိန် မျက်နှာပြင် မပွင့်ထားပါနဲ့",
     "keepScreenOnWhilePlayingDes": "ဖွင့်ထားပါက အသံလှည့်နေစဉ် စက်ပစ္စည်း၏ မျက်နှာပြင် မအိပ်ဘဲ ပွင့်နေပါလိမ့်မည်"
@@ -5890,7 +5957,9 @@ Map<String, Map<String, String>> get keys => {
     "cancelTimerAlert": "Tidsavbrudd avbrutt",
     "minutes": "minutter",
     "keepScreenOnWhilePlaying": "Hold skjermen på under avspilling",
-    "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles"
+    "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"nl" : {
     "enqueueAll": "Alles in wachtrij",
     "removePlaylist": "Verwijder Afspeellijst",
@@ -6078,7 +6147,9 @@ Map<String, Map<String, String>> get keys => {
     "selectSongs": "Selecteer liedjes",
     "selectAll": "Selecteer alle",
     "keepScreenOnWhilePlaying": "Scherm aanhouden tijdens afspelen",
-    "keepScreenOnWhilePlayingDes": "Indien ingeschakeld blijft het scherm van het apparaat ingeschakeld tijdens het afspelen van muziek"
+    "keepScreenOnWhilePlayingDes": "Indien ingeschakeld blijft het scherm van het apparaat ingeschakeld tijdens het afspelen van muziek",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"or" : {
     "playlistCreatednsongAddedAlert": "ପ୍ଲେଲିଷ୍ଟ ସୃଷ୍ଟି ଏବଂ ଗୀତ ଯୋଡା ଯାଇଛି!",
     "dismiss": "ବରଖାସ୍ତ",
@@ -6223,7 +6294,9 @@ Map<String, Map<String, String>> get keys => {
     "removeMultiple": "ଏକାଧିକ ଗୀତ କାଢ଼ି ଦିଅନ୍ତୁ",
     "album": "ସଂଗ୍ରହପୁସ୍ତକ",
     "keepScreenOnWhilePlaying": "ସଙ୍ଗୀତ ଚଲିଥିବାବେଳେ ସ୍କ୍ରୀନ୍ ଚାଲୁ ରଖନ୍ତୁ",
-    "keepScreenOnWhilePlayingDes": "ସକ୍ରିୟ କଲେ, ସଙ୍ଗୀତ ଚଳାଉଥିବା ସମୟରେ ଡିଭାଇସର ସ୍କ୍ରୀନ୍ ଜାଗ୍ରତ ରହିବ"
+    "keepScreenOnWhilePlayingDes": "ସକ୍ରିୟ କଲେ, ସଙ୍ଗୀତ ଚଳାଉଥିବା ସମୟରେ ଡିଭାଇସର ସ୍କ୍ରୀନ୍ ଜାଗ୍ରତ ରହିବ",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"pa" : {
     "playlistCreatednsongAddedAlert": "ਪਲੇਲਿਸਟ ਬਣਾਈ ਗਈ ਅਤੇ ਗੀਤ ਜੋੜਿਆ ਗਿਆ!",
     "dismiss": "ਖਾਰਿਜ ਕਰੋ",
@@ -6458,7 +6531,9 @@ Map<String, Map<String, String>> get keys => {
     "loudnessNormalization": "ਉੱਚੀ ਆਵਾਜ਼ ਦਾ ਸਧਾਰਣਕਰਨ",
     "loudnessNormalizationDes": "ਸਾਰੇ ਗੀਤਾਂ (ਪ੍ਰਯੋਗਾਤਮਕ) ਲਈ ਉੱਚੀ ਆਵਾਜ਼ ਦਾ ਇੱਕੋ ਪੱਧਰ ਸੈੱਟ ਕਰਦਾ ਹੈ (ਪਿਛਲੇ ਸੰਸਕਰਣ (< v1.10.0) 'ਤੇ ਡਾਊਨਲੋਡ ਕੀਤੇ ਗੀਤਾਂ 'ਤੇ ਕੰਮ ਨਹੀਂ ਕਰੇਗਾ)",
     "keepScreenOnWhilePlaying": "ਸੰਗੀਤ ਚਲਾਉਣ ਦੌਰਾਨ ਸਕਰੀਨ ਚਾਲੂ ਰੱਖੋ",
-    "keepScreenOnWhilePlayingDes": "ਜੇ ਇਹ ਚਾਲੂ ਕੀਤਾ ਗਿਆ ਹੈ, ਤਾਂ ਡਿਵਾਈਸ ਦੀ ਸਕ੍ਰੀਨ ਸੰਗੀਤ ਚਲਦੇ ਸਮੇਂ ਚਾਲੂ ਰਹੇਗੀ"
+    "keepScreenOnWhilePlayingDes": "ਜੇ ਇਹ ਚਾਲੂ ਕੀਤਾ ਗਿਆ ਹੈ, ਤਾਂ ਡਿਵਾਈਸ ਦੀ ਸਕ੍ਰੀਨ ਸੰਗੀਤ ਚਲਦੇ ਸਮੇਂ ਚਾਲੂ ਰਹੇਗੀ",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"pl" : {
     "home": "Główna",
     "songs": "Utwory",
@@ -6730,7 +6805,9 @@ Map<String, Map<String, String>> get keys => {
     "playlistExportedMsg": "Lista odtwarzania została pomyślnie wyeksportowana do",
     "importError": "Błąd podczas importowania listy odtwarzania",
     "keepScreenOnWhilePlaying": "Utrzymuj ekran włączony podczas odtwarzania",
-    "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki"
+    "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"pt" : {
     "renamePlaylist": "Renomear Playlist",
     "noLibPlaylist": "Você não tem uma biblioteca de playlist!",
@@ -6999,7 +7076,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "Arquivo não encontrado",
     "importLargeFileNote": "Nota: Playlists longas pode levar mais tempo para importar",
     "keepScreenOnWhilePlaying": "Manter a tela ligada durante a reprodução",
-    "keepScreenOnWhilePlayingDes": "Se ativado, a tela do dispositivo permanecerá ligada enquanto a música estiver sendo reproduzida"
+    "keepScreenOnWhilePlayingDes": "Se ativado, a tela do dispositivo permanecerá ligada enquanto a música estiver sendo reproduzida",
+    "foryou": "Para você",
+    "continueRadio": "Continuar rádio",
 },"ro" : {
     "minutes": "minute",
     "results": "Rezultate",
@@ -7244,7 +7323,9 @@ Map<String, Map<String, String>> get keys => {
     "restoreAppData": "Restaurați datele aplicației",
     "id": "Id",
     "keepScreenOnWhilePlaying": "Păstrează ecranul aprins în timpul redării",
-    "keepScreenOnWhilePlayingDes": "Dacă este activat, ecranul dispozitivului va rămâne aprins în timp ce muzica se redă"
+    "keepScreenOnWhilePlayingDes": "Dacă este activat, ecranul dispozitivului va rămâne aprins în timp ce muzica se redă",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"ru" : {
     "home": "Главная",
     "songs": "Песни",
@@ -7521,7 +7602,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Ваш плейлист (до 50 песен) будет добавлен в текущую очередь. Не забудьте добавить его в плейлист или сохранить после открытия в YtMusic",
     "linkCopied": "Ссылка скопирована в буфер обмена",
     "keepScreenOnWhilePlaying": "Держать экран включенным во время воспроизведения",
-    "keepScreenOnWhilePlayingDes": "Если включено, экран устройства будет оставаться включенным во время воспроизведения музыки"
+    "keepScreenOnWhilePlayingDes": "Если включено, экран устройства будет оставаться включенным во время воспроизведения музыки",
+    "foryou": "Для вас",
+    "continueRadio": "Продолжить радио",
 },"sk" : {
     "nomatch": "Nenašla sa žiadna zhoda pre",
     "subscribers": "Odberatelia",
@@ -7797,7 +7880,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Do aktuálneho zoznamu skladieb sa presunie váš playlist (menej ako 50 skladieb). Nezabudnite ho pridať do playlistu/uložiť po otvorení v YtMusic",
     "linkCopied": "Odkaz skopírovaný do schránky",
     "keepScreenOnWhilePlaying": "Nechajte obrazovku zapnutú počas prehrávania",
-    "keepScreenOnWhilePlayingDes": "Ak je povolené, obrazovka zariadenia zostane zapnutá počas prehrávania hudby"
+    "keepScreenOnWhilePlayingDes": "Ak je povolené, obrazovka zariadenia zostane zapnutá počas prehrávania hudby",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"sr" : {
     "playlistCreatednsongAddedAlert": "Плејлиста је направљена и песма је додата!",
     "dismiss": "Одбаци",
@@ -8067,7 +8152,9 @@ Map<String, Map<String, String>> get keys => {
     "importPlaylistDesc": "Изаберите претходно извезен JSON фајл плејлисте за увоз",
     "importErrorFormat": "Неважећи формат фајла",
     "keepScreenOnWhilePlaying": "Одржавај екран укљученим током репродукције",
-    "keepScreenOnWhilePlayingDes": "Ако је омогућено, екран уређаја ће остати укључен док се репродукује музика"
+    "keepScreenOnWhilePlayingDes": "Ако је омогућено, екран уређаја ће остати укључен док се репродукује музика",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"sv" : {
     "settings": "Inställningar",
     "library": "Bibliotek",
@@ -8235,7 +8322,9 @@ Map<String, Map<String, String>> get keys => {
     "blacklistPlstResetAlert": "Återställning lyckades!",
     "goToDownloadPage": "Klicka här för att gå till nedladdningssidan",
     "keepScreenOnWhilePlaying": "Håll skärmen på under uppspelning",
-    "keepScreenOnWhilePlayingDes": "Om aktiverat förblir enhetens skärm på medan musik spelas"
+    "keepScreenOnWhilePlayingDes": "Om aktiverat förblir enhetens skärm på medan musik spelas",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"ta" : {
     "CreateNewPlaylist": "புதிய பட்டியலை உருவாக்கு",
     "home": "முகப்பு",
@@ -8502,7 +8591,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "கோப்பு கிடைக்கவில்லை",
     "importLargeFileNote": "குறிப்பு: பெரிய பிளேலிஸ்ட்களை இறக்குமதி செய்ய அதிக நேரம் ஆகலாம்",
     "keepScreenOnWhilePlaying": "ப்ளே செய்யும்போது திரையை இயக்க 상태வை வைத்திரு",
-    "keepScreenOnWhilePlayingDes": "செயல்படுத்தப்பட்டால், இசை ஓடும்போது சாதனத்தின் திரை பயங்கரவாக இருக்கும்"
+    "keepScreenOnWhilePlayingDes": "செயல்படுத்தப்பட்டால், இசை ஓடும்போது சாதனத்தின் திரை பயங்கரவாக இருக்கும்",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"te" : {
     "selectSongs": "పాటలను ఎంచుకోండి",
     "openIn": "తెరవండి",
@@ -8638,7 +8729,9 @@ Map<String, Map<String, String>> get keys => {
     "export": "ఎగుమతి",
     "exporting": "ఎగుమతి చేస్తున్నది...",
     "keepScreenOnWhilePlaying": "సంగీతం ప్లే చేస్తున్నప్పుడు స్క్రీన్ ఆన్ ఉంచండి",
-    "keepScreenOnWhilePlayingDes": "సక్రియపెడితే, సంగీతం ప్లే చేస్తున్నప్పుడు పరికరం యొక్క స్క్రీన్ ఆన్ గా ఉంటుంది"
+    "keepScreenOnWhilePlayingDes": "సక్రియపెడితే, సంగీతం ప్లే చేస్తున్నప్పుడు పరికరం యొక్క స్క్రీన్ ఆన్ గా ఉంటుంది",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"tr" : {
     "renamePlaylist": "Çalma Listesini Yeniden Adlandır",
     "networkError1": "Oops ağ hatası!",
@@ -8915,7 +9008,9 @@ Map<String, Map<String, String>> get keys => {
     "exportPlaylistCsvSubtitle": "Buraya aktarılamaz",
     "exportToYouTubeMusicSubtitle": "Çalma listenizdeki 50 şarkıdan kısa olanları mevcut kuyruğa ekleyecek, YtMusic'te açtıktan sonra çalma listesine eklemeyi/kaydetmeyi unutmayın",
     "keepScreenOnWhilePlaying": "Müzik çalarken ekranı açık tut",
-    "keepScreenOnWhilePlayingDes": "Etkinleştirildiğinde, müzik çalarken cihazın ekranı açık kalır"
+    "keepScreenOnWhilePlayingDes": "Etkinleştirildiğinde, müzik çalarken cihazın ekranı açık kalır",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"uk" : {
     "library": "Бібліотека",
     "libPlaylists": "Бібліотека списків відтворення",
@@ -9191,7 +9286,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Це додасть ваш список відтворення (пісень < 50) до поточної черги, не забудьте додати до плейлиста / зберегти після відкриття в YtMusic",
     "linkCopied": "Посилання скопійовано в буфер обміну",
     "keepScreenOnWhilePlaying": "Тримати екран увімкненим під час відтворення",
-    "keepScreenOnWhilePlayingDes": "Якщо увімкнено, екран пристрою залишатиметься увімкненим під час відтворення музики"
+    "keepScreenOnWhilePlayingDes": "Якщо увімкнено, екран пристрою залишатиметься увімкненим під час відтворення музики",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"ur" : {
     "songs": "گانے",
     "playlists": "پلے لسٹ",
@@ -9204,7 +9301,10 @@ Map<String, Map<String, String>> get keys => {
     "library": "لائبریری",
     "libSongs": "لائبریری کے گانے",
     "keepScreenOnWhilePlaying": "پلے ہوتے وقت اسکرین کو روشن رکھیں",
-    "keepScreenOnWhilePlayingDes": "اگر فعال ہو تو، جب موسیقی چل رہی ہوگی تو ڈیوائس کی اسکرین روشن رہے گی"
+    "keepScreenOnWhilePlayingDes": "اگر فعال ہو تو، جب موسیقی چل رہی ہوگی تو ڈیوائس کی اسکرین روشن رہے گی",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
+    "discover": "Discover",
 },"vi" : {
     "home": "Trang chủ",
     "songs": "Bài hát",
@@ -9480,7 +9580,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "Nó sẽ đẩy danh sách phát của bạn (bài hát < 50) vào hàng đợi hiện tại, đừng quên thêm vào danh sách phát/lưu sau khi mở trong YtMusic",
     "linkCopied": "Liên kết đã được sao chép vào bảng tạm",
     "keepScreenOnWhilePlaying": "Giữ màn hình sáng khi phát nhạc",
-    "keepScreenOnWhilePlayingDes": "Nếu được bật, màn hình thiết bị sẽ giữ sáng trong khi nhạc đang phát"
+    "keepScreenOnWhilePlayingDes": "Nếu được bật, màn hình thiết bị sẽ giữ sáng trong khi nhạc đang phát",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },"zh-CN" : {
     "home": "首页",
     "songs": "歌曲",
@@ -9757,7 +9859,9 @@ Map<String, Map<String, String>> get keys => {
     "exportToYouTubeMusicSubtitle": "这将推送你的播放列表（小于50首）到当前播放队列，请不要忘记在打开YtMusic后将曲目添加到歌单或保存",
     "exportPlaylistCsvSubtitle": "无法在此处导入",
     "keepScreenOnWhilePlaying": "播放时保持屏幕常亮",
-    "keepScreenOnWhilePlayingDes": "启用后，播放音乐时设备屏幕将保持点亮"
+    "keepScreenOnWhilePlayingDes": "启用后，播放音乐时设备屏幕将保持点亮",
+    "foryou": "为你推荐",
+    "continueRadio": "继续播放电台",
 },"zh-TW" : {
     "createnAdd": "建立並新增",
     "cachedOrOffline": "快取/離線",
@@ -10024,7 +10128,9 @@ Map<String, Map<String, String>> get keys => {
     "fileNotFound": "無法找到檔案",
     "importLargeFileNote": "注意：匯入大型播放清單可能需要更長的時間",
     "keepScreenOnWhilePlaying": "播放時保持螢幕常亮",
-    "keepScreenOnWhilePlayingDes": "啟用後，播放音樂時設備螢幕將保持亮起"
+    "keepScreenOnWhilePlayingDes": "啟用後，播放音樂時設備螢幕將保持亮起",
+    "foryou": "For You",
+    "continueRadio": "Continue Radio",
 },
  };
 }
