@@ -26,6 +26,7 @@ class PlayerController extends GetxController
   final _audioHandler = Get.find<AudioHandler>();
   final _musicServices = Get.find<MusicServices>();
   final currentQueue = <MediaItem>[].obs;
+  bool _recoveryAttemptedThisSession = false;
 
   final playerPaneOpacity = (1.0).obs;
   final isPlayerpanelTopVisible = true.obs;
@@ -334,10 +335,35 @@ class PlayerController extends GetxController
     Future.delayed(
       Duration.zero,
       () async {
-        final content = await _musicServices.getWatchPlaylist(
-            videoId: mediaItem?.id ?? "", radio: radio, playlistId: playlistid);
+        Map<String, dynamic>? content;
+        try {
+          content = await _musicServices.getWatchPlaylist(
+              videoId: mediaItem?.id ?? "", radio: radio, playlistId: playlistid);
+        } catch (_) {}
+
+        if (content == null || (content['tracks'] as List?)?.isEmpty == true) {
+          if (!_recoveryAttemptedThisSession) {
+            _recoveryAttemptedThisSession = true;
+            printINFO(
+                '[Harmony] Recovery: regenerating visitorId after failed watch');
+            await _musicServices.regenerateVisitorId();
+            try {
+              final retryContent = await _musicServices.getWatchPlaylist(
+                  videoId: mediaItem?.id ?? "",
+                  radio: radio,
+                  playlistId: playlistid);
+              if ((retryContent['tracks'] as List?)?.isNotEmpty == true) {
+                await _recordSnapshotToBox(mediaItem, retryContent,
+                    radio: radio, fromContinueRadio: fromContinueRadio);
+              }
+            } catch (_) {}
+          }
+          return;
+        }
+
         radioContinuationParam = content['additionalParamsForNext'];
-        await _recordSnapshotToBox(mediaItem, content, radio: radio, fromContinueRadio: fromContinueRadio);
+        await _recordSnapshotToBox(mediaItem, content,
+            radio: radio, fromContinueRadio: fromContinueRadio);
         await _buildPlaybackQueue(content, radio, mediaItem);
       },
     ).then((value) async {
