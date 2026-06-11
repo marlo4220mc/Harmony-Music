@@ -169,6 +169,23 @@ class MusicServices extends getx.GetxService {
     }
   }
 
+  Future<void> regenerateVisitorId() async {
+    final appPrefsBox = Hive.box('AppPrefs');
+    await appPrefsBox.delete('visitorId');
+    _headers.remove('X-Goog-Visitor-Id');
+    final visitorId = await genrateVisitorId();
+    if (visitorId != null) {
+      _headers['X-Goog-Visitor-Id'] = visitorId;
+      appPrefsBox.put("visitorId", {
+        'id': visitorId,
+        'exp': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 2592000
+      });
+    } else {
+      _headers['X-Goog-Visitor-Id'] =
+          "CgttN24wcmd5UzNSWSi2lvq2BjIKCgJKUBIEGgAgYQ%3D%3D";
+    }
+  }
+
   Future<Response> _sendRequest(String action, Map<dynamic, dynamic> data,
       {additionalParams = "", int retryCount = 0}) async {
     if (retryCount > 3) {
