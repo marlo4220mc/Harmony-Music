@@ -711,6 +711,8 @@ class PlaylistScreen extends StatelessWidget {
                                     const EdgeInsets.only(left: 20.0, right: 5),
                                 child: SongListTile(
                                   onTap: () {
+                                    final tappedSong = playlistController
+                                        .songList[index - 3];
                                     playerController.playPlayListSong(
                                         List<MediaItem>.from(
                                             playlistController.songList),
@@ -728,6 +730,11 @@ class PlaylistScreen extends StatelessWidget {
                                         openedFromHomeApiPlaylist:
                                             playlistController
                                                 .openedFromHomeApiPlaylist);
+                                    if (playlistController
+                                        .openedFromHomeApiPlaylist) {
+                                      playerController
+                                          .recordSnapshotFromSong(tappedSong);
+                                    }
                                   },
                                   song: playlistController.songList[index - 3],
                                   isPlaylistOrAlbum: true,
