@@ -4,7 +4,10 @@ on: workflow_dispatch
 jobs:
 
   build-windows-exe:
-    runs-on: windows-latest
+    # Flutter 3.24.x is not compatible with the VS2026 toolchain currently
+    # shipped during the windows-latest migration.
+    # Pin to windows-2022 until Flutter officially supports VS2026.
+    runs-on: windows-2022
     
     steps:
       - uses: actions/checkout@v3
