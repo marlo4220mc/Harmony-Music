@@ -18,7 +18,7 @@ class SyncedLyricsService {
     try {
       final response = (await Dio().get(url)).data;
       if (response["syncedLyrics"] != null) {
-        printINFO("Synced Available");
+        
         final lyricsData = {
           "synced": response["syncedLyrics"],
           "plainLyrics": response["plainLyrics"]

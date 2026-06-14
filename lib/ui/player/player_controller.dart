@@ -197,11 +197,11 @@ class PlayerController extends GetxController
 
     try {
       if (enable) {
-        printINFO("Enabling wakelock");
+        
         WakelockPlus.enable();
         _wakelockActive = true;
       } else {
-        printINFO("Disabling wakelock");
+        
         WakelockPlus.disable();
         _wakelockActive = false;
       }
@@ -258,7 +258,7 @@ class PlayerController extends GetxController
         val.buffered = oldState.buffered;
       });
       if (mediaItem != null) {
-        printINFO(mediaItem.title);
+        
         _newSongFlag = true;
         isCurrentSongBuffered.value = false;
         currentSong.value = mediaItem;
@@ -345,8 +345,7 @@ class PlayerController extends GetxController
         if (content == null || (content['tracks'] as List?)?.isEmpty == true) {
           if (!_recoveryAttemptedThisSession) {
             _recoveryAttemptedThisSession = true;
-            printINFO(
-                '[Harmony] Recovery: regenerating visitorId after failed watch');
+            
             await _musicServices.regenerateVisitorId();
             try {
               final retryContent = await _musicServices.getWatchPlaylist(

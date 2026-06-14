@@ -98,7 +98,7 @@ class HomeScreenController extends GetxController
               : PlaylistContent.fromJson(e))
           .toList();
       isContentFetched.value = true;
-      printINFO("Loaded from offline db");
+      
       return true;
     } else {
       return false;
@@ -199,9 +199,7 @@ if (!discoverContentTypes.contains(
   } else if (
       homeContentListMap.isNotEmpty) {
 
-    printINFO(
-      "Quick Picks not found, using fallback",
-    );
+    
 
     con = homeContentListMap.first;
   }
@@ -512,7 +510,7 @@ if (!discoverContentTypes.contains(
         "cachedContentType":
             Hive.box("AppPrefs").get("discoverContentType") ?? "TR",
       });
-      printINFO("Saved Homescreen data data");
+      
     } else if (updateAll) {
       await homeScreenData.putAll({
         "quickPicksType": quickPicks.value.title,
@@ -523,7 +521,7 @@ if (!discoverContentTypes.contains(
         "cachedContentType":
             Hive.box("AppPrefs").get("discoverContentType") ?? "TR",
       });
-      printINFO("Saved Homescreen data data");
+      
     }
   }
 

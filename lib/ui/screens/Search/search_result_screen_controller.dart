@@ -65,7 +65,7 @@ class SearchResultScreenController extends GetxController
             additionalParamNext[tabName]['additionalParams'] !=
                 '&ctoken=null&continuation=null') {
           if (!continuationInProgress) {
-            printINFO("Acchhsk");
+            
             continuationInProgress = true;
             getContinuationContents();
           }

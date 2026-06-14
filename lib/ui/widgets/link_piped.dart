@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../utils/helper.dart';
 import '/services/piped_service.dart';
 import '../screens/Settings/settings_screen_controller.dart';
 import '../screens/Library/library_controller.dart';
@@ -168,7 +167,7 @@ class PipedLinkedController extends GetxController {
             password)
         .then((res) {
       if (res.code == 1) {
-        printINFO("Login Successfull");
+        
         Get.find<SettingsScreenController>().isLinkedWithPiped.value = true;
         Navigator.of(Get.context!).pop();
         ScaffoldMessenger.of(Get.context!).showSnackBar(

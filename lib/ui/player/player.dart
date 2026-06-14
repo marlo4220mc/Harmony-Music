@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '/ui/player/components/gesture_player.dart';
 import '/ui/player/components/standard_player.dart';
 import '/ui/screens/Settings/settings_screen_controller.dart';
-import '../../utils/helper.dart';
 import '../widgets/snackbar.dart';
 import '../widgets/up_next_queue.dart';
 import '/ui/player/player_controller.dart';
@@ -21,7 +20,7 @@ class Player extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    printINFO("player");
+    
     final size = MediaQuery.of(context).size;
     final PlayerController playerController = Get.find<PlayerController>();
     final settingsScreenController = Get.find<SettingsScreenController>();

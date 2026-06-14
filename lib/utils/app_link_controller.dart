@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 
 import '../models/playling_from.dart';
 import '/ui/widgets/songinfo_bottom_sheet.dart';
-import '/utils/helper.dart';
 import '../ui/widgets/loader.dart';
 import '/services/music_service.dart';
 import '/ui/player/player_controller.dart';
@@ -61,8 +60,7 @@ mixin ProcessLink {
         uri.host == "youtu.be" ||
         uri.host == "www.youtube.com" ||
         uri.host == "m.youtube.com") {
-      printINFO(
-          "pathsegmet: ${uri.pathSegments} params:${uri.queryParameters}");
+      
       if (uri.pathSegments[0] == "playlist" &&
           uri.queryParameters.containsKey("list")) {
         final browseId = uri.queryParameters['list'];

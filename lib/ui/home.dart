@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 
 import '/ui/screens/Home/home_screen_controller.dart';
 import '/ui/screens/Settings/settings_screen_controller.dart';
-import '../utils/helper.dart';
 import '../ui/navigator.dart';
 import '../ui/player/player.dart';
 import 'player/components/mini_player.dart';
@@ -22,7 +21,7 @@ class Home extends StatelessWidget {
   static const routeName = '/appHome';
   @override
   Widget build(BuildContext context) {
-    printINFO("Home");
+    
     final PlayerController playerController = Get.find<PlayerController>();
     final settingsScreenController = Get.find<SettingsScreenController>();
     final homeScreenController = Get.find<HomeScreenController>();

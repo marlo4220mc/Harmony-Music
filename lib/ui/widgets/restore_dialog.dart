@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:terminate_restart/terminate_restart.dart';
 
 import '/ui/screens/Settings/settings_screen_controller.dart';
-import '/utils/helper.dart';
 import '../../services/permission_service.dart';
 import 'common_dialog_widget.dart';
 
@@ -175,7 +174,7 @@ class RestoreDialogController extends GetxController {
     restoreRunning.value = true;
     for (final file in archive) {
       final filename = file.name;
-      printINFO(filename);
+      
       if (file.isFile) {
         final data = file.content as List<int>;
         final targetFileDir =

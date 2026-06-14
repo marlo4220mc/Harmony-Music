@@ -281,7 +281,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
     if (url.contains('/cache') ||
         (Get.find<SettingsScreenController>().cacheSongs.isTrue &&
             url.contains("http"))) {
-      printINFO("Playing Using LockCaching");
+      
       isPlayingUsingLockCachingSource = true;
       return LockCachingAudioSource(
         Uri.parse(url),
@@ -290,7 +290,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
       );
     }
 
-    printINFO("Playing Using AudioSource.uri");
+    
     isPlayingUsingLockCachingSource = false;
     return AudioSource.uri(
       Uri.tryParse(url)!,
@@ -705,8 +705,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
     // We use a factor to convert dB difference to a linear scale
     // 10^(difference / 20) converts dB difference to a linear volume factor
     final volumeAdjustment = pow(10.0, loudnessDifference / 20.0);
-    printINFO(
-        "loudness:$currentLoudnessDb Normalized volume: $volumeAdjustment");
+    
     _player.setVolume(volumeAdjustment.toDouble().clamp(0, 1.0));
   }
 
@@ -725,7 +724,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
       await prevSessionData.putAll(
           {"queue": queueData, "position": position, "index": currIndex});
       await prevSessionData.close();
-      printINFO("Saved session data");
+      
     }
   }
 
@@ -775,11 +774,11 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
 // Work around used [useNewInstanceOfExplode = false] to Fix Connection closed before full header was received issue
   Future<HMStreamingData> checkNGetUrl(String songId,
       {bool generateNewUrl = false, bool offlineReplacementUrl = false}) async {
-    printINFO("Requested id : $songId");
+    
     final songDownloadsBox = Hive.box("SongDownloads");
     if (!offlineReplacementUrl &&
         (await Hive.openBox("SongsCache")).containsKey(songId)) {
-      printINFO("Got Song from cachedbox ($songId)");
+      
       // if contains stream Info
       final streamInfo = Hive.box("SongsCache").get(songId)["streamInfo"];
       Audio? cacheAudioPlaceholder;
@@ -846,7 +845,7 @@ class MyAudioHandler extends BaseAudioHandler with GetxServiceMixin {
         final streamInfoJson = songsUrlCacheBox.get(songId);
         if (streamInfoJson.runtimeType.toString().contains("Map") &&
             !isExpired(url: (streamInfoJson['lowQualityAudio']['url']))) {
-          printINFO("Got cached Url ($songId)");
+          
           streamInfo = HMStreamingData.fromJson(streamInfoJson);
         }
       }

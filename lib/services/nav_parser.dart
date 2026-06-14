@@ -8,7 +8,6 @@ import '/services/utils.dart';
 import '../models/album.dart';
 import '../models/artist.dart';
 import '../models/playlist.dart';
-import '../utils/helper.dart';
 
 const single_column = ['contents', 'singleColumnBrowseResultsRenderer'];
 const tab_content = ['tabs', 0, 'tabRenderer', 'content'];
@@ -172,9 +171,7 @@ List<Map<String, dynamic>> parseMixedContent(
         if (results == null ||
             !results.containsKey('contents')) {
 
-  printINFO(
-            "Skipping shelf without contents",
-          );
+  
 
           continue;
         }
@@ -255,9 +252,7 @@ List<Map<String, dynamic>> parseMixedContent(
 
           } catch (e) {
 
-  printINFO(
-              "Error parsing content item: $e",
-            );
+  
 
             continue;
           }
@@ -273,17 +268,13 @@ List<Map<String, dynamic>> parseMixedContent(
 
         } else {
 
-  printINFO(
-            "Skipping invalid shelf",
-          );
+  
         }
       }
 
     } catch (e) {
 
-  printINFO(
-        "Error parsing mixed content row: $e",
-      );
+  
 
       continue;
     }
@@ -804,7 +795,7 @@ List<dynamic> parseSearchResults(List<dynamic> results,
         if (result is! Map) return null;
         final data = result[mrlir];
         if (data is! Map) {
-  printINFO('[HarmonySearch] Item not MRLIR: keys=${result.keys}');
+  
           return null;
         }
         return parseSearchResult(data as Map<String, dynamic>,
@@ -939,7 +930,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
         resultType ??= 'song';
       }
     }
-  printINFO('[HarmonySearch] type=$resultType pageType=$pt browseId=${nav(data, navigation_browse_id)} videoType=$videoType');
+  
   }
   searchResult['resultType'] = resultType;
 
@@ -1029,17 +1020,10 @@ dynamic parseSearchResult(Map<String, dynamic> data,
     String? videoId = nav(data, [
         ...play_button, 'playNavigationEndpoint', 'watchEndpoint', 'videoId'
     ]);
-    String? videoIdSource = 'overlay';
-    if (videoId == null) {
-      videoId = nav(data, ['navigationEndpoint', 'watchEndpoint', 'videoId']);
-      videoIdSource = 'navEndpoint';
-    }
-    if (videoId == null) {
-      // OpenTune uses playlistItemData.videoId as primary song identifier
-      videoId = nav(data, ['playlistItemData', 'videoId']);
-      videoIdSource = 'playlistData';
-    }
-  printINFO('[HarmonySearch] videoId source=$videoIdSource');
+    videoId ??= nav(data, ['navigationEndpoint', 'watchEndpoint', 'videoId']);
+    // OpenTune uses playlistItemData.videoId as primary song identifier
+    videoId ??= nav(data, ['playlistItemData', 'videoId']);
+  
     searchResult['videoId'] = videoId;
     searchResult['videoType'] = videoType;
   }
@@ -1059,7 +1043,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
   if ((['artist', 'album', 'playlist']).contains(resultType)) {
     searchResult['browseId'] = nav(data, navigation_browse_id);
     if (searchResult['browseId'] == null) {
-  printINFO('[HarmonySearch] Discard($resultType): browseId=null');
+  
       return null;
     }
   }
@@ -1074,7 +1058,7 @@ dynamic parseSearchResult(Map<String, dynamic> data,
     if (searchResult['videoId'] != null) {
       return MediaItemBuilder.fromJson(searchResult);
     }
-  printINFO('[HarmonySearch] Discard($resultType): videoId=null');
+  
     return;
   } else if (resultType.contains('playlist')) {
     return Playlist.fromJson(searchResult);

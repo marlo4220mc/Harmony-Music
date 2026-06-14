@@ -240,7 +240,7 @@ class _SlidingUpPanelState extends State<SlidingUpPanel>
         if (widget.onPanelClosed != null && _ac.value == 0.0) {
           widget.onPanelClosed!();
         }
-        //printINFO("offset :${_sc.offset}");
+        //
       });
 
     // prevent the panel content from being scrolled only if the widget is

@@ -291,7 +291,7 @@ Future<void> compressFilesInBackground(
       .map((path) => path.split(GetPlatform.isWindows ? '\\' : '/').last)
       .toList();
 
-  printINFO(fileNames);
+  
   // Use compute to run the compression in the background
   await compute(_compressFiles, {
     'filesData': filesData,

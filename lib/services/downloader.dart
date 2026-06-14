@@ -157,7 +157,7 @@ class Downloader extends GetxService {
 
     final playerResponse = await StreamProvider.fetch(song.id);
     // if (!playerResponse.playable) {
-    //   printINFO("Network error! Check your network connection.");
+    //   
     //   ScaffoldMessenger.of(Get.context!).showSnackBar(snackbar(
     //       Get.context!, playerResponse.statusMSG,
     //       size: SanckBarSize.BIG,
@@ -176,7 +176,7 @@ class Downloader extends GetxService {
           size: SanckBarSize.BIG,
           duration: const Duration(seconds: 2),
           top: !GetPlatform.isDesktop));
-      printINFO("Requested song is not downloadable. You may try again");
+      
       complete.complete();
       return complete.future;
     }
@@ -193,7 +193,7 @@ class Downloader extends GetxService {
     final songTitle = "${song.title.trim()} (${song.artist?.trim()})"
         .replaceAll(invalidChar, "");
     String filePath = "$dirPath/$songTitle.$actualDownformat";
-    printINFO("Downloading filePath: $filePath");
+    
     final totalBytes = requiredAudioStream.size;
 
     _dio.download(
@@ -204,7 +204,7 @@ class Downloader extends GetxService {
       songDownloadingProgress.value = ((count / total) * 100).toInt();
     }).then(
       (value) async {
-        printINFO(value.data);
+        
 
         String? year;
         try {
@@ -235,7 +235,7 @@ class Downloader extends GetxService {
 
         Hive.box("SongDownloads").put(song.id, songJson);
         Get.find<LibrarySongsController>().librarySongsList.add(song);
-        printINFO("Downloaded successfully");
+        
 
         final trackDetails = (song.extras?['trackDetails'])?.split("/");
         final int? trackNumber = int.tryParse(trackDetails?[0] ?? "");
@@ -276,8 +276,7 @@ class Downloader extends GetxService {
             size: SanckBarSize.BIG,
             duration: const Duration(seconds: 2),
             top: !GetPlatform.isDesktop));
-        printINFO(
-            "Downloading failed due to network/stream error! Please try again");
+        
         complete.complete();
       },
     );

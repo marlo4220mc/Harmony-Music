@@ -72,7 +72,7 @@ class ThemeController extends GetxController {
         generator.lightVibrantColor;
     primaryColor.value = paletteColor!.color;
     textColor.value = paletteColor.bodyTextColor;
-    // printINFO(paletteColor.color.computeLuminance().toString());0.11 ref
+    // 0.11 ref
     if (paletteColor.color.computeLuminance() > 0.10) {
       primaryColor.value = paletteColor.color.withLightness(0.10);
       textColor.value = Colors.white54;
