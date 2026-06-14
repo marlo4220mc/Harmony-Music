@@ -7,6 +7,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../../models/playling_from.dart';
+import '../../services/continue_playlists_store.dart';
 import '../../services/downloader.dart';
 import '../screens/Playlist/playlist_screen_controller.dart';
 import '../widgets/snackbar.dart';
@@ -493,7 +494,11 @@ class PlayerController extends GetxController
   }
 
   Future<void> playPlayListSong(List<MediaItem> mediaItems, int index,
-      {PlaylingFrom? playfrom}) async {
+      {PlaylingFrom? playfrom,
+      String? playlistId,
+      String? subtitle,
+      String? imageUrl,
+      bool openedFromHomeApiPlaylist = false}) async {
     isRadioModeOn = false;
     //open player pane,set current song and push first song into playing list,
 
@@ -507,6 +512,18 @@ class PlayerController extends GetxController
       await _audioHandler.customAction("shuffleCmd", {"index": index});
     }
     await _audioHandler.customAction("playByIndex", {"index": index});
+
+    if (playfrom?.type == PlaylingFromType.PLAYLIST &&
+        playlistId != null &&
+        !openedFromHomeApiPlaylist) {
+      await ContinuePlaylistsStore.save(
+        playlistId: playlistId,
+        title: playfrom!.name,
+        subtitle: subtitle,
+        imageUrl: imageUrl,
+      );
+      Get.find<HomeScreenController>().refreshContinuePlaylists();
+    }
   }
 
   Future<void> startRadio(MediaItem? mediaItem, {String? playlistid}) async {

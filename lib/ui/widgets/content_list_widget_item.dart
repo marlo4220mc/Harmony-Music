@@ -6,11 +6,15 @@ import 'image_widget.dart';
 
 class ContentListItem extends StatelessWidget {
   const ContentListItem(
-      {super.key, required this.content, this.isLibraryItem = false});
+      {super.key,
+      required this.content,
+      this.isLibraryItem = false,
+      this.openedFromHomeApiPlaylist = false});
 
   ///content will be of Type class Album or Playlist
   final dynamic content;
   final bool isLibraryItem;
+  final bool openedFromHomeApiPlaylist;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,7 @@ class ContentListItem extends StatelessWidget {
         }
         Get.toNamed(ScreenNavigationSetup.playlistScreen,
             id: ScreenNavigationSetup.id,
-            arguments: [content, content.playlistId]);
+            arguments: [content, content.playlistId, openedFromHomeApiPlaylist]);
       },
       child: Container(
         width: 130,
@@ -127,12 +131,12 @@ class ContentListItem extends StatelessWidget {
             const SizedBox(height: 5),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     content.title,
-                    // overflow: TextOverflow.ellipsis,
                     maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(
@@ -144,6 +148,7 @@ class ContentListItem extends StatelessWidget {
                             ? ""
                             : content.description ?? "",
                     maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ],

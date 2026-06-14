@@ -51,7 +51,7 @@
     "items": "елементи",
     "subscribers": "абонати",
     "startRadio": "Стартирай радиото",
-    "discover": "Открийте",
+    "discover": "Открий",
     "cacheSongs": "Кеш на песни",
     "songAlreadyExists": "Песента вече съществува!",
     "libArtists": "Библиотека Изпълнители",
@@ -276,6 +276,7 @@
     "linkCopied": "Връзката е копирана в клипборда",
     "keepScreenOnWhilePlaying": "Запази екрана включен по време на възпроизвеждане",
     "keepScreenOnWhilePlayingDes": "Ако е активирано, екранът на устройството ще остане включен по време на възпроизвеждане на музика",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "За вас",
+    "continueradio": "Продължи радиото",
+    "continuePlaylists": "Продължи плейлистите"
 }

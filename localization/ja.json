@@ -50,7 +50,7 @@
     "items": "項目",
     "subscribers": "人の登録者",
     "startRadio": "ラジオで開始",
-    "discover": "検索",
+    "discover": "見つける",
     "cacheSongs": "曲をキャッシュ",
     "downloads": "ダウンロード",
     "removeFromLib": "曲のライブラリから削除",
@@ -275,6 +275,7 @@
     "linkCopied": "リンクをクリップボードにコピー",
     "keepScreenOnWhilePlaying": "再生中は画面を点灯したままにする",
     "keepScreenOnWhilePlayingDes": "有効にすると、音楽再生中はデバイスの画面が点灯したままになります",
-    "foryou": "あなたに",
-    "continueradio": "ラジオを続ける"
+    "foryou": "あなたへのおすすめ",
+    "continueradio": "ラジオを続ける",
+    "continuePlaylists": "プレイリストを続ける"
 }

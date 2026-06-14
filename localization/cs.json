@@ -52,7 +52,7 @@
     "items": "položky",
     "subscribers": "odběratelé",
     "startRadio": "Spustit rádio",
-    "discover": "Doporučené skladby",
+    "discover": "Objevovat",
     "cacheSongs": "Skladby mezipaměti",
     "songAlreadyExists": "Skladba už existuje!",
     "libArtists": "Knihovna interpretů",
@@ -276,6 +276,7 @@
     "linkCopied": "Odkaz zkopírován do schránky",
     "keepScreenOnWhilePlaying": "Nechat obrazovku zapnutou během přehrávání",
     "keepScreenOnWhilePlayingDes": "Pokud je povoleno, obrazovka zařízení zůstane během přehrávání hudby zapnutá",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Pro vás",
+    "continueradio": "Pokračovat v rádiu",
+    "continuePlaylists": "Pokračovat v playlistech"
 }

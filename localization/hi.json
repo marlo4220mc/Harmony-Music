@@ -75,7 +75,7 @@
     "artistBookmarkAddAlert": "कलाकार बुकमार्क हो गया!",
     "setDiscoverContent": "डिस्कवर कंटेंट सेट करें",
     "quickPics": "गानों का सुझाव",
-    "discover": "डिस्कवर",
+    "discover": "खोजें",
     "trending": "रुझान में चल रहे गाने",
     "basedOnLast": "अंतिम गतिविधि के आधार पर",
     "subscribers": "सब्सक्राइबर्स",
@@ -236,6 +236,7 @@
     "songInfo": "गाने की जानकारी",
     "keepScreenOnWhilePlaying": "प्ले के दौरान स्क्रीन जला रखें",
     "keepScreenOnWhilePlayingDes": "यदि सक्षम है, तो संगीत चलाते समय डिवाइस की स्क्रीन जगी रहेगी",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "आपके लिए",
+    "continueradio": "रेडियो जारी रखें",
+    "continuePlaylists": "प्लेलिस्ट जारी रखें"
 }

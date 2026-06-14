@@ -16,6 +16,7 @@ import '../../../mixins/additional_opeartion_mixin.dart';
 import '../../../models/album.dart' show Album;
 import '../../../models/media_Item_builder.dart';
 import '../../../models/playlist.dart';
+import '../../../services/continue_playlists_store.dart';
 import '../../../services/music_service.dart';
 import '../../../services/piped_service.dart';
 import '../Home/home_screen_controller.dart';
@@ -49,6 +50,8 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
   AnimationController get animationController => _animationController;
   Animation<double> get scaleAnimation => _scaleAnimation;
   Animation<double> get heightAnimation => _heightAnimation;
+  bool openedFromHomeApiPlaylist = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -66,6 +69,9 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
     final args = Get.arguments as List;
     final Playlist? playlist = args[0];
     final playlistId = args[1];
+    if (args.length > 2) {
+      openedFromHomeApiPlaylist = args[2] as bool;
+    }
     fetchPlaylistDetails(playlist, playlistId);
     Future.delayed(const Duration(milliseconds: 200),
         () => Get.find<HomeScreenController>().whenHomeScreenOnTop());
@@ -126,22 +132,44 @@ class PlaylistScreenController extends PlaylistAlbumScreenControllerBase
     isContentFetched.value = false;
 
     if (isPipedPlaylist) {
-      songList.value = (await Get.find<PipedServices>().getPlaylistSongs(id));
+      try {
+        songList.value = (await Get.find<PipedServices>().getPlaylistSongs(id));
+      } catch (_) {
+        isContentFetched.value = true;
+        rethrow;
+      }
       isContentFetched.value = true;
       checkDownloadStatus();
       return;
     }
 
-    final content =
-        await _musicServices.getPlaylistOrAlbumSongs(playlistId: id);
+    try {
+      final content =
+          await _musicServices.getPlaylistOrAlbumSongs(playlistId: id);
 
-    if (isIdOnly) {
-      content['playlistId'] = id;
-      playlist.value = Playlist.fromJson(content);
-      _animationController.forward();
+      if (isIdOnly) {
+        content['playlistId'] = id;
+        playlist.value = Playlist.fromJson(content);
+        _animationController.forward();
+      }
+      songList.value = List<MediaItem>.from(content['tracks']);
+      checkDownloadStatus();
+    } catch (_) {
+      isContentFetched.value = true;
+      if (await ContinuePlaylistsStore.contains(id)) {
+        await ContinuePlaylistsStore.remove(id);
+        Get.find<HomeScreenController>().continuePlaylists.value =
+            await ContinuePlaylistsStore.loadHome();
+        Get.snackbar(
+          '',
+          'Lo sentimos, este playlist ya no está disponible en YT.',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(10),
+          borderRadius: 20,
+        );
+      }
     }
-    songList.value = List<MediaItem>.from(content['tracks']);
-    checkDownloadStatus();
   }
 
   @override

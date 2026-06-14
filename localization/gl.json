@@ -268,6 +268,7 @@
     "importLargeFileNote": "Nota: As listaxes grandes poden tardar máis en importarse",
     "keepScreenOnWhilePlaying": "Manter a pantalla acesa mentres se reproduce",
     "keepScreenOnWhilePlayingDes": "Se está activado, a pantalla do dispositivo manterase acesa mentres se reproduce música",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Para ti",
+    "continueradio": "Continuar radio",
+    "continuePlaylists": "Continuar listas de reprodución"
 }

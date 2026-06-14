@@ -58,7 +58,7 @@
     "languageDes": "Aplikazioaren hizkuntza hautatu",
     "setDiscoverContent": "Detekzio-edukia ezarri",
     "quickpicks": "Hautaketa azkarrak",
-    "discover": "Deskubritu",
+    "discover": "Ezagutu",
     "trending": "Joerak",
     "topmusicvideos": "Bideo musikal onenak",
     "basedOnLast": "Azken interakzioan oinarritua",
@@ -273,6 +273,7 @@
     "linkCopied": "Esteka arbelean kopiatu da",
     "keepScreenOnWhilePlaying": "Mantendu pantaila piztuta erreproduzitzen den bitartean",
     "keepScreenOnWhilePlayingDes": "Gaituta badago, gailuaren pantaila piztuta egongo da musika erreproduzitzen den bitartean",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Zuretzat",
+    "continueradio": "Jarraitu irratia",
+    "continuePlaylists": "Jarraitu erreprodukzio-zerrendekin"
 }

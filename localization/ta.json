@@ -145,7 +145,7 @@
     "light": "ஒளி",
     "playerUiDes": "பிளேயர் பயனர் இடைமுகத்தைத் தேர்ந்தெடுக்கவும்",
     "gesture": "சைகை",
-    "discover": "கண்டுபிடி",
+    "discover": "கண்டறியவும்",
     "basedOnLast": "கடைசி தொடர்புகளின் அடிப்படையில்",
     "restoreLastPlaybackSessionDes": "பயன்பாட்டு தொடக்கத்தில் கடைசி பிளேபேக் அமர்வை தானாக மீட்டெடுக",
     "homeContentCount": "வீட்டு உள்ளடக்க எண்ணிக்கை",
@@ -266,6 +266,7 @@
     "importLargeFileNote": "குறிப்பு: பெரிய பிளேலிஸ்ட்களை இறக்குமதி செய்ய அதிக நேரம் ஆகலாம்",
     "keepScreenOnWhilePlaying": "ப்ளே செய்யும்போது திரையை இயக்க 상태வை வைத்திரு",
     "keepScreenOnWhilePlayingDes": "செயல்படுத்தப்பட்டால், இசை ஓடும்போது சாதனத்தின் திரை பயங்கரவாக இருக்கும்",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "உங்களுக்காக",
+    "continueradio": "வானொலியை தொடரவும்",
+    "continuePlaylists": "பிளேலிஸ்ட்களை தொடரவும்"
 }

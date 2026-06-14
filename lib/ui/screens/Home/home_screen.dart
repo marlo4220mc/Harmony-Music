@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 import '../Search/components/desktop_search_bar.dart';
 import '/ui/screens/Search/search_screen_controller.dart';
@@ -12,6 +13,7 @@ import '../Settings/settings_screen_controller.dart';
 import '/ui/player/player_controller.dart';
 import '/ui/widgets/create_playlist_dialog.dart';
 import '../../navigator.dart';
+import '/models/playlist.dart';
 import '../../widgets/content_list_widget.dart';
 import '../../widgets/quickpickswidget.dart';
 import '../../widgets/shimmer_widgets/home_shimmer.dart';
@@ -195,6 +197,9 @@ class Body extends StatelessWidget {
                     : Obx(() {
                         // dispose all detachached scroll controllers
                         homeScreenController.disposeDetachedScrollControllers();
+                        final isBoli = Hive.box('AppPrefs')
+                                .get('discoverContentType') ==
+                            'BOLI';
                         final items = homeScreenController
                                 .isContentFetched.value
                             ? [
@@ -207,22 +212,47 @@ class Body extends StatelessWidget {
                                           homeScreenController.quickPicks.value,
                                       scrollController: scrollController);
                                 }),
-                                ...homeScreenController.snapshotCards.map((qp) {
-                                  final scrollController =
-                                      ScrollController();
-                                  homeScreenController
-                                      .contentScrollControllers
-                                      .add(scrollController);
-                                  return QuickPicksWidget(
-                                      content: qp,
-                                      scrollController: scrollController);
-                                }),
+                                if (isBoli)
+                                  ...homeScreenController.snapshotCards.map((
+                                      qp) {
+                                    final scrollController =
+                                        ScrollController();
+                                    homeScreenController
+                                        .contentScrollControllers
+                                        .add(scrollController);
+                                    return QuickPicksWidget(
+                                        content: qp,
+                                        scrollController: scrollController);
+                                  }),
                                 ...getWidgetList(
                                     homeScreenController.middleContent,
-                                    homeScreenController),
+                                    homeScreenController,
+                                    true),
+                                Obx(() {
+                                  final hasItems = homeScreenController
+                                      .continuePlaylists.isNotEmpty;
+                                  if (isBoli && hasItems) {
+                                    final scrollController =
+                                        ScrollController();
+                                    homeScreenController
+                                        .contentScrollControllers
+                                        .add(scrollController);
+                                    return ContentListWidget(
+                                      content: PlaylistContent(
+                                        title: 'continuePlaylists'.tr,
+                                        playlistList:
+                                            homeScreenController
+                                                .continuePlaylists,
+                                      ),
+                                      scrollController: scrollController,
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }),
                                 ...getWidgetList(
                                     homeScreenController.fixedContent,
-                                    homeScreenController)
+                                    homeScreenController,
+                                    true)
                               ]
                             : [const HomeShimmer()];
                         return ListView.builder(
@@ -274,14 +304,17 @@ class Body extends StatelessWidget {
     }
   }
 
-  List<Widget> getWidgetList(
-      dynamic list, HomeScreenController homeScreenController) {
+  List<Widget> getWidgetList(dynamic list,
+      HomeScreenController homeScreenController,
+      [bool openedFromHomeApiPlaylist = false]) {
     return list
         .map((content) {
           final scrollController = ScrollController();
           homeScreenController.contentScrollControllers.add(scrollController);
           return ContentListWidget(
-              content: content, scrollController: scrollController);
+              content: content,
+              scrollController: scrollController,
+              openedFromHomeApiPlaylist: openedFromHomeApiPlaylist);
         })
         .whereType<Widget>()
         .toList();

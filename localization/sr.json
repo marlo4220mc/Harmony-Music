@@ -269,6 +269,7 @@
     "importErrorFormat": "Неважећи формат фајла",
     "keepScreenOnWhilePlaying": "Одржавај екран укљученим током репродукције",
     "keepScreenOnWhilePlayingDes": "Ако је омогућено, екран уређаја ће остати укључен док се репродукује музика",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "За тебе",
+    "continueradio": "Настави радио",
+    "continuePlaylists": "Настави плејлисте"
 }

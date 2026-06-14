@@ -10,6 +10,7 @@ import '/utils/helper.dart';
 import '/models/album.dart';
 import '/models/playlist.dart';
 import '/models/quick_picks.dart';
+import '/services/continue_playlists_store.dart';
 import '/services/music_service.dart';
 import '../Settings/settings_screen_controller.dart';
 
@@ -23,6 +24,7 @@ class HomeScreenController extends GetxController
   final snapshotCards = <QuickPicks>[].obs;
   final middleContent = [].obs;
   final fixedContent = [].obs;
+  final continuePlaylists = <Playlist>[].obs;
   //isHomeScreenOnTop var only useful if bottom nav enabled
   final isHomeSreenOnTop = true.obs;
   final List<ScrollController> contentScrollControllers = [];
@@ -68,6 +70,11 @@ class HomeScreenController extends GetxController
     } else {
       loadContentFromNetwork();
     }
+    continuePlaylists.assignAll(await ContinuePlaylistsStore.loadHome());
+  }
+
+  void refreshContinuePlaylists() async {
+    continuePlaylists.assignAll(await ContinuePlaylistsStore.loadHome());
   }
 
   Future<bool> loadContentFromDb() async {
@@ -547,7 +554,9 @@ if (!discoverContentTypes.contains(
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed &&
+        Hive.isBoxOpen("AppPrefs") &&
+        Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
       _refreshBoliCards();
     }
   }
@@ -592,7 +601,10 @@ if (!discoverContentTypes.contains(
   }
 
   Future<void> refreshAfterBootstrap() async {
-    await _refreshBoliCards();
+    if (Hive.isBoxOpen("AppPrefs") &&
+        Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
+      await _refreshBoliCards();
+    }
   }
 
   @override

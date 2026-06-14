@@ -319,7 +319,16 @@ class PlaylistScreen extends StatelessWidget {
                                                         name: playlistController
                                                             .playlist.value.title,
                                                         type: PlaylingFromType
-                                                            .PLAYLIST));
+                                                            .PLAYLIST),
+                                                    playlistId: playlistController
+                                                        .playlist.value.playlistId,
+                                                    subtitle: playlistController
+                                                        .playlist.value.description,
+                                                    imageUrl: playlistController
+                                                        .playlist.value.thumbnailUrl,
+                                                    openedFromHomeApiPlaylist:
+                                                        playlistController
+                                                            .openedFromHomeApiPlaylist);
                                               },
                                               icon: Icon(
                                                 Icons.play_circle,
@@ -372,7 +381,16 @@ class PlaylistScreen extends StatelessWidget {
                                                         name: playlistController
                                                             .playlist.value.title,
                                                         type: PlaylingFromType
-                                                            .PLAYLIST));
+                                                            .PLAYLIST),
+                                                    playlistId: playlistController
+                                                        .playlist.value.playlistId,
+                                                    subtitle: playlistController
+                                                        .playlist.value.description,
+                                                    imageUrl: playlistController
+                                                        .playlist.value.thumbnailUrl,
+                                                    openedFromHomeApiPlaylist:
+                                                        playlistController
+                                                            .openedFromHomeApiPlaylist);
                                               },
                                               icon: Icon(
                                                 Icons.shuffle,
@@ -700,7 +718,16 @@ class PlaylistScreen extends StatelessWidget {
                                         playfrom: PlaylingFrom(
                                             name: playlistController
                                                 .playlist.value.title,
-                                            type: PlaylingFromType.PLAYLIST));
+                                            type: PlaylingFromType.PLAYLIST),
+                                        playlistId: playlistController
+                                            .playlist.value.playlistId,
+                                        subtitle: playlistController
+                                            .playlist.value.description,
+                                        imageUrl: playlistController
+                                            .playlist.value.thumbnailUrl,
+                                        openedFromHomeApiPlaylist:
+                                            playlistController
+                                                .openedFromHomeApiPlaylist);
                                   },
                                   song: playlistController.songList[index - 3],
                                   isPlaylistOrAlbum: true,

@@ -277,5 +277,6 @@
     "keepScreenOnWhilePlaying": "播放时保持屏幕常亮",
     "keepScreenOnWhilePlayingDes": "启用后，播放音乐时设备屏幕将保持点亮",
     "foryou": "为你推荐",
-    "continueradio": "继续播放电台"
+    "continueradio": "继续收听电台",
+    "continuePlaylists": "继续播放列表"
 }

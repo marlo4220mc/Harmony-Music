@@ -279,5 +279,6 @@
     "keepScreenOnWhilePlaying": "Garder l'écran allumé pendant la lecture",
     "keepScreenOnWhilePlayingDes": "S'il est activé, l'écran restera allumé pendant la lecture de la musique",
     "foryou": "Pour vous",
-    "continueradio": "Continuer la radio"
+    "continueradio": "Continuer la radio",
+    "continuePlaylists": "Continuer les playlists"
 }

@@ -10,11 +10,13 @@ class ContentListWidget extends StatelessWidget {
       {super.key,
       this.content,
       this.isHomeContent = true,
-      this.scrollController});
+      this.scrollController,
+      this.openedFromHomeApiPlaylist = false});
 
   ///content will be of class Type AlbumContent or PlaylistContent
   final dynamic content;
   final bool isHomeContent;
+  final bool openedFromHomeApiPlaylist;
   final ScrollController? scrollController;
 
   @override
@@ -73,7 +75,9 @@ class ContentListWidget extends StatelessWidget {
                       return ContentListItem(content: content.albumList[index]);
                     }
                     return ContentListItem(
-                        content: content.playlistList[index]);
+                        content: content.playlistList[index],
+                        openedFromHomeApiPlaylist:
+                            openedFromHomeApiPlaylist);
                   }),
             ),
           ),

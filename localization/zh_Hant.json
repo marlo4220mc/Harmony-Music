@@ -267,5 +267,6 @@
     "keepScreenOnWhilePlaying": "播放時保持螢幕常亮",
     "keepScreenOnWhilePlayingDes": "啟用後，播放音樂時設備螢幕將保持亮起",
     "foryou": "為你推薦",
-    "continueradio": "繼續播放電台"
+    "continueradio": "繼續收聽電台",
+    "continuePlaylists": "繼續播放清單"
 }

@@ -116,7 +116,7 @@
     "hintApiUrl": "API URL a la instància Piped",
     "stopMusicOnTaskClear": "Aturar la música quan s'elimina de la llista de tasques",
     "stopMusicOnTaskClearDes": "La reproducció s'aturarà quan s'elimini la App de la llista de tasques",
-    "discover": "Descobrir",
+    "discover": "Descobreix",
     "homeContentCount": "Recompte de contingut a l'inici",
     "streamingQualityDes": "Qualitat de la transmissió de la música",
     "restoreLastPlaybackSessionDes": "Restaurar automàticament la darrera sessió de reproducció en iniciar la App",
@@ -268,6 +268,7 @@
     "importLargeFileNote": "Nota: La importació de llistes de reproducció grosses pot trigar més estona",
     "keepScreenOnWhilePlaying": "Mantenir la pantalla encesa mentre es reprodueix",
     "keepScreenOnWhilePlayingDes": "Si està activat, la pantalla del dispositiu romandrà encesa mentre es reprodueix música",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Per a tu",
+    "continueradio": "Continua la ràdio",
+    "continuePlaylists": "Continua les llistes de reproducció"
 }

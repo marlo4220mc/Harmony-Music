@@ -274,5 +274,6 @@
     "keepScreenOnWhilePlaying": "Keep screen on while playing",
     "keepScreenOnWhilePlayingDes": "If enabled, the device screen will stay awake while music is playing",
     "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "continueradio": "Continue Radio",
+    "continuePlaylists": "Continue Playlists"
 }

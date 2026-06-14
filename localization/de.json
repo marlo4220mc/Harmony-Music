@@ -272,5 +272,6 @@
     "keepScreenOnWhilePlaying": "Bildschirm während der Wiedergabe eingeschaltet lassen",
     "keepScreenOnWhilePlayingDes": "Wenn aktiviert, bleibt der Bildschirm des Geräts beim Musikhören eingeschaltet",
     "foryou": "Für dich",
-    "continueradio": "Radio fortsetzen"
+    "continueradio": "Radio fortsetzen",
+    "continuePlaylists": "Playlists fortsetzen"
 }

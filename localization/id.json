@@ -50,7 +50,7 @@
     "items": "Item",
     "subscribers": "pelanggan",
     "startRadio": "Mulai radio",
-    "discover": "Temukan",
+    "discover": "Jelajahi",
     "cacheSongs": "Cache lagu",
     "downloads": "Unduhan",
     "removeFromLib": "Hapus dari Pustaka Lagu",
@@ -266,6 +266,7 @@
     "importLargeFileNote": "Catatan: Daftar putar berukuran besar mungkin akan memakan waktu lama saat mengimpor",
     "keepScreenOnWhilePlaying": "Pertahankan layar tetap hidup saat memutar",
     "keepScreenOnWhilePlayingDes": "Jika diaktifkan, layar perangkat akan tetap menyala saat musik sedang diputar",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Untuk Anda",
+    "continueradio": "Lanjutkan radio",
+    "continuePlaylists": "Lanjutkan playlist"
 }

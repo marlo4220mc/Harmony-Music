@@ -56,7 +56,7 @@
     "languageDes": "Valitse sovelluksen kieli",
     "quickpicks": "Pikavalinnat",
     "setDiscoverContent": "Aseta löytöjen sisältö",
-    "discover": "Löydöt",
+    "discover": "Löydä",
     "trending": "Trendaavat",
     "topmusicvideos": "Parhaat musiikkivideot",
     "basedOnLast": "Viimeisimpään toimintaan perustuvat",
@@ -152,6 +152,7 @@
     "systemDefault": "Järjestelmän oletus",
     "keepScreenOnWhilePlaying": "Pidä näyttö päällä toiston aikana",
     "keepScreenOnWhilePlayingDes": "Jos käytössä, laitteen näyttö pysyy päällä musiikin toiston aikana",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Sinulle",
+    "continueradio": "Jatka radiota",
+    "continuePlaylists": "Jatka soittolistoja"
 }

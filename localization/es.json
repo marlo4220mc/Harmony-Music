@@ -276,5 +276,6 @@
     "keepScreenOnWhilePlaying": "Mantener la pantalla encendida mientras se reproduce",
     "keepScreenOnWhilePlayingDes": "Si está activado, la pantalla del dispositivo permanecerá despierta mientras se reproduce música",
     "foryou": "Para ti",
-    "continueradio": "Continuar la radio"
+    "continueradio": "Continuar radio",
+    "continuePlaylists": "Continuar playlists"
 }

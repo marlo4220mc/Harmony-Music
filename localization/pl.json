@@ -271,6 +271,7 @@
     "importError": "Błąd podczas importowania listy odtwarzania",
     "keepScreenOnWhilePlaying": "Utrzymuj ekran włączony podczas odtwarzania",
     "keepScreenOnWhilePlayingDes": "Jeśli włączone, ekran urządzenia pozostanie włączony podczas odtwarzania muzyki",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Dla Ciebie",
+    "continueradio": "Kontynuuj radio",
+    "continuePlaylists": "Kontynuuj playlisty"
 }

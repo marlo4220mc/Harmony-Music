@@ -44,7 +44,7 @@
     "noLibPlaylist": "Du har ikke noen biblioteksspilleliste",
     "setDiscoverContent": "Sett oppdagbart innhold",
     "quickPics": "Hurtigbilder",
-    "discover": "Oppdagbart",
+    "discover": "Oppdag",
     "trending": "På vei opp",
     "topMusicVid": "Topp-musikkvideoer",
     "equalizer": "Tonekontroll",
@@ -138,6 +138,7 @@
     "minutes": "minutter",
     "keepScreenOnWhilePlaying": "Hold skjermen på under avspilling",
     "keepScreenOnWhilePlayingDes": "Hvis aktivert, vil enhetens skjerm være på mens musikk spilles",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "For deg",
+    "continueradio": "Fortsett radio",
+    "continuePlaylists": "Fortsett spillelister"
 }

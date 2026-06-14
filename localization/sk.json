@@ -180,7 +180,7 @@
     "unlinkAlert": "Odpojené úspešne!",
     "downloads": "Stiahnuté",
     "upNext": "Nasledujúce",
-    "discover": "Doporučené",
+    "discover": "Objavovať",
     "plain": "Obyčajný",
     "deleteDownloadedDataAlert": "Úspešne odstránené zo stiahnutých!",
     "linkPipedDes": "Prepojte s Piped pre playlisty",
@@ -275,6 +275,7 @@
     "linkCopied": "Odkaz skopírovaný do schránky",
     "keepScreenOnWhilePlaying": "Nechajte obrazovku zapnutú počas prehrávania",
     "keepScreenOnWhilePlayingDes": "Ak je povolené, obrazovka zariadenia zostane zapnutá počas prehrávania hudby",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Pre vás",
+    "continueradio": "Pokračovať v rádiu",
+    "continuePlaylists": "Pokračovať v playlistoch"
 }

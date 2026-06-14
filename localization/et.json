@@ -45,7 +45,7 @@
     "languageDes": "Vali rakenduse keel",
     "setDiscoverContent": "Vali uue sisu avastamise viis",
     "quickpicks": "Kiirvalikud",
-    "discover": "Avastamised",
+    "discover": "Avasta",
     "trending": "Populaarsust koguvad lood",
     "topmusicvideos": "Populaarsed muusikavideod",
     "basedOnLast": "Sinu viimaste tegevuste alusel",
@@ -273,6 +273,7 @@
     "linkCopied": "Link on kopeeritud lõikelauale",
     "keepScreenOnWhilePlaying": "Hoia ekraan mängimise ajal sees",
     "keepScreenOnWhilePlayingDes": "Kui see on lubatud, jääb seadme ekraan muusika esituse ajal ärkvel",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Sulle",
+    "continueradio": "Jätka raadiot",
+    "continuePlaylists": "Jätka esitusloendeid"
 }

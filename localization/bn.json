@@ -40,7 +40,7 @@
     "languageDes": "অ্যাপের ভাষা নির্ধারণ করুন",
     "setDiscoverContent": "আবিষ্কারের বিষয়বস্তু নির্ধারণ করুন",
     "quickpicks": "দ্রুত পছন্দ",
-    "discover": "আবিষ্কার",
+    "discover": "আবিষ্কার করুন",
     "basedOnLast": "শেষ ইন্টারঅ্যাকশনের উপর",
     "autoOpenPlayer": "অটো প্লেয়ার স্ক্রিন খুলুন",
     "enableBottomNav": "নিচের নেভিগেশন বার",
@@ -266,6 +266,7 @@
     "importPlaylistDesc": "আমদানি করার জন্য পূর্বে রপ্তানি করা একটি প্লেলিস্ট JSON ফাইল নির্বাচন করুন",
     "keepScreenOnWhilePlaying": "প্লে থাকাকালীন স্ক্রীন জ্বলন্ত রাখুন",
     "keepScreenOnWhilePlayingDes": "সক্রিয় করলে, গান চলাকালীন ডিভাইসের স্ক্রীন জ্বলে থাকবে",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "আপনার জন্য",
+    "continueradio": "রেডিও চালিয়ে যান",
+    "continuePlaylists": "প্লেলিস্ট চালিয়ে যান"
 }

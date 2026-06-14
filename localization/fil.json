@@ -212,6 +212,7 @@
     "allFieldsReqMsg": "Kailagan may laman ang mga field",
     "keepScreenOnWhilePlaying": "Panatilihing naka-on ang screen habang tumutugtog",
     "keepScreenOnWhilePlayingDes": "Kung naka-enable, mananatiling naka-on ang screen ng device habang tumutugtog ang musika",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Para sa iyo",
+    "continueradio": "Ipagpatuloy ang radyo",
+    "continuePlaylists": "Ipagpatuloy ang mga playlist"
 }

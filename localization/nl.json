@@ -95,7 +95,7 @@
     "create": "Creëer",
     "CreateNewPlaylist": "Creëer nieuwe afspeellijst",
     "cancel": "Annuleer",
-    "discover": "Ontdek",
+    "discover": "Ontdekken",
     "trending": "Trending",
     "basedOnLast": "Gebaseerd op laatste interactie",
     "cacheSongs": "Cache Liedjes",
@@ -187,6 +187,7 @@
     "selectAll": "Selecteer alle",
     "keepScreenOnWhilePlaying": "Scherm aanhouden tijdens afspelen",
     "keepScreenOnWhilePlayingDes": "Indien ingeschakeld blijft het scherm van het apparaat ingeschakeld tijdens het afspelen van muziek",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Voor jou",
+    "continueradio": "Doorgaan met radio",
+    "continuePlaylists": "Doorgaan met afspeellijsten"
 }

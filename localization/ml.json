@@ -62,6 +62,8 @@
     "playnextMsg": "വെരാൻ പോകുന്നത്",
     "keepScreenOnWhilePlaying": "പ്ലേ ചെയ്യുമ്പോൾ സ്‌ക്രീൻ ഓണായിരിക്കട്ടെ",
     "keepScreenOnWhilePlayingDes": "സജ്ജമാക്കിയാൽ, സംഗീതം പ്ലേ ചെയ്യുമ്പോൾ ഡിവൈസിന്റെ സ്‌ക്രീൻ ഓണായിരിക്കുമെന്ന് ഉറപ്പ ചെയ്യും",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "നിങ്ങൾക്കായി",
+    "discover": "കണ്ടെത്തുക",
+    "continueradio": "റേഡിയോ തുടരുക",
+    "continuePlaylists": "പ്ലേലിസ്റ്റുകൾ തുടരുക"
 }

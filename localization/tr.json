@@ -276,6 +276,7 @@
     "exportToYouTubeMusicSubtitle": "Çalma listenizdeki 50 şarkıdan kısa olanları mevcut kuyruğa ekleyecek, YtMusic'te açtıktan sonra çalma listesine eklemeyi/kaydetmeyi unutmayın",
     "keepScreenOnWhilePlaying": "Müzik çalarken ekranı açık tut",
     "keepScreenOnWhilePlayingDes": "Etkinleştirildiğinde, müzik çalarken cihazın ekranı açık kalır",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "Senin için",
+    "continueradio": "Radyoya devam et",
+    "continuePlaylists": "Çalma listelerine devam et"
 }

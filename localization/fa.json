@@ -78,7 +78,7 @@
     "languageDes": "تنظیم زبان نرم افزار",
     "setDiscoverContent": "تنظیم محتوای کشف",
     "quickpicks": "انتخاب های سریع",
-    "discover": "کشف",
+    "discover": "کشف کنید",
     "topmusicvideos": "نماهنگ های برتر",
     "basedOnLast": "بر اساس آخرین تعامل",
     "restoreLastPlaybackSession": "بازگرداندن آخرین نشست پخش",
@@ -128,6 +128,7 @@
     "cacheHomeScreenDataDes": "ذخیره سازی داده‌های محتوای صفحه اصلی را فعال کنید، اگر این گزینه فعال باشد، صفحه اصلی فوراً بارگیری می‌شود",
     "keepScreenOnWhilePlaying": "روشن نگه داشتن صفحه هنگام پخش",
     "keepScreenOnWhilePlayingDes": "در صورت فعال بودن، صفحه دستگاه هنگام پخش موسیقی روشن خواهد ماند",
-    "foryou": "For You",
-    "continueradio": "Continue Radio"
+    "foryou": "برای شما",
+    "continueradio": "ادامه رادیو",
+    "continuePlaylists": "ادامه فهرست‌های پخش"
 }

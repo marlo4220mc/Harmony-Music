@@ -77,7 +77,7 @@
     "github": "GitHub",
     "newVersionAvailable": "Nova versão disponível!",
     "subscribers": "Inscritos",
-    "discover": "Descubra",
+    "discover": "Descobrir",
     "cacheSongs": "Músicas baixadas",
     "removeFromLib": "Remover da Biblioteca de Músicas",
     "songAlreadyExists": "Música já existe!",
@@ -269,5 +269,6 @@
     "keepScreenOnWhilePlaying": "Manter a tela ligada durante a reprodução",
     "keepScreenOnWhilePlayingDes": "Se ativado, a tela do dispositivo permanecerá ligada enquanto a música estiver sendo reproduzida",
     "foryou": "Para você",
-    "continueradio": "Continuar rádio"
+    "continueradio": "Continuar rádio",
+    "continuePlaylists": "Continuar playlists"
 }
