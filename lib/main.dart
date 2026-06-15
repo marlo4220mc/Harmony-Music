@@ -133,7 +133,7 @@ if (!appPrefs.containsKey(
 
   appPrefs.put(
     'discoverContentType',
-    "TR",
+    "BOLI",
   );
 }
 

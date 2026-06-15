@@ -44,7 +44,7 @@ class HomeScreenController extends GetxController
 
   Future<void> loadContent() async {
     final box = Hive.box("AppPrefs");
-    final currentContentType = box.get("discoverContentType") ?? "TR";
+    final currentContentType = box.get("discoverContentType") ?? "BOLI";
     final isCachedHomeScreenDataEnabled =
         box.get("cacheHomeScreenData") ?? true;
     if (isCachedHomeScreenDataEnabled) {
@@ -111,19 +111,19 @@ class HomeScreenController extends GetxController
     box.get(
       "discoverContentType",
     ) ??
-    "TR";
+    "BOLI";
 
 if (!discoverContentTypes.contains(
     contentType)) {
 
   printERROR(
-    "Invalid discover type $contentType -> TR");
+    "Invalid discover type $contentType -> BOLI");
 
-  contentType = "TR";
+  contentType = "BOLI";
 
   await box.put(
     'discoverContentType',
-    "TR",
+    "BOLI",
   );
 }
 
@@ -133,6 +133,14 @@ if (!discoverContentTypes.contains(
       final homeContentListMap = await _musicServices.getHome(
           limit:
               Get.find<SettingsScreenController>().noOfHomeScreenContent.value);
+
+      if (contentType == "BOLI") {
+        await _refreshBoliCards();
+        if (quickPicks.value.title != "foryou") {
+          contentType = "TR";
+        }
+      }
+
       if (contentType == "TR") {
         final index = homeContentListMap
             .indexWhere((element) => element['title'] == "Trending");
@@ -170,8 +178,6 @@ if (!discoverContentTypes.contains(
             middleContentTemp.addAll(charts);
           }
         }
-      } else if (contentType == "BOLI") {
-        await _refreshBoliCards();
       }
 
       if (contentType != "BOLI") {
@@ -602,6 +608,9 @@ if (!discoverContentTypes.contains(
     if (Hive.isBoxOpen("AppPrefs") &&
         Hive.box("AppPrefs").get("discoverContentType") == "BOLI") {
       await _refreshBoliCards();
+      if (quickPicks.value.title == "foryou") {
+        await loadContentFromNetwork(silent: true);
+      }
     }
   }
 

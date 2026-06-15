@@ -30,7 +30,7 @@ class SettingsScreenController extends GetxController {
   final slidableActionEnabled = true.obs;
   final isIgnoringBatteryOptimizations = false.obs;
   final autoOpenPlayer = false.obs;
-  final discoverContentType = "TR".obs;
+  final discoverContentType = "BOLI".obs;
   final isNewVersionAvailable = false.obs;
   final isLinkedWithPiped = false.obs;
   final stopPlyabackOnSwipeAway = false.obs;
@@ -125,7 +125,7 @@ class SettingsScreenController extends GetxController {
         setBox.get("exportLocationPath") ?? "/storage/emulated/0/Music";
     downloadingFormat.value = setBox.get('downloadingFormat') ?? "m4a";
     discoverContentType.value =
-        setBox.get('discoverContentType') ?? "TR";
+        setBox.get('discoverContentType') ?? "BOLI";
     slidableActionEnabled.value = setBox.get('slidableActionEnabled') ?? true;
     if (setBox.containsKey("piped")) {
       isLinkedWithPiped.value = setBox.get("piped")['isLoggedIn'];

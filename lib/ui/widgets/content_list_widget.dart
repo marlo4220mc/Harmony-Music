@@ -60,8 +60,7 @@ class ContentListWidget extends StatelessWidget {
               controller: scrollController,
               child: ListView.separated(
                   controller: scrollController,
-                  addAutomaticKeepAlives: false, //Testing going
-                  addRepaintBoundaries: false, //on this
+                  addAutomaticKeepAlives: false,
                   physics: const BouncingScrollPhysics(),
                   separatorBuilder: (context, index) => const SizedBox(
                         width: 15,

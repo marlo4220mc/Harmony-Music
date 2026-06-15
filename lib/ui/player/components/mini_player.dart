@@ -27,9 +27,8 @@ class MiniPlayer extends StatelessWidget {
     return Obx(() {
       return Visibility(
         visible: playerController.isPlayerpanelTopVisible.value,
-        child: AnimatedOpacity(
+        child: Opacity(
           opacity: playerController.playerPaneOpacity.value,
-          duration: Duration.zero,
           child: Container(
             height: playerController.playerPanelMinHeight.value,
             width: size.width,
