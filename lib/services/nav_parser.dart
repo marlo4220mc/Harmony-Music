@@ -339,6 +339,17 @@ MediaItem parseSong(Map<dynamic, dynamic> result) {
 
 Map<String, dynamic> parseSongRuns(List<dynamic> runs) {
   Map<String, dynamic> parsed = {'artists': []};
+
+  // Strip leading type labels (e.g. "Song • Queen • 2024" → "Queen • 2024")
+  // so "Song" is not treated as an artist name.
+  if (runs.length >= 3 &&
+      runs[0] is Map &&
+      runs[1] is Map &&
+      runs[1]['text'] == ' • ' &&
+      _cardTypeLabels.contains(runs[0]['text'])) {
+    runs = runs.sublist(2);
+  }
+
   for (int i = 0; i < runs.length; i++) {
     Map<String, dynamic> run = runs[i];
     if (i % 2 != 0) {

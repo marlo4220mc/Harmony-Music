@@ -14,7 +14,7 @@ class SyncedLyricsService {
 
     final dur = song.duration?.inSeconds ?? durInSec;
     final url =
-        'https://lrclib.net/api/get?artist_name=${song.artist?.replaceAll(" ", "+")}&track_name=${song.title.replaceAll(" ", "+")}&album_name=${song.album?.replaceAll(" ", "+")}&duration=$dur';
+        'https://lrclib.net/api/get?artist_name=${song.artist?.replaceAll(" ", "+")}&track_name=${song.title.replaceAll(" ", "+")}&album_name=${(song.album ?? "").replaceAll(" ", "+")}&duration=$dur';
     try {
       final response = (await Dio().get(url)).data;
       if (response["syncedLyrics"] != null) {

@@ -852,8 +852,9 @@ class PlayerController extends GetxController
 
   Future<void> showLyrics() async {
     showLyricsflag.value = !showLyricsflag.value;
-    if ((lyrics["synced"].isEmpty && lyrics['plainLyrics'].isEmpty) &&
-        showLyricsflag.value) {
+    if (showLyricsflag.value && !isLyricsLoading.value &&
+        ((lyrics["synced"].isEmpty && lyrics['plainLyrics'].isEmpty) ||
+         lyrics['plainLyrics'] == "NA")) {
       isLyricsLoading.value = true;
       try {
         final Map<String, dynamic>? lyricsR =
