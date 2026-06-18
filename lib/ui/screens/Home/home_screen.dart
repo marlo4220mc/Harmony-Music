@@ -212,9 +212,14 @@ class Body extends StatelessWidget {
                                           homeScreenController.quickPicks.value,
                                       scrollController: scrollController);
                                 }),
-                                if (isBoli)
-                                  ...homeScreenController.snapshotCards.map((
-                                      qp) {
+                                Obx(() {
+                                  if (!isBoli) return const SizedBox.shrink();
+                                  return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: homeScreenController
+                                      .snapshotCards
+                                      .map((qp) {
                                     final scrollController =
                                         ScrollController();
                                     homeScreenController
@@ -223,11 +228,15 @@ class Body extends StatelessWidget {
                                     return QuickPicksWidget(
                                         content: qp,
                                         scrollController: scrollController);
-                                  }),
-                                ...getWidgetList(
+                                  }).toList());
+                                }),
+                                Obx(() => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: getWidgetList(
                                     homeScreenController.middleContent,
                                     homeScreenController,
-                                    true),
+                                    true))),
                                 Obx(() {
                                   final hasItems = homeScreenController
                                       .continuePlaylists.isNotEmpty;
@@ -249,10 +258,13 @@ class Body extends StatelessWidget {
                                   }
                                   return const SizedBox.shrink();
                                 }),
-                                ...getWidgetList(
+                                Obx(() => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: getWidgetList(
                                     homeScreenController.fixedContent,
                                     homeScreenController,
-                                    true)
+                                    true)))
                               ]
                             : [const HomeShimmer()];
                         return ListView.builder(
@@ -312,6 +324,7 @@ class Body extends StatelessWidget {
           final scrollController = ScrollController();
           homeScreenController.contentScrollControllers.add(scrollController);
           return ContentListWidget(
+              key: ObjectKey(content),
               content: content,
               scrollController: scrollController,
               openedFromHomeApiPlaylist: openedFromHomeApiPlaylist);

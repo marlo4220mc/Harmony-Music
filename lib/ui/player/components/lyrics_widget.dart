@@ -5,6 +5,20 @@ import 'package:get/get.dart';
 import '../../widgets/loader.dart';
 import '../player_controller.dart';
 
+String _cachedLyricsText = '';
+dynamic _cachedLyricsModel;
+
+dynamic _buildOrGetCachedModel(String lyricsText) {
+  if (lyricsText == _cachedLyricsText && _cachedLyricsModel != null) {
+    return _cachedLyricsModel!;
+  }
+  _cachedLyricsText = lyricsText;
+  _cachedLyricsModel = LyricsModelBuilder.create()
+      .bindLyricToMain(lyricsText)
+      .getModel();
+  return _cachedLyricsModel;
+}
+
 class LyricsWidget extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   const LyricsWidget({super.key, required this.padding});
@@ -47,10 +61,8 @@ class LyricsWidget extends StatelessWidget {
                     lyricUi: playerController.lyricUi,
                     position: playerController
                         .progressBarStatus.value.current.inMilliseconds,
-                    model: LyricsModelBuilder.create()
-                        .bindLyricToMain(
-                            playerController.lyrics['synced'].toString())
-                        .getModel(),
+                    model: _buildOrGetCachedModel(
+                        playerController.lyrics['synced'].toString()),
                     emptyBuilder: () => Center(
                       child: Text(
                         "syncedLyricsNotAvailable".tr,
