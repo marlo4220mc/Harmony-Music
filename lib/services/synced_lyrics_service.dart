@@ -5,7 +5,10 @@ import 'package:hive/hive.dart';
 
 class SyncedLyricsService {
   static Future<Map<String, dynamic>?> getSyncedLyrics(
-      MediaItem song, int durInSec) async {
+    MediaItem song,
+    int durInSec, {
+    CancelToken? cancelToken,
+  }) async {
     final lyricsBox = await Hive.openBox("lyrics");
     // check if lyrics available in local database
     if (lyricsBox.containsKey(song.id)) {
@@ -16,7 +19,7 @@ class SyncedLyricsService {
     final url =
         'https://lrclib.net/api/get?artist_name=${song.artist?.replaceAll(" ", "+")}&track_name=${song.title.replaceAll(" ", "+")}&album_name=${(song.album ?? "").replaceAll(" ", "+")}&duration=$dur';
     try {
-      final response = (await Dio().get(url)).data;
+      final response = (await Dio().get(url, cancelToken: cancelToken)).data;
       if (response["syncedLyrics"] != null) {
         
         final lyricsData = {
@@ -28,8 +31,6 @@ class SyncedLyricsService {
       }
     } on DioException catch (e) {
       printERROR(e.response);
-    } finally {
-      await lyricsBox.close();
     }
     return null;
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
+import 'package:dio/dio.dart';
 import '../../models/playling_from.dart';
 import '../../services/continue_playlists_store.dart';
 import '../../services/downloader.dart';
@@ -82,6 +83,11 @@ class PlayerController extends GetxController
 
   var _newSongFlag = true;
   final isCurrentSongBuffered = false.obs;
+
+  int _genPlan = 0;
+  final Map<String, Future<Map<String, dynamic>?>> _lyricsInFlight = {};
+  CancelToken? _planCancelToken;
+  String? _planSongId;
 
   late StreamSubscription<bool> keyboardSubscription;
 
@@ -271,6 +277,7 @@ class PlayerController extends GetxController
         }
         lyrics.value = {"synced": "", "plainLyrics": ""};
         showLyricsflag.value = false;
+        _onPlayerChanged();
         if (isDesktopLyricsDialogOpen) {
           Navigator.pop(Get.context!);
         }
@@ -850,16 +857,75 @@ class PlayerController extends GetxController
     recentItem = mediaItem;
   }
 
+  void _onPlayerChanged() {
+    if (Hive.box("AppPrefs").get("useLyrics") != true) return;
+    final song = currentSong.value;
+    if (song == null) return;
+    if (song.id == _planSongId) return;
+    _planSongId = song.id;
+    _planCancelToken?.cancel();
+    _lyricsInFlight.clear();
+    _planCancelToken = CancelToken();
+    _genPlan++;
+    _resolveCurrent(_genPlan);
+  }
+
+  Future<void> _resolveCurrent(int gen) async {
+    final song = currentSong.value;
+    if (song == null) return;
+    final key = song.id;
+    if (_lyricsInFlight.containsKey(key)) {
+      await _lyricsInFlight[key]!;
+    } else {
+      final capturedGen = gen;
+      final future = SyncedLyricsService.getSyncedLyrics(
+        song, progressBarStatus.value.total.inSeconds, cancelToken: _planCancelToken,
+      ).whenComplete(() {
+        if (capturedGen == _genPlan) _lyricsInFlight.remove(key);
+      });
+      _lyricsInFlight[key] = future;
+      await future;
+    }
+    if (gen != _genPlan) return;
+    _resolveNext(gen);
+  }
+
+  Future<void> _resolveNext(int gen) async {
+    final nextIndex = currentSongIndex.value + 1;
+    if (nextIndex >= currentQueue.length) return;
+    final song = currentQueue[nextIndex];
+    final key = song.id;
+    if (_lyricsInFlight.containsKey(key)) return;
+    final capturedGen = gen;
+    final future = SyncedLyricsService.getSyncedLyrics(
+      song, progressBarStatus.value.total.inSeconds, cancelToken: _planCancelToken,
+    ).whenComplete(() {
+        if (capturedGen == _genPlan) _lyricsInFlight.remove(key);
+    });
+    _lyricsInFlight[key] = future;
+    await future;
+  }
+
   Future<void> showLyrics() async {
+    if (Hive.box("AppPrefs").get("useLyrics") != true) {
+      Hive.box("AppPrefs").put("useLyrics", true);
+    }
     showLyricsflag.value = !showLyricsflag.value;
     if (showLyricsflag.value && !isLyricsLoading.value &&
         ((lyrics["synced"].isEmpty && lyrics['plainLyrics'].isEmpty) ||
          lyrics['plainLyrics'] == "NA")) {
       isLyricsLoading.value = true;
       try {
-        final Map<String, dynamic>? lyricsR =
-            await SyncedLyricsService.getSyncedLyrics(
+        final String originalId = currentSong.value!.id;
+        final future = _lyricsInFlight.containsKey(originalId)
+            ? _lyricsInFlight[originalId]!
+            : SyncedLyricsService.getSyncedLyrics(
                 currentSong.value!, progressBarStatus.value.total.inSeconds);
+        final Map<String, dynamic>? lyricsR = await future;
+        if (currentSong.value?.id != originalId) {
+          isLyricsLoading.value = false;
+          return;
+        }
         if (lyricsR != null) {
           lyrics.value = lyricsR;
           isLyricsLoading.value = false;
