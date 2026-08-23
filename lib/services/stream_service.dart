@@ -116,7 +116,7 @@ class StreamProvider {
     return formats.first;
   }
 
-  Audio? get highestQualityAudio => _preferred(const [140, 251]);
+  Audio? get highestQualityAudio => _preferred(const [251, 140]);
 
   Audio? get highestBitrateMp4aAudio => _preferred(const [140, 139]);
 
