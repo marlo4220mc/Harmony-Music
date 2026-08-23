@@ -339,17 +339,6 @@ MediaItem parseSong(Map<dynamic, dynamic> result) {
 
 Map<String, dynamic> parseSongRuns(List<dynamic> runs) {
   Map<String, dynamic> parsed = {'artists': []};
-
-  // Strip leading type labels (e.g. "Song • Queen • 2024" → "Queen • 2024")
-  // so "Song" is not treated as an artist name.
-  if (runs.length >= 3 &&
-      runs[0] is Map &&
-      runs[1] is Map &&
-      runs[1]['text'] == ' • ' &&
-      _cardTypeLabels.contains(runs[0]['text'])) {
-    runs = runs.sublist(2);
-  }
-
   for (int i = 0; i < runs.length; i++) {
     Map<String, dynamic> run = runs[i];
     if (i % 2 != 0) {
@@ -555,13 +544,25 @@ Map<String, dynamic> parseWatchTrack(Map<String, dynamic> data) {
 }
 
 String? getTabBrowseId(Map<String, dynamic> watchNextRenderer, int tabId) {
-  if (!watchNextRenderer['tabs'][tabId]['tabRenderer']
-      .containsKey('unselectable')) {
-    return watchNextRenderer['tabs'][tabId]['tabRenderer']['endpoint']
-        ['browseEndpoint']['browseId'];
-  } else {
-    return null;
+  final tabs = watchNextRenderer['tabs'];
+  if (tabs is! List || tabs.isEmpty) return null;
+  // tabId: 1 = lyrics, 2 = related. Match by browseId prefix instead of a
+  // fixed index since YouTube inserted a "Comments" tab between them.
+  final String prefix = tabId == 1 ? 'MPLYt' : 'MPTRt';
+  for (final tab in tabs) {
+    if (tab is! Map) continue;
+    final renderer = tab['tabRenderer'];
+    if (renderer is! Map) continue;
+    final endpoint = renderer['endpoint'];
+    if (endpoint is! Map) continue;
+    final browseEndpoint = endpoint['browseEndpoint'];
+    if (browseEndpoint is! Map) continue;
+    final browseId = browseEndpoint['browseId'];
+    if (browseId is String && browseId.startsWith(prefix)) {
+      return browseId;
+    }
   }
+  return null;
 }
 
 ///Parse playlist songs, Also used in Album Song parsing
