@@ -1,4 +1,32 @@
-# 1.12.2
+# 1.13.0
+Fixes:
+* Restored music playback using VISIONOS innertube client to bypass YouTube proof-of-origin gating
+* Fixed Comments-tab parser crash that silently broke queues and playlists
+* Fixed visitorId expiration causing playback failures
+* Guard against empty watch queues and empty queue contents in getWatchPlaylist
+* Fixed one-shot visitorId recovery on first watch failure
+* Fixed home screen: wrap snapshotCards/middleContent/fixedContent in Obx
+* Fixed lyrics: retry on NA, normalize artist metadata, fix album=null
+* Fixed search result classification, ordering and artist metadata normalization
+* Fixed search: process itemSectionRenderer search shelves
+* Fixed search: extract top result artist from musicCardShelfRenderer
+* Fixed DISCOVER radio leakage
+* Fixed i18n: rename continueRadio to continueradio
+* Fixed CI Windows runner for VS2026 compatibility
+* Locked Android to portrait mode to fix landscape layout issues
+* Removed diagnostic logs for cleaner output
+
+Features:
+* Preferred Opus itag 251 over AAC 140 for higher streaming quality
+* Synced lyrics preload with generation scheduler, CancelToken and Hive deduplication
+* BOLI recommendation engine with automatic refresh and snapshot persistence
+* Continue Playlists feature with BOLI-only guard and i18n
+* Record RecommendationSnapshot on Home API playlist song tap
+* Set BOLI as default home with TR fallback until first snapshot
+* Restored search with mixed result support
+* Enhanced app preferences initialization and visitor ID handling
+* Updated translations via Weblate (Czech, Filipino, Dutch, Punjabi, Swedish, Catalan, Interlingua, Khmer, Malayalam, Bulgarian, Arabic, Serbian, Hindi, Korean, Tamil, Russian, German, Hungarian, French, Kannada, Romanian, Indonesian, Norwegian, Finnish, Italian, Croatian, Slovak, Telugu, Esperanto, Persian, Spanish, Polish, Urdu, Portuguese, Galician, Chinese, Odia, Bengali, Azerbaijani)
+* Active maintenance and extended support for future issues
 * Added wakelock support to keep screen awake while playing music (can be toggled from settings)
 * Enabled downloading in external storage for Android devices
 * Fixed Home discover content loading issue

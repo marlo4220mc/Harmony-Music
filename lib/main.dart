@@ -30,6 +30,9 @@ Future<void> main() async {
   Get.put<AudioHandler>(await initAudioService(), permanent: true);
   WidgetsBinding.instance.addObserver(LifecycleHandler());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  if (!GetPlatform.isDesktop) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
   TerminateRestart.instance.initialize();
   runApp(const MyApp());
 }
