@@ -358,15 +358,92 @@ jobs:
 
       - name: Smoke test with real dlopen in clean env
         run: |
-          docker run --rm -v "$PWD/squashfs-root":/app -w /app ubuntu:24.04 bash -c '
+          # Write the python test scripts on the host inside quoted heredocs so the
+          # delimiters are at column 0 (this `run:` block executes directly in bash);
+          # they are then mounted into the container and run with python3 there.
+          cat > smoke_dlopen.py <<'PYEOF'
+          import ctypes, subprocess, os, re
+          so = "/app/lib/libmpv.so.2"
+          lib = ctypes.CDLL(so)
+          lib.mpv_client_api_version.argtypes = [ctypes.c_ulong]
+          lib.mpv_client_api_version.restype = ctypes.c_ulong
+          print("dlopen OK:", so, "api", hex(lib.mpv_client_api_version(0)))
+          print("mpv_initialize present:", hasattr(lib, "mpv_initialize"))
+          print("mpv_terminate_destroy present:", hasattr(lib, "mpv_terminate_destroy"))
+          bundled = []
+          for line in subprocess.run(["ldd", so], capture_output=True, text=True).stdout.splitlines():
+              if "=>" in line:
+                  name, rest = line.split("=>", 1)
+                  p = rest.split()[0]
+                  if "/app/lib/" in p:
+                      bundled.append(name.strip())
+                  print(line)
+              elif "not found" in line:
+                  raise SystemExit("::error::unresolved dependency: "+line)
+          # Every direct NEEDED of libmpv must be either bundled in /app/lib or a
+          # host-delegated library. Media deps (libmpv/FFmpeg/libass/libplacebo) and
+          # the codec stack MUST be bundled; glibc, the graphics/audio/driver stack
+          # and the GTK/GLib family are delegated to the host.
+          need = subprocess.run(["objdump","-p",so],capture_output=True,text=True).stdout
+          needed = [l.split()[-1] for l in need.splitlines() if l.strip().startswith("NEEDED")]
+          HOST_RE = re.compile(r"^(ld-linux|libc\.so|libm\.so|libdl\.so|libpthread|librt\.so|"
+                               r"libgcc_s|libstdc\+\+|libresolv|libz\.so|"
+                               r"libGL|libEGL|libGLX|libOpenGL|libvulkan|libdrm|libgbm|"
+                               r"libva|libvdpau|libwayland|libX11|libxcb|libxkbcommon|"
+                               r"libSDL|libasound|libpulse|libpipewire|libjack|libsndio|"
+                               r"libcrypto|libssl|libgnutls|libgtk-3|libgdk-3|libglib|"
+                               r"libgobject|libgio|libgdk_pixbuf|libpango|libcairo|librsvg)")
+          missing = [n for n in needed if not HOST_RE.match(n) and not os.path.exists("/app/lib/"+n)]
+          if missing:
+              raise SystemExit("::error::bundled media dep missing in /app/lib: "+", ".join(missing))
+          host_in_bundle = [n for n in os.listdir("/app/lib") if HOST_RE.match(n)]
+          if host_in_bundle:
+              raise SystemExit("::error::host library wrongly bundled: "+", ".join(host_in_bundle))
+          print("OK: all media dependencies bundled; host stack delegated")
+          print("bundled media libs:", len(bundled))
+          PYEOF
+
+          cat > smoke_lifecycle.py <<'PYEOF'
+          import ctypes
+          so = "/app/lib/libmpv.so.2"
+          lib = ctypes.CDLL(so)
+          lib.mpv_create.restype = ctypes.c_void_p
+          lib.mpv_create.argtypes = []
+          lib.mpv_initialize.argtypes = [ctypes.c_void_p]
+          lib.mpv_initialize.restype = ctypes.c_int
+          lib.mpv_terminate_destroy.argtypes = [ctypes.c_void_p]
+          lib.mpv_set_option_string.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+          lib.mpv_set_option_string.restype = ctypes.c_int
+          ctx = lib.mpv_create()
+          if not ctx:
+              raise SystemExit("::error::mpv_create returned NULL")
+          # Audio-only: disable video output so the bundled libmpv does not require
+          # the host GPU/display chain at init (matches the audio-only encapsulation).
+          lib.mpv_set_option_string(ctx, b"video", b"no")
+          lib.mpv_set_option_string(ctx, b"vo", b"null")
+          rc_init = lib.mpv_initialize(ctx)
+          print("mpv_create OK; mpv_initialize =", rc_init)
+          if rc_init != 0:
+              raise SystemExit("::error::mpv_initialize failed: "+str(rc_init))
+          lib.mpv_terminate_destroy(ctx)
+          print("mpv_terminate_destroy OK (audio-only lifecycle works)")
+          PYEOF
+
+          docker run --rm \
+            -v "$PWD/squashfs-root":/app \
+            -v "$PWD/smoke_dlopen.py":/smoke_dlopen.py \
+            -v "$PWD/smoke_lifecycle.py":/smoke_lifecycle.py \
+            -w /app ubuntu:24.04 bash -c '
             set -e
             # Provide ONLY the host-delegated stack (glibc, GTK/GLib, audio,
-            # graphics, crypto). None of the bundled media libs (libmpv/FFmpeg/
-            # libass/libplacebo/codecs) are installed, so every media dep must
-            # resolve from the AppImage /app/lib via RUNPATH, and the host stack
-            # must resolve from the system.
+            # graphics, crypto) plus python3 for the smoke scripts. None of the
+            # bundled media libs (libmpv/FFmpeg/libass/libplacebo/codecs) are
+            # installed, so every media dep must resolve from /app/lib via RUNPATH,
+            # and the host stack must resolve from the system.
+            export DEBIAN_FRONTEND=noninteractive
             apt-get update >/dev/null 2>&1
             apt-get install -y --no-install-recommends \
+              python3 \
               libgtk-3-0t64 libglib2.0-0t64 libasound2t64 libpulse0 \
               libpipewire-0.3-0 libjack-jackd2-0 libgl1 libegl1 libx11-6 \
               libxkbcommon0 libwayland-client0 libcairo2 libpango-1.0-0 \
@@ -377,79 +454,11 @@ jobs:
             fi
             echo "OK: neither libmpv nor any media dep is provided by apt"
             echo
-            # Load the AppImage libmpv.so.2 via dlopen (audio-only path) and
-            # verify its bundled libs resolve from /app/lib, not from any system
-            # path.
-            python3 - <<PY
-            import ctypes, subprocess, os, re
-            so = "/app/lib/libmpv.so.2"
-            lib = ctypes.CDLL(so)
-            lib.mpv_client_api_version.argtypes = [ctypes.c_ulong]
-            lib.mpv_client_api_version.restype = ctypes.c_ulong
-            print("dlopen OK:", so, "api", hex(lib.mpv_client_api_version(0)))
-            print("mpv_initialize present:", hasattr(lib, "mpv_initialize"))
-            print("mpv_terminate_destroy present:", hasattr(lib, "mpv_terminate_destroy"))
-            bundled = []
-            for line in subprocess.run(["ldd", so], capture_output=True, text=True).stdout.splitlines():
-                if "=>" in line:
-                    name, rest = line.split("=>", 1)
-                    p = rest.split()[0]
-                    if "/app/lib/" in p:
-                        bundled.append(name.strip())
-                    print(line)
-                elif "not found" in line:
-                    raise SystemExit("::error::unresolved dependency: "+line)
-            # Every direct NEEDED of libmpv must be either bundled in /app/lib or
-            # a host-delegated library. Media deps (libmpv/FFmpeg/libass/libplacebo)
-            # and the codec stack MUST be bundled; glibc, the graphics/audio/driver
-            # stack and the GTK/GLib family are delegated to the host.
-            need = subprocess.run(["objdump","-p",so],capture_output=True,text=True).stdout
-            needed = [l.split()[-1] for l in need.splitlines() if l.strip().startswith("NEEDED")]
-            HOST_RE = re.compile(r"^(ld-linux|libc\.so|libm\.so|libdl\.so|libpthread|librt\.so|"
-                                 r"libgcc_s|libstdc\+\+|libresolv|libz\.so|"
-                                 r"libGL|libEGL|libGLX|libOpenGL|libvulkan|libdrm|libgbm|"
-                                 r"libva|libvdpau|libwayland|libX11|libxcb|libxkbcommon|"
-                                 r"libSDL|libasound|libpulse|libpipewire|libjack|libsndio|"
-                                 r"libcrypto|libssl|libgnutls|libgtk-3|libgdk-3|libglib|"
-                                 r"libgobject|libgio|libgdk_pixbuf|libpango|libcairo|librsvg)")
-            missing = [n for n in needed if not HOST_RE.match(n) and not os.path.exists("/app/lib/"+n)]
-            if missing:
-                raise SystemExit("::error::bundled media dep missing in /app/lib: "+", ".join(missing))
-            # Host-delegated NEEDED must NOT be bundled into the AppImage lib dir.
-            host_in_bundle = [n for n in os.listdir("/app/lib") if HOST_RE.match(n)]
-            if host_in_bundle:
-                raise SystemExit("::error::host library wrongly bundled: "+", ".join(host_in_bundle))
-            print("OK: all media dependencies bundled; host stack delegated")
-            print("bundled media libs:", len(bundled))
-            PY
-            # Prove the audio-only lifecycle works: create -> initialize -> destroy.
-            python3 - <<PY
-            import ctypes
-            so = "/app/lib/libmpv.so.2"
-            lib = ctypes.CDLL(so)
-            lib.mpv_create.restype = ctypes.c_void_p
-            lib.mpv_create.argtypes = []
-            lib.mpv_initialize.argtypes = [ctypes.c_void_p]
-            lib.mpv_initialize.restype = ctypes.c_int
-            lib.mpv_terminate_destroy.argtypes = [ctypes.c_void_p]
-            lib.mpv_set_option_string.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
-            lib.mpv_set_option_string.restype = ctypes.c_int
-            ctx = lib.mpv_create()
-            if not ctx:
-                raise SystemExit("::error::mpv_create returned NULL")
-            # Audio-only: disable video output so the bundled libmpv does not
-            # require the host GPU/display chain at init (matches the audio-only
-            # encapsulation of the app).
-            lib.mpv_set_option_string(ctx, b"video", b"no")
-            lib.mpv_set_option_string(ctx, b"vo", b"null")
-            rc_init = lib.mpv_initialize(ctx)
-            print("mpv_create OK; mpv_initialize =", rc_init)
-            if rc_init != 0:
-                raise SystemExit("::error::mpv_initialize failed: "+str(rc_init))
-            lib.mpv_terminate_destroy(ctx)
-            print("mpv_terminate_destroy OK (audio-only lifecycle works)")
-            PY
+            python3 /smoke_dlopen.py
+            echo
+            python3 /smoke_lifecycle.py
           '
+          rm -f smoke_dlopen.py smoke_lifecycle.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -593,7 +602,7 @@ jobs:
             echo "harmonymusic binary is executable (755) in package"
             tar -xOf "$PKG" .PKGINFO > /tmp/PKGINFO
             for d in gtk3 libayatana-appindicator libayatana-indicator mpv; do
-              grep -qx "depends = $d" /tmp/PKGINFO || { echo "::error::depends $d missing in .PKGINFO"; exit 1; }
+              grep -qx "depend = $d" /tmp/PKGINFO || { echo "::error::depend $d missing in .PKGINFO"; exit 1; }
             done
             echo "PKGINFO depends OK: gtk3 libayatana-appindicator libayatana-indicator mpv"
           '
