@@ -445,6 +445,7 @@ jobs:
             apt-get install -y --no-install-recommends \
               python3 \
               libgtk-3-0t64 libglib2.0-0t64 libasound2t64 libpulse0 \
+              libsdl2-2.0-0 \
               libpipewire-0.3-0 libjack-jackd2-0 libgl1 libegl1 libx11-6 \
               libxkbcommon0 libwayland-client0 libcairo2 libpango-1.0-0 \
               libssl3t64 >/dev/null 2>&1
