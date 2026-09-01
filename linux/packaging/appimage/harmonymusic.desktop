@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Harmony Music
+GenericName=Music Application
+Exec=harmonymusic %U
+Icon=harmonymusic
+Type=Application
+StartupNotify=false
+Categories=AudioVideo;Audio;Player;
+Keywords=Music;Media;Streaming;

@@ -1,0 +1,23 @@
+# Maintainer: marlo4220mc <https://github.com/marlo4220mc>
+pkgname=harmonymusic
+pkgver=__PKGVER__
+pkgrel=1
+pkgdesc='A cross platform app for music streaming.'
+arch=('x86_64')
+url='https://github.com/marlo4220mc/Harmony-Music'
+license=('GPL-3.0-or-later')
+depends=('gtk3' 'libayatana-appindicator' 'libayatana-indicator' 'mpv')
+source=('harmonymusic-__PKGVER__-linux-x86_64.tar.gz')
+sha256sums=('SKIP')
+options=('!debug')
+
+package() {
+  install -dm755 "$pkgdir/usr/share/harmonymusic"
+  tar -xzf "$srcdir/harmonymusic-$pkgver-linux-x86_64.tar.gz" -C "$pkgdir/usr/share/harmonymusic/"
+  chmod 755 "$pkgdir/usr/share/harmonymusic/harmonymusic"
+  install -dm755 "$pkgdir/usr/bin"
+  ln -s /usr/share/harmonymusic/harmonymusic "$pkgdir/usr/bin/harmonymusic"
+  install -Dm644 "$startdir/harmonymusic.desktop" "$pkgdir/usr/share/applications/harmonymusic.desktop"
+  install -Dm644 "$startdir/harmonymusic.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/harmonymusic.png"
+  install -Dm644 "$startdir/harmonymusic.png" "$pkgdir/usr/share/icons/hicolor/128x128/apps/harmonymusic.png"
+}

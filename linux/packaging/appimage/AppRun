@@ -1,0 +1,7 @@
+#!/bin/bash
+HERE="$(dirname "$(readlink -f "$0")")"
+# libmpv and Ayatana closures are bundled in AppDir/lib with RUNPATH=$ORIGIN.
+# media_kit loads libmpv.so.2 via LIBMPV_LIBRARY_PATH; do NOT set a global
+# LD_LIBRARY_PATH so the app keeps resolving GTK/GLib from the host system.
+export LIBMPV_LIBRARY_PATH="$HERE/lib/libmpv.so.2"
+exec "$HERE/harmonymusic" "$@"

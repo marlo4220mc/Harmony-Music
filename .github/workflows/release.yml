@@ -1,0 +1,750 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version override (e.g. 1.14.0). Leave empty to use pubspec.yaml'
+        required: false
+        type: string
+      draft:
+        description: 'Create as draft release'
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      release_name:
+        description: 'Custom release title (e.g. "Harmony Music v1.14.0")'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.24.2'
+
+jobs:
+  get-version:
+    name: Resolve version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      version_source: ${{ steps.resolve.outputs.source }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read pubspec version
+        id: pubspec
+        run: |
+          PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          echo "version=$PUBSPEC_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Resolve version
+        id: resolve
+        run: |
+          PUBSPEC_VERSION="${{ steps.pubspec.outputs.version }}"
+          INPUT_VERSION="${{ inputs.version }}"
+          TAG_VERSION=""
+
+          # Extract tag version if triggered by tag
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG_VERSION="${{ github.ref_name }}"
+            TAG_VERSION="${TAG_VERSION#v}"
+          fi
+
+          # Priority: tag > input > pubspec
+          if [[ -n "$TAG_VERSION" ]]; then
+            VERSION="$TAG_VERSION"
+            SOURCE="tag"
+          elif [[ -n "$INPUT_VERSION" ]]; then
+            VERSION="$INPUT_VERSION"
+            SOURCE="input"
+          else
+            VERSION="$PUBSPEC_VERSION"
+            SOURCE="pubspec"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "source=$SOURCE" >> $GITHUB_OUTPUT
+          echo "Resolved version: $VERSION (source: $SOURCE)"
+
+      - name: Validate semver format
+        run: |
+          VERSION="${{ steps.resolve.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version format: $VERSION (expected X.Y.Z)"
+            exit 1
+          fi
+
+      - name: Validate tag vs pubspec consistency
+        if: steps.resolve.outputs.source == 'tag'
+        run: |
+          TAG_VERSION="${{ steps.resolve.outputs.version }}"
+          PUBSPEC_VERSION="${{ steps.pubspec.outputs.version }}"
+          if [[ "$TAG_VERSION" != "$PUBSPEC_VERSION" ]]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match pubspec.yaml version ($PUBSPEC_VERSION)"
+            echo "Update pubspec.yaml to match the tag before releasing."
+            exit 1
+          fi
+          echo "Tag and pubspec versions match: $TAG_VERSION"
+
+  build-android:
+    name: Build Android APKs
+    needs: get-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26b
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK (arm64-v8a)
+        run: |
+          flutter build apk --release --target-platform android-arm64
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+
+      - name: Build APK (armeabi-v7a)
+        run: |
+          flutter build apk --release --target-platform android-arm
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+
+      - name: Build APK (universal)
+        run: flutter build apk --release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: |
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            build/app/outputs/flutter-apk/app-release.apk
+
+  build-windows:
+    name: Build Windows exe
+    needs: get-version
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install InnoSetup
+        run: |
+          if (-not (Get-Command "innosetup" -ErrorAction SilentlyContinue)) {
+            choco install innosetup -y
+          }
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Patch InnoSetup version
+        run: |
+          $version = "${{ needs.get-version.outputs.version }}"
+          $iss = Get-Content "windows/packaging/exe/inno_setup.iss" -Raw
+          $iss = $iss -replace 'AppVersion=.*', "AppVersion=$version"
+          $iss = $iss -replace 'OutputBaseFilename=.*', "OutputBaseFilename=harmonymusic-$version-windows-x64"
+          Set-Content "windows/packaging/exe/inno_setup.iss" $iss
+          Write-Output "InnoSetup patched to $version"
+
+      - name: Build Windows exe
+        run: |
+          dart pub global activate flutter_distributor
+          flutter_distributor package --platform windows --targets exe
+
+      - name: Find exe file
+        id: find_exe
+        run: |
+          $exeFile = Get-ChildItem -Path "${{ github.workspace }}/dist" -Recurse -Filter "*.exe" | Select-Object -First 1
+          if ($exeFile) {
+            echo "exe_path=$($exeFile.FullName)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Error "No .exe files found"
+            exit 1
+          }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: ${{ steps.find_exe.outputs.exe_path }}
+
+  build-linux:
+    name: Build Linux bundle
+    needs: get-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build clang pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libayatana-appindicator3-dev
+
+      - name: Build Linux bundle
+        run: flutter build linux --release
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle
+          path: build/linux/x64/release/bundle
+
+  build-appimage:
+    name: Build AppImage
+    needs: [get-version, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-bundle
+          path: bundle
+
+      - name: Install packaging deps (no build toolchain)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfuse2 binutils patchelf \
+            libayatana-appindicator3-1 zstd
+          curl -fsSL -o appimagetool https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          sudo mv appimagetool /usr/local/bin/
+
+      - name: Download media stack from official Ubuntu repos (no compile)
+        run: |
+          set -euo pipefail
+          # Resolve the exact library paths we need from the official Ubuntu 24.04
+          # (noble) repos, download and extract WITHOUT installing. The closure
+          # collector prefers this isolated prefix, so we bundle libmpv/FFmpeg/
+          # libass/libplacebo + the full codec closure, delegating glibc, the
+          # GTK/GLib UI stack, the audio stack and the graphics/driver stack to
+          # the host distro.
+          sudo add-apt-repository -y universe >/dev/null 2>&1 || sudo apt-add-repository -y universe
+          sudo apt-get update >/dev/null
+          # Build the complete runtime dependency closure (by package relationship)
+          # starting from the top media packages plus the system tray package.
+          # --recurse + --no-recommends/--no-suggests keeps only hard runtime deps,
+          # which is exactly the set of .so the closure bundler needs.
+          # Ubuntu 24.04 (noble) ships libmpv2 = mpv 0.37.0, which links against
+          # libplacebo SONAME .338 (package libplacebo338). Returns a list of the
+          # Ubuntu package names that must be downloaded, WITHOUT installing.
+          PKGS="libmpv2 libass9 libplacebo338 libayatana-appindicator3-1"
+          # Build the full runtime dependency closure (by package relationship).
+          # --recurse + --no-recommends/--no-suggests keeps only hard runtime
+          # deps, which is exactly the set of .so the closure bundler needs.
+          # NOTE: `grep -oP '(?<=Depends: )'` only captures lines that START with
+          # "Depends:", so the recursive output lists dependencies but NOT the
+          # root packages themselves. We therefore seed the list with the roots
+          # ($PKGS) explicitly before the transitive closure is appended.
+          apt-cache depends --recurse --no-recommends --no-suggests \
+            --no-conflicts --no-breaks --no-replaces --no-enhances \
+            $PKGS 2>/dev/null \
+            | grep -oP '(?<=Depends: )[a-z0-9][a-z0-9.+-]*' \
+            | sort -u > /tmp/reposeed-deps.txt
+          # Seed the download list with the root packages + their transitive deps.
+          { printf '%s\n' $PKGS; cat /tmp/reposeed-deps.txt; } \
+            | sort -u > /tmp/reposeed-pkgs.txt
+          echo "== resolved package closure ($(wc -l < /tmp/reposeed-pkgs.txt) pkgs) =="
+          cat /tmp/reposeed-pkgs.txt
+          mkdir -p /opt/reposeed/deb
+          cd /opt/reposeed/deb
+          # Download every package; fail loudly if any is missing (no silent
+          # `|| true`): a missing .deb here means a wrong closure and a broken
+          # AppImage later.
+          set -e
+          xargs -a /tmp/reposeed-pkgs.txt apt-get download
+          # Verify every requested package produced a .deb before extracting.
+          missing=0
+          while read -r p; do
+            ls "${p}"_*.deb >/dev/null 2>&1 || { echo "::error::missing deb for $p"; missing=1; }
+          done < /tmp/reposeed-pkgs.txt
+          [ "$missing" -eq 0 ] || exit 1
+          for deb in *.deb; do dpkg-deb -x "$deb" /opt/reposeed/extracted; done
+          test -f /opt/reposeed/extracted/usr/lib/x86_64-linux-gnu/libmpv.so.2 || \
+            { echo "::error::libmpv.so.2 not extracted"; exit 1; }
+          ls -l /opt/reposeed/extracted/usr/lib/x86_64-linux-gnu/libmpv.so.2
+
+      - name: Assemble AppDir and build AppImage
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          mkdir -p AppDir
+          cp -r bundle/. AppDir/
+          cp linux/packaging/appimage/AppRun AppDir/AppRun
+          cp linux/packaging/appimage/harmonymusic.desktop AppDir/harmonymusic.desktop
+          cp assets/icons/icon.png AppDir/harmonymusic.png
+          chmod 755 AppDir/AppRun AppDir/harmonymusic
+          # Bundle the media closure (libmpv/FFmpeg/libass/libplacebo + codecs)
+          # resolved from the extracted Ubuntu prefix, plus the thin Ayatana
+          # tray closure, each with RUNPATH=$ORIGIN. No global LD_LIBRARY_PATH:
+          # glibc, the GTK/GLib family, the audio stack and the graphics/driver
+          # stack all stay on the host distro.
+          bash linux/packaging/appimage/collect-lib-closure.sh \
+            --src-prefix /opt/reposeed/extracted/usr \
+            AppDir/lib libmpv.so.2 libayatana-appindicator3.so.1
+          ls -l AppDir/lib/libmpv.so.2 AppDir/AppRun
+          ARCH=x86_64 appimagetool --no-appstream AppDir "harmonymusic-${VERSION}.AppImage"
+
+      - name: Validate AppImage contents
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          ./harmonymusic-${VERSION}.AppImage --appimage-extract > /dev/null
+          test -f squashfs-root/lib/libmpv.so.2
+          test -f squashfs-root/lib/libayatana-appindicator3.so.1
+          echo "Bundled media closure (official Ubuntu libmpv2 + codecs, libplacebo included):"
+          ls -l squashfs-root/lib/
+          echo "== libmpv NEEDED =="
+          objdump -p squashfs-root/lib/libmpv.so.2 | awk '/NEEDED/{print $2}'
+          # The media stack is bundled from official repos; libplacebo is bundled
+          # too (it is a hard load requirement of libmpv). But the graphics/
+          # driver/audio/host stack must stay on the host and NOT be copied into
+          # AppDir/lib: no GPU/VA-API/DRM/Wayland/X11/SDL/ALSA/Pulse driver glue.
+          if ls squashfs-root/lib/ | grep -qiE "libva|libdrm|libgbm|libEGL|libGL|libGLX|libvulkan|libvdpau|libX11|libwayland|libSDL|libasound|libpulse|libgtk-3|libglib-2.0"; then
+            echo "::error::a host graphics/audio/GTK library was wrongly bundled into AppDir/lib"
+            exit 1
+          fi
+          echo "OK: no host graphics/audio/GTK libraries bundled; libplacebo included as required"
+          # The mpv executable must NOT be shipped, only libmpv.
+          if find squashfs-root -path '*/usr/bin/mpv' -o -path '*/bin/mpv' | grep -q .; then
+            echo "::error::mpv executable must not be packaged in the AppImage"
+            exit 1
+          fi
+          if find squashfs-root -type f \( -name 'mpv' -o -name 'mpv.bin' \) | grep -q .; then
+            echo "::error::an 'mpv' file got packaged in the AppImage"
+            exit 1
+          fi
+          echo "OK: no mpv executable packaged"
+
+      - name: Smoke test with real dlopen in clean env
+        run: |
+          docker run --rm -v "$PWD/squashfs-root":/app -w /app ubuntu:24.04 bash -c '
+            set -e
+            # Provide ONLY the host-delegated stack (glibc, GTK/GLib, audio,
+            # graphics, crypto). None of the bundled media libs (libmpv/FFmpeg/
+            # libass/libplacebo/codecs) are installed, so every media dep must
+            # resolve from the AppImage /app/lib via RUNPATH, and the host stack
+            # must resolve from the system.
+            apt-get update >/dev/null 2>&1
+            apt-get install -y --no-install-recommends \
+              libgtk-3-0t64 libglib2.0-0t64 libasound2t64 libpulse0 \
+              libpipewire-0.3-0 libjack-jackd2-0 libgl1 libegl1 libx11-6 \
+              libxkbcommon0 libwayland-client0 libcairo2 libpango-1.0-0 \
+              libssl3t64 >/dev/null 2>&1
+            echo "== clean env: bundled media libs must NOT be provided by apt =="
+            if ldconfig -p | grep -qE "libmpv\.so|libavcodec|libass\.so|libplacebo\.so|libdav1d\.so"; then
+              echo "::error::clean env unexpectedly provides a bundled media library"; exit 1
+            fi
+            echo "OK: neither libmpv nor any media dep is provided by apt"
+            echo
+            # Load the AppImage libmpv.so.2 via dlopen (audio-only path) and
+            # verify its bundled libs resolve from /app/lib, not from any system
+            # path.
+            python3 - <<PY
+            import ctypes, subprocess, os, re
+            so = "/app/lib/libmpv.so.2"
+            lib = ctypes.CDLL(so)
+            lib.mpv_client_api_version.argtypes = [ctypes.c_ulong]
+            lib.mpv_client_api_version.restype = ctypes.c_ulong
+            print("dlopen OK:", so, "api", hex(lib.mpv_client_api_version(0)))
+            print("mpv_initialize present:", hasattr(lib, "mpv_initialize"))
+            print("mpv_terminate_destroy present:", hasattr(lib, "mpv_terminate_destroy"))
+            bundled = []
+            for line in subprocess.run(["ldd", so], capture_output=True, text=True).stdout.splitlines():
+                if "=>" in line:
+                    name, rest = line.split("=>", 1)
+                    p = rest.split()[0]
+                    if "/app/lib/" in p:
+                        bundled.append(name.strip())
+                    print(line)
+                elif "not found" in line:
+                    raise SystemExit("::error::unresolved dependency: "+line)
+            # Every direct NEEDED of libmpv must be either bundled in /app/lib or
+            # a host-delegated library. Media deps (libmpv/FFmpeg/libass/libplacebo)
+            # and the codec stack MUST be bundled; glibc, the graphics/audio/driver
+            # stack and the GTK/GLib family are delegated to the host.
+            need = subprocess.run(["objdump","-p",so],capture_output=True,text=True).stdout
+            needed = [l.split()[-1] for l in need.splitlines() if l.strip().startswith("NEEDED")]
+            HOST_RE = re.compile(r"^(ld-linux|libc\.so|libm\.so|libdl\.so|libpthread|librt\.so|"
+                                 r"libgcc_s|libstdc\+\+|libresolv|libz\.so|"
+                                 r"libGL|libEGL|libGLX|libOpenGL|libvulkan|libdrm|libgbm|"
+                                 r"libva|libvdpau|libwayland|libX11|libxcb|libxkbcommon|"
+                                 r"libSDL|libasound|libpulse|libpipewire|libjack|libsndio|"
+                                 r"libcrypto|libssl|libgnutls|libgtk-3|libgdk-3|libglib|"
+                                 r"libgobject|libgio|libgdk_pixbuf|libpango|libcairo|librsvg)")
+            missing = [n for n in needed if not HOST_RE.match(n) and not os.path.exists("/app/lib/"+n)]
+            if missing:
+                raise SystemExit("::error::bundled media dep missing in /app/lib: "+", ".join(missing))
+            # Host-delegated NEEDED must NOT be bundled into the AppImage lib dir.
+            host_in_bundle = [n for n in os.listdir("/app/lib") if HOST_RE.match(n)]
+            if host_in_bundle:
+                raise SystemExit("::error::host library wrongly bundled: "+", ".join(host_in_bundle))
+            print("OK: all media dependencies bundled; host stack delegated")
+            print("bundled media libs:", len(bundled))
+            PY
+            # Prove the audio-only lifecycle works: create -> initialize -> destroy.
+            python3 - <<PY
+            import ctypes
+            so = "/app/lib/libmpv.so.2"
+            lib = ctypes.CDLL(so)
+            lib.mpv_create.restype = ctypes.c_void_p
+            lib.mpv_create.argtypes = []
+            lib.mpv_initialize.argtypes = [ctypes.c_void_p]
+            lib.mpv_initialize.restype = ctypes.c_int
+            lib.mpv_terminate_destroy.argtypes = [ctypes.c_void_p]
+            lib.mpv_set_option_string.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+            lib.mpv_set_option_string.restype = ctypes.c_int
+            ctx = lib.mpv_create()
+            if not ctx:
+                raise SystemExit("::error::mpv_create returned NULL")
+            # Audio-only: disable video output so the bundled libmpv does not
+            # require the host GPU/display chain at init (matches the audio-only
+            # encapsulation of the app).
+            lib.mpv_set_option_string(ctx, b"video", b"no")
+            lib.mpv_set_option_string(ctx, b"vo", b"null")
+            rc_init = lib.mpv_initialize(ctx)
+            print("mpv_create OK; mpv_initialize =", rc_init)
+            if rc_init != 0:
+                raise SystemExit("::error::mpv_initialize failed: "+str(rc_init))
+            lib.mpv_terminate_destroy(ctx)
+            print("mpv_terminate_destroy OK (audio-only lifecycle works)")
+            PY
+          '
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-appimage
+          path: harmonymusic-*.AppImage
+
+  build-deb:
+    name: Build deb package
+    needs: [get-version, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-bundle
+          path: bundle
+
+      - name: Build deb from bundle
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          FULL_VERSION="$(grep '^version:' pubspec.yaml | awk '{print $2}')"
+          mkdir -p pkg/opt/harmonymusic pkg/DEBIAN \
+                   pkg/usr/share/applications \
+                   pkg/usr/share/icons/hicolor/128x128/apps \
+                   pkg/usr/share/icons/hicolor/256x256/apps
+          cp -r bundle/. pkg/opt/harmonymusic/
+          chmod 755 pkg/opt/harmonymusic/harmonymusic
+          sed "s/__VERSION__/${FULL_VERSION}/" linux/packaging/deb/DEBIAN/control > pkg/DEBIAN/control
+          cp linux/packaging/deb/DEBIAN/postinst pkg/DEBIAN/postinst
+          cp linux/packaging/deb/DEBIAN/postrm pkg/DEBIAN/postrm
+          chmod +x pkg/DEBIAN/postinst pkg/DEBIAN/postrm
+          cp linux/packaging/deb/usr/share/applications/harmonymusic.desktop pkg/usr/share/applications/harmonymusic.desktop
+          cp assets/icons/icon.png pkg/usr/share/icons/hicolor/128x128/apps/harmonymusic.png
+          cp assets/icons/icon.png pkg/usr/share/icons/hicolor/256x256/apps/harmonymusic.png
+          dpkg-deb --build --root-owner-group pkg "harmonymusic-${VERSION}.deb"
+          dpkg-deb --info "harmonymusic-${VERSION}.deb"
+          dpkg-deb -c "harmonymusic-${VERSION}.deb" | grep 'opt/harmonymusic/harmonymusic$'
+          DEPS="$(dpkg-deb -f "harmonymusic-${VERSION}.deb" Depends)"
+          echo "Depends: ${DEPS}"
+          echo "$DEPS" | grep -q "libmpv" || { echo "::error::libmpv missing in Depends"; exit 1; }
+          echo "$DEPS" | grep -q "libayatana-appindicator3-1" || { echo "::error::libayatana-appindicator3-1 missing in Depends"; exit 1; }
+          if echo "$DEPS" | grep -qE "(^|, )(mpv)(,|$)"; then
+            echo "::error::the mpv executable must not be a Depends entry"
+            exit 1
+          fi
+          echo "deb Depends OK: libmpv and libayatana-appindicator3-1 (no mpv)"
+
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: harmonymusic-*.deb
+
+  build-rpm:
+    name: Build rpm package
+    needs: [get-version, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-bundle
+          path: bundle
+
+      - name: Build rpm from bundle
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          sudo apt-get update
+          sudo apt-get install -y rpm patchelf
+          mkdir -p "$PWD/rpmbuild"/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+          BUILDROOT="$PWD/rpmbuild/BUILD/harmonymusic"
+          mkdir -p "$BUILDROOT"
+          cp -r bundle/. "$BUILDROOT/"
+          for f in "$BUILDROOT"/lib/*.so; do
+            [ -f "$f" ] || continue
+            rp="$(patchelf --print-rpath "$f" 2>/dev/null)" || continue
+            sane="$(echo "$rp" | awk -F: '{s=""; for(i=1;i<=NF;i++){if(substr($i,1,1)=="/") $i="$ORIGIN"; if(s!="") s=s ":"; s=s $i} print s}')"
+            [ "$sane" != "$rp" ] && patchelf --set-rpath "$sane" "$f" || true
+          done
+          chmod 755 "$BUILDROOT/harmonymusic"
+          cp assets/icons/icon.png "$PWD/rpmbuild/BUILD/harmonymusic.png"
+          cp linux/packaging/rpm/harmonymusic.desktop "$PWD/rpmbuild/BUILD/harmonymusic.desktop"
+          sed "s/__VERSION__/${VERSION}/g" linux/packaging/rpm/harmonymusic.spec > rpmbuild/SPECS/harmonymusic.spec
+          QA_RPATHS=17 rpmbuild --define "_topdir $PWD/rpmbuild" -bb rpmbuild/SPECS/harmonymusic.spec
+          cp "$PWD"/rpmbuild/RPMS/x86_64/harmonymusic-*.rpm "harmonymusic-${VERSION}.rpm"
+          rpm -qplv "harmonymusic-${VERSION}.rpm" | grep '/usr/share/harmonymusic/harmonymusic$'
+          rpm -qp --requires "harmonymusic-${VERSION}.rpm" > requires.txt
+          cat requires.txt
+          grep -q "mpv-libs" requires.txt || { echo "::error::mpv-libs missing in Requires"; exit 1; }
+          grep -q "libayatana-appindicator-gtk3" requires.txt || { echo "::error::libayatana-appindicator-gtk3 missing in Requires"; exit 1; }
+          echo "rpm Requires OK: mpv-libs and libayatana-appindicator-gtk3"; rm requires.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-rpm
+          path: harmonymusic-*.rpm
+
+  build-arch:
+    name: Build Arch package
+    needs: [get-version, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-bundle
+          path: bundle
+
+      - name: Build Arch package (makepkg)
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          mkdir -p archbuild
+          tar -C bundle -czf "archbuild/harmonymusic-${VERSION}-linux-x86_64.tar.gz" .
+          sed "s/__PKGVER__/${VERSION}/g" linux/packaging/arch/PKGBUILD > archbuild/PKGBUILD
+          cp linux/packaging/arch/harmonymusic.desktop archbuild/harmonymusic.desktop
+          cp assets/icons/icon.png archbuild/harmonymusic.png
+          chmod -R a+rX archbuild
+          docker run --rm -v "$PWD/archbuild":/work -w /work archlinux:latest bash -c '
+            # jack2 is installed explicitly so the `jack` provider dependency of
+            # mpv is already satisfied, avoiding pacman'"'"'s interactive provider
+            # prompt in a non-TTY job. libayatana-indicator is installed
+            # explicitly too (it is a hard dependency of libayatana-appindicator
+            # and is declared in the PKGBUILD).
+            set -e
+            pacman -Syu --noconfirm
+            pacman -S --noconfirm --needed \
+              base-devel gtk3 libayatana-appindicator libayatana-indicator jack2 mpv
+            useradd -m builder
+            chown -R builder /work
+            su builder -c "makepkg -f --noconfirm"
+            PKG=$(ls harmonymusic-*.pkg.tar.zst)
+            echo "Built package: $PKG"
+            tar -tvf "$PKG" | grep "usr/share/harmonymusic/harmonymusic$"
+            tar -tvf "$PKG" | grep "usr/share/harmonymusic/harmonymusic$" | awk "{print \$1}" | grep -q -- "-rwxr-xr-x"
+            echo "harmonymusic binary is executable (755) in package"
+            tar -xOf "$PKG" .PKGINFO > /tmp/PKGINFO
+            for d in gtk3 libayatana-appindicator libayatana-indicator mpv; do
+              grep -qx "depends = $d" /tmp/PKGINFO || { echo "::error::depends $d missing in .PKGINFO"; exit 1; }
+            done
+            echo "PKGINFO depends OK: gtk3 libayatana-appindicator libayatana-indicator mpv"
+          '
+          sudo chown -R "$(id -u):$(id -g)" archbuild 2>/dev/null || true
+          cp archbuild/harmonymusic-*.pkg.tar.zst "harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst"
+          ls -la harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-arch
+          path: harmonymusic-*-linux-arch-x86_64.pkg.tar.zst
+
+  create-release:
+    name: Create GitHub Release
+    needs: [get-version, build-android, build-windows, build-linux, build-appimage, build-deb, build-rpm, build-arch]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Prepare release files
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+          mkdir -p release
+
+          # Android
+          cp artifacts/android-apks/app-arm64-v8a-release.apk "release/harmonymusic-${VERSION}-android-arm64-v8a.apk" 2>/dev/null || true
+          cp artifacts/android-apks/app-armeabi-v7a-release.apk "release/harmonymusic-${VERSION}-android-armeabi-v7a.apk" 2>/dev/null || true
+          cp artifacts/android-apks/app-release.apk "release/harmonymusic-${VERSION}-android-universal.apk" 2>/dev/null || true
+
+          # Windows
+          cp artifacts/windows-exe/*.exe "release/harmonymusic-${VERSION}-windows-x64.exe" 2>/dev/null || true
+
+          # Linux
+          find artifacts/linux-appimage -name "*.AppImage" -exec cp {} "release/harmonymusic-${VERSION}-linux-x86_64.AppImage" \; 2>/dev/null || true
+          find artifacts/linux-deb -name "*.deb" -exec cp {} "release/harmonymusic-${VERSION}-linux-x86_64.deb" \; 2>/dev/null || true
+          find artifacts/linux-rpm -name "*.rpm" -exec cp {} "release/harmonymusic-${VERSION}-linux-x86_64.rpm" \; 2>/dev/null || true
+          find artifacts/linux-arch -name "*.pkg.tar.zst" -exec cp {} "release/harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst" \; 2>/dev/null || true
+
+          echo "Release files:"
+          ls -la release/
+
+      - name: Generate release notes body
+        id: notes
+        run: |
+          VERSION="${{ needs.get-version.outputs.version }}"
+
+          # Changelog block for this version
+          awk -v v="$VERSION" '
+            $0 == "# " v { found=1; next }
+            found && /^# / { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/changelog_block.txt
+
+          # Previous version (first version header below current)
+          PREV_VERSION=$(awk -v v="$VERSION" '
+            $0 == "# " v { found=1; next }
+            found && /^# [0-9]+\.[0-9]+\.[0-9]+/ { print $2; exit }
+          ' CHANGELOG.md)
+          PREV_VERSION="${PREV_VERSION:-1.0.0}"
+
+          # Contributors from git range if previous version tag exists
+          if git rev-parse -q --verify "refs/tags/v${PREV_VERSION}" >/dev/null 2>&1; then
+            CONTRIBUTORS=$(git log --format='%an' "v${PREV_VERSION}..HEAD" | sort -u | awk '{print "[@"$1"](https://github.com/"$1")"}' | paste -sd ', ' -)
+          else
+            CONTRIBUTORS="[@marlo4220mc](https://github.com/marlo4220mc)"
+          fi
+
+          REPO="https://github.com/marlo4220mc/Harmony-Music"
+
+          cat > /tmp/release_body.md <<EOF
+          # Harmony Music V${VERSION}
+
+          ## Thank you all for showing immense love and support ❤️.
+
+          # Changelogs:
+
+          $(cat /tmp/changelog_block.txt)
+
+          **Full Changelog**: [v${PREV_VERSION}...v${VERSION}](${REPO}/compare/v${PREV_VERSION}...v${VERSION})
+
+          ## Thanks to all contributors:
+
+          ${CONTRIBUTORS}
+
+          # Android
+
+          ### Download apk from below assets as per your device architecture.
+
+          - harmonymusic-${VERSION}-android-arm64-v8a.apk - for Arm64 64bit processor architecture (Support New devices)
+          - harmonymusic-${VERSION}-android-armeabi-v7a.apk - for Armabi 32bit processor architecture (Support Old devices)
+          - harmonymusic-${VERSION}-android-universal.apk - universal apk
+
+          # Windows (64 bit)
+
+          - harmonymusic-${VERSION}-windows-x64.exe
+
+          #### ⚠️ Attention before downloading exe file please note that some VirusTotal vendors are flagging this binary as Malicious report. Please don't raise any issues as i'm not gonna look into this and fix this (i've no idea how native windows works). For your own satisfaction you can build it by yourself or Git Action check [here](${REPO}/wiki/Build-Harmony-music-App-by-yourself).
+
+          # Linux (Debian, AppImage, RPM, Arch)
+
+          - harmonymusic-${VERSION}-linux-x86_64.AppImage
+          - harmonymusic-${VERSION}-linux-x86_64.deb
+          - harmonymusic-${VERSION}-linux-x86_64.rpm
+          - harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst
+
+          ### Arch / CachyOS
+          \`curl -LO ${REPO}/releases/download/v${VERSION}/harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst\`
+          \`sudo pacman -U harmonymusic-${VERSION}-linux-arch-x86_64.pkg.tar.zst\`
+
+          ## Install MPV package in linux if any of binaries is not working
+
+          **For Debian:**
+          \`sudo apt install mpv\`
+
+          **For Arch linux:**
+          \`sudo pacman -S mpv\`
+
+          **For Red hat:**
+          \`sudo dnf install mpv-libs\`
+
+          ## Linux: Fedora 44 - Google Fonts failing with TLS errors
+
+          On Fedora 44, after a \`dnf update\`, Google Fonts may fail to load inside the app with errors like \`CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate\`. This is a certificate-path quirk between Fedora 44 and the Google Fonts HTTP client bundled in Flutter 3.24.2, not a bug in Harmony Music.
+
+          Restore the expected CA bundle locations manually:
+
+          \`\`\`sh
+          sudo mkdir -p /etc/pki/tls/certs
+          sudo ln -sf /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/pki/tls/certs/ca-bundle.crt
+          sudo ln -sf /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/certs/ca-certificates.crt
+          \`\`\`
+
+          > Note: Harmony Music and its AppImage never modify \`/etc\` on their own. The commands above are an optional user-side workaround for the affected Fedora 44 + Flutter 3.24.2 combination.
+
+          How to import playlist,song,album,artist from yt/ytmusic? check [FAQ](${REPO}/wiki/FAQ)
+          Want to know about how to link with Piped check [WIKI](${REPO}/wiki/Piped-linking)
+          EOF
+          echo "Release body generated ($(wc -l < /tmp/release_body.md) lines)"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ format('v{0}', needs.get-version.outputs.version) }}
+          name: ${{ inputs.release_name || format('Harmony Music v{0}', needs.get-version.outputs.version) }}
+          draft: ${{ inputs.draft || false }}
+          prerelease: ${{ inputs.prerelease || false }}
+          body_path: /tmp/release_body.md
+          files: release/*

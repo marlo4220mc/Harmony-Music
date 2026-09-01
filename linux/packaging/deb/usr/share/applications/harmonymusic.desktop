@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Harmony Music
+GenericName=Music Application
+Icon=harmonymusic
+Exec=harmonymusic %U
+Categories=AudioVideo;Audio;Player;
+Keywords=Opensource;Music;Streaming;Flutter;
