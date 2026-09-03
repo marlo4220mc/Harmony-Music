@@ -79,7 +79,6 @@ The search functionality issue has been fixed in version **v1.12.1**. Please upd
 - **Android (ARMv7):** [harmonymusic-1.12.1-armeabi-v7a-release.apk](https://github.com/anandnet/Harmony-Music/releases/download/v1.12.1/harmonymusic-1.12.1-armeabi-v7a-release.apk)
 - **Windows:** [harmonymusic-1.12.1.exe](https://github.com/anandnet/Harmony-Music/releases/download/v1.12.1/harmonymusic-1.12.1.exe)
 - **Linux (Debian):** [harmonymusic-1.12.1+26-linux.deb](https://github.com/anandnet/Harmony-Music/releases/download/v1.12.1/harmonymusic-1.12.1%2B26-linux.deb)
-- **Linux (AppImage):** [harmonymusic-1.12.1+26-linux.AppImage](https://github.com/anandnet/Harmony-Music/releases/download/v1.12.1/harmonymusic-1.12.1%2B26-linux.AppImage)
 - **Linux (RPM):** [harmonymusic-1.12.1+26-linux.rpm](https://github.com/anandnet/Harmony-Music/releases/download/v1.12.1/harmonymusic-1.12.1%2B26-linux.rpm)
 
 If the issue persists after updating, please feel free to reopen this issue or create a new one with details about your setup.

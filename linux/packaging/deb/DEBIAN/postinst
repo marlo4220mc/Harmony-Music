@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+ln -s /opt/harmonymusic/harmonymusic /usr/bin/harmonymusic
+chmod +x /usr/bin/harmonymusic
+exit 0

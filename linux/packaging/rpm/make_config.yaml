@@ -1,10 +1,10 @@
 icon: assets/icons/icon.png
 summary: An application to stream Music
 group: Application/Multimedia
-vendor: anandnet
-packager: anandnet
+vendor: marlo4220mc
+packager: marlo4220mc
 license: GPLv3
-url: https://github.com/anandnet/Harmony-Music
+url: https://github.com/marlo4220mc/Harmony-Music
 
 requires:
   - mpv-libs

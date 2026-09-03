@@ -1,0 +1,10 @@
+Maintainer: marlo4220mc <null>
+Package: harmonymusic
+Version: __VERSION__
+Section: x11
+Priority: optional
+Architecture: amd64
+Essential: no
+Installed-Size: 20000
+Description: A cross platform app for music streaming.
+Depends: libmpv1 | libmpv2, libayatana-appindicator3-1
